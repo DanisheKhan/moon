@@ -48,9 +48,9 @@ function StoreSwitcher({ stores, currentStoreCode, isOwner, onSelect }) {
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         className={cn(
-          'flex items-center gap-2 text-xs font-semibold bg-bg border border-border rounded-full px-3.5 py-1.5 text-text cursor-pointer',
+          'flex items-center gap-2 text-xs font-medium bg-bg border border-border rounded-lg px-3 py-1.5 text-text cursor-pointer',
           'hover:border-text/40 transition-all select-none',
-          isOpen && 'border-accent ring-1 ring-accent shadow-sm'
+          isOpen && 'border-accent ring-1 ring-accent shadow-2xs'
         )}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -64,8 +64,8 @@ function StoreSwitcher({ stores, currentStoreCode, isOwner, onSelect }) {
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 top-full mt-1.5 w-64 bg-surface border border-border rounded-2xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-100 shadow-sm">
-          <div className="px-3 py-1.5 text-[10px] font-bold text-muted uppercase tracking-wider">
+        <div className="absolute left-0 top-full mt-1.5 w-64 bg-surface border border-border rounded-xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-100 shadow-2xs">
+          <div className="px-3 py-1.5 text-[10px] font-medium text-muted uppercase tracking-wider">
             Switch Store Workspace
           </div>
           <div className="space-y-0.5">
@@ -80,8 +80,8 @@ function StoreSwitcher({ stores, currentStoreCode, isOwner, onSelect }) {
                     setIsOpen(false);
                   }}
                   className={cn(
-                    'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs text-left cursor-pointer transition-colors select-none',
-                    isSelected ? 'bg-bg font-semibold text-text' : 'text-text hover:bg-bg/80'
+                    'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs text-left cursor-pointer transition-colors select-none',
+                    isSelected ? 'bg-bg font-medium text-text' : 'text-text hover:bg-bg/80'
                   )}
                 >
                   <div className="flex items-center gap-2 truncate">
@@ -104,8 +104,8 @@ function StoreSwitcher({ stores, currentStoreCode, isOwner, onSelect }) {
                 setIsOpen(false);
               }}
               className={cn(
-                'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs text-left cursor-pointer transition-colors select-none',
-                location.pathname.startsWith('/admin/staff') ? 'bg-bg font-semibold text-text' : 'text-text hover:bg-bg/80'
+                'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs text-left cursor-pointer transition-colors select-none',
+                location.pathname.startsWith('/admin/staff') ? 'bg-bg font-medium text-text' : 'text-text hover:bg-bg/80'
               )}
             >
               <div className="flex items-center gap-2 truncate">
@@ -123,8 +123,8 @@ function StoreSwitcher({ stores, currentStoreCode, isOwner, onSelect }) {
                   setIsOpen(false);
                 }}
                 className={cn(
-                  'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs text-left cursor-pointer transition-colors select-none',
-                  location.pathname === '/admin/all' ? 'bg-bg font-semibold text-text' : 'text-text hover:bg-bg/80'
+                  'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs text-left cursor-pointer transition-colors select-none',
+                  location.pathname === '/admin/all' ? 'bg-bg font-medium text-text' : 'text-text hover:bg-bg/80'
                 )}
               >
                 <div className="flex items-center gap-2 truncate">
@@ -141,7 +141,7 @@ function StoreSwitcher({ stores, currentStoreCode, isOwner, onSelect }) {
                 onSelect('launcher');
                 setIsOpen(false);
               }}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-left cursor-pointer text-muted hover:text-text hover:bg-bg/80 transition-colors select-none"
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-left cursor-pointer text-muted hover:text-text hover:bg-bg/80 transition-colors select-none"
             >
               <LayoutGrid size={14} className="shrink-0" />
               <span>Workspace Launcher</span>
@@ -187,7 +187,7 @@ export function RootLayout() {
           <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <Link
               to={isPublicPage ? '/' : '/admin'}
-              className="font-semibold text-text tracking-tight flex items-center gap-2 shrink-0 text-xs sm:text-base"
+              className="font-medium text-text tracking-tight flex items-center gap-2 shrink-0 text-xs sm:text-base"
             >
               <span className="w-2.5 h-2.5 rounded-full bg-accent inline-block shrink-0" />
               <span className="truncate">STAR ENTERPRISES</span>
@@ -232,7 +232,7 @@ export function RootLayout() {
                 <ShoppingBag size={14} />
                 <span>Cart</span>
                 {totalCount > 0 && (
-                  <span className="bg-accent text-accent-fg text-[10px] font-semibold px-1.5 py-0.2 rounded-full ml-0.5">
+                  <span className="bg-accent text-accent-fg text-[10px] font-medium px-1.5 py-0.2 rounded-md ml-0.5">
                     {totalCount}
                   </span>
                 )}
@@ -241,7 +241,7 @@ export function RootLayout() {
               {/* Discreet Owner Portal Link */}
               <Link
                 to="/login"
-                className="text-xs px-2.5 sm:px-3 py-1.5 rounded-full border border-border text-muted hover:text-text hover:bg-bg transition-colors flex items-center gap-1.5 font-medium"
+                className="text-xs px-2.5 sm:px-3 py-1.5 rounded-lg border border-border text-muted hover:text-text hover:bg-bg transition-colors flex items-center gap-1.5 font-medium"
               >
                 <Shield size={13} />
                 <span className="hidden sm:inline">Owner Portal</span>

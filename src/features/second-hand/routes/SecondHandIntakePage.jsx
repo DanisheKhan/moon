@@ -105,7 +105,7 @@ export function SecondHandIntakePage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-semibold text-text">
+          <h1 className="text-xl sm:text-2xl font-medium text-text">
             Second-Hand Mobile Buyback & Intake
           </h1>
           <p className="text-sm text-muted">
@@ -141,7 +141,7 @@ export function SecondHandIntakePage() {
             {intakes.map((intake) => (
               <TableRow key={intake.id}>
                 <TableCell>
-                  <div className="font-semibold text-text">{intake.seller_name}</div>
+                  <div className="font-medium text-text">{intake.seller_name}</div>
                   <div className="text-xs text-muted">
                     {intake.seller_phone} ({intake.seller_id_type.toUpperCase()})
                   </div>
@@ -152,7 +152,7 @@ export function SecondHandIntakePage() {
                   </div>
                   <div className="text-xs text-muted">{formatDate(intake.created_at)}</div>
                 </TableCell>
-                <TableCell className="font-mono text-xs font-semibold">
+                <TableCell className="font-mono text-xs font-medium">
                   {intake.imei}
                 </TableCell>
                 <TableCell>
@@ -160,7 +160,7 @@ export function SecondHandIntakePage() {
                     Grade {intake.calculated_grade}
                   </Badge>
                 </TableCell>
-                <TableCell className="font-semibold">
+                <TableCell className="font-medium">
                   {formatCurrency(intake.agreed_price)}
                 </TableCell>
                 <TableCell>
@@ -209,7 +209,7 @@ export function SecondHandIntakePage() {
       >
         <form onSubmit={handleSubmitIntake} className="space-y-5">
           {formError && (
-            <div className="rounded-2xl border border-danger/30 bg-danger/10 p-3 text-sm text-danger flex items-center gap-2">
+            <div className="rounded-lg border border-danger/30 bg-danger/10 p-3 text-sm text-danger flex items-center gap-2">
               <ShieldAlert size={16} />
               <span>{formError}</span>
             </div>
@@ -217,7 +217,7 @@ export function SecondHandIntakePage() {
 
           {/* Section 1: Seller KYC */}
           <div className="space-y-3">
-            <h4 className="text-sm font-semibold text-text uppercase tracking-wider pb-1 border-b border-border">
+            <h4 className="text-sm font-medium text-text uppercase tracking-wider pb-1 border-b border-border">
               1. Seller Verification (Mandatory KYC)
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -264,7 +264,7 @@ export function SecondHandIntakePage() {
 
           {/* Section 2: Device & IMEI */}
           <div className="space-y-3">
-            <h4 className="text-sm font-semibold text-text uppercase tracking-wider pb-1 border-b border-border">
+            <h4 className="text-sm font-medium text-text uppercase tracking-wider pb-1 border-b border-border">
               2. Device & IMEI Uniqueness Verification
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -303,14 +303,14 @@ export function SecondHandIntakePage() {
           {/* Section 3: Diagnostic Checklist */}
           <div className="space-y-3">
             <div className="flex items-center justify-between pb-1 border-b border-border">
-              <h4 className="text-sm font-semibold text-text uppercase tracking-wider">
+              <h4 className="text-sm font-medium text-text uppercase tracking-wider">
                 3. Condition Checklist
               </h4>
               <Badge variant="accent">Computed Grade: {computedGrade}</Badge>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <label className="flex items-center gap-2.5 border border-border p-3.5 rounded-2xl cursor-pointer hover:bg-bg/60 transition-colors">
+              <label className="flex items-center gap-2.5 border border-border p-3.5 rounded-xl cursor-pointer hover:bg-bg/60 transition-colors">
                 <input
                   type="checkbox"
                   checked={screenOk}
@@ -320,7 +320,7 @@ export function SecondHandIntakePage() {
                 <span className="text-sm font-medium">Original Screen</span>
               </label>
 
-              <label className="flex items-center gap-2.5 border border-border p-3.5 rounded-2xl cursor-pointer hover:bg-bg/60 transition-colors">
+              <label className="flex items-center gap-2.5 border border-border p-3.5 rounded-xl cursor-pointer hover:bg-bg/60 transition-colors">
                 <input
                   type="checkbox"
                   checked={touchOk}
@@ -330,7 +330,7 @@ export function SecondHandIntakePage() {
                 <span className="text-sm font-medium">Touch & FaceID OK</span>
               </label>
 
-              <label className="flex items-center gap-2.5 border border-border p-3.5 rounded-2xl cursor-pointer hover:bg-bg/60 transition-colors">
+              <label className="flex items-center gap-2.5 border border-border p-3.5 rounded-xl cursor-pointer hover:bg-bg/60 transition-colors">
                 <input
                   type="checkbox"
                   checked={cameraOk}
@@ -405,9 +405,9 @@ export function SecondHandIntakePage() {
           size="lg"
         >
           <div className="space-y-4">
-            <div className="border border-border p-5 rounded-2xl bg-surface font-mono text-xs space-y-3">
+            <div className="border border-border p-5 rounded-xl bg-surface font-mono text-xs space-y-3">
               <div className="text-center space-y-1">
-                <div className="font-bold text-sm">{store?.name}</div>
+                <div className="font-medium text-sm">{store?.name}</div>
                 <div>Second-Hand Mobile Purchase Voucher</div>
                 <div>GSTIN: {store?.gstin}</div>
               </div>
@@ -422,12 +422,12 @@ export function SecondHandIntakePage() {
               </div>
 
               <div className="space-y-1">
-                <div className="font-bold">
+                <div className="font-medium">
                   Device: {selectedIntake.brand_name} {selectedIntake.model_name}
                 </div>
                 <div>IMEI: {selectedIntake.imei}</div>
                 <div>Assessed Grade: Grade {selectedIntake.calculated_grade}</div>
-                <div className="font-bold text-sm pt-2">
+                <div className="font-medium text-sm pt-2">
                   Agreed Payout: {formatCurrency(selectedIntake.agreed_price)}
                 </div>
               </div>

@@ -69,10 +69,10 @@ export function WorkspaceLayout() {
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <h2 className="text-sm font-bold text-text truncate leading-tight">
+                  <h2 className="text-sm font-medium text-text truncate leading-tight">
                     {store.name}
                   </h2>
-                  <span className="hidden md:inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-mono font-semibold bg-bg border border-border text-muted">
+                  <span className="hidden md:inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-mono font-medium bg-bg border border-border text-muted">
                     {store.invoice_prefix}
                   </span>
                 </div>
@@ -84,13 +84,13 @@ export function WorkspaceLayout() {
           </div>
 
           {/* Right: Modern Segmented Tab Capsule */}
-          <nav className="inline-flex items-center p-1 rounded-xl bg-bg border border-border overflow-x-auto min-w-0 max-w-full">
+          <nav className="inline-flex items-center p-1 rounded-lg bg-bg border border-border overflow-x-auto min-w-0 max-w-full">
             <Link
               to={basePath}
               className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all select-none whitespace-nowrap shrink-0',
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all select-none whitespace-nowrap shrink-0',
                 isPos
-                  ? 'bg-surface text-text shadow-xs border border-border/80'
+                  ? 'bg-surface text-text shadow-2xs border border-border/80'
                   : 'text-muted hover:text-text hover:bg-surface/50 border border-transparent'
               )}
             >
@@ -101,9 +101,9 @@ export function WorkspaceLayout() {
             <Link
               to={`${basePath}/inventory`}
               className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all select-none whitespace-nowrap shrink-0',
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all select-none whitespace-nowrap shrink-0',
                 isInventory
-                  ? 'bg-surface text-text shadow-xs border border-border/80'
+                  ? 'bg-surface text-text shadow-2xs border border-border/80'
                   : 'text-muted hover:text-text hover:bg-surface/50 border border-transparent'
               )}
             >
@@ -115,9 +115,9 @@ export function WorkspaceLayout() {
               <Link
                 to={`${basePath}/second-hand`}
                 className={cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all select-none whitespace-nowrap shrink-0',
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all select-none whitespace-nowrap shrink-0',
                   isSecondHand
-                    ? 'bg-surface text-text shadow-xs border border-border/80'
+                    ? 'bg-surface text-text shadow-2xs border border-border/80'
                     : 'text-muted hover:text-text hover:bg-surface/50 border border-transparent'
                 )}
               >
@@ -129,9 +129,9 @@ export function WorkspaceLayout() {
             <Link
               to={`${basePath}/invoices`}
               className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all select-none whitespace-nowrap shrink-0',
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all select-none whitespace-nowrap shrink-0',
                 isInvoices
-                  ? 'bg-surface text-text shadow-xs border border-border/80'
+                  ? 'bg-surface text-text shadow-2xs border border-border/80'
                   : 'text-muted hover:text-text hover:bg-surface/50 border border-transparent'
               )}
             >

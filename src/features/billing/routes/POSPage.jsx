@@ -327,18 +327,18 @@ export function POSPage() {
 
   return (
     <div className="space-y-6 min-w-0">
-      {/* 1. Page Title & Subtitle - Aligned identically with Inventory, Second-Hand, and Invoices */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* 1. Page Title & Subtitle */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <h1 className="text-xl sm:text-2xl font-semibold text-text">
+          <h1 className="text-xl sm:text-2xl font-medium text-text">
             {store?.name} Billing (POS)
           </h1>
-          <p className="text-sm text-muted">
+          <p className="text-xs sm:text-sm text-muted mt-0.5">
             Fast checkout, barcode scan ready, atomic GST invoice generator.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="default" className="text-xs">
+          <Badge variant="default" className="text-xs font-medium">
             {cart.length} {cart.length === 1 ? 'Item' : 'Items'} in Bill
           </Badge>
           {cart.length > 0 && (
@@ -346,7 +346,7 @@ export function POSPage() {
               variant="outline"
               size="sm"
               onClick={handleClearBill}
-              className="text-xs gap-1.5 text-muted hover:text-danger hover:border-danger/30"
+              className="text-xs gap-1.5 text-muted hover:text-danger hover:border-danger/30 rounded-lg font-medium"
             >
               <RotateCcw size={13} /> Reset Bill
             </Button>
@@ -354,9 +354,9 @@ export function POSPage() {
         </div>
       </div>
 
-      {/* 2. Customer Details Card (Inline - No Popup Friction) */}
-      <Card className="p-5 rounded-xl border border-border bg-surface space-y-3.5 shadow-xs">
-        <div className="flex items-center justify-between text-xs font-semibold text-text pb-2 border-b border-border">
+      {/* 2. Customer Details Card (Inline) */}
+      <Card className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-3.5 shadow-2xs">
+        <div className="flex items-center justify-between text-xs font-medium text-text pb-2 border-b border-border">
           <div className="flex items-center gap-1.5">
             <User size={14} className="text-muted" />
             <span>Customer & GST Details</span>
@@ -368,7 +368,7 @@ export function POSPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-muted flex items-center gap-1">
+            <label className="text-[11px] font-medium text-muted flex items-center gap-1">
               <User size={12} /> Customer Name
             </label>
             <Input
@@ -381,7 +381,7 @@ export function POSPage() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-muted flex items-center gap-1">
+            <label className="text-[11px] font-medium text-muted flex items-center gap-1">
               <Phone size={12} /> Mobile Number (WhatsApp)
             </label>
             <Input
@@ -395,7 +395,7 @@ export function POSPage() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-muted flex items-center gap-1">
+            <label className="text-[11px] font-medium text-muted flex items-center gap-1">
               <Building size={12} /> Customer GSTIN (Optional B2B)
             </label>
             <Input
@@ -408,7 +408,7 @@ export function POSPage() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-muted flex items-center gap-1">
+            <label className="text-[11px] font-medium text-muted flex items-center gap-1">
               <FileText size={12} /> Invoice Remarks / Delivery
             </label>
             <Input
@@ -423,7 +423,7 @@ export function POSPage() {
       </Card>
 
       {/* 3. Fast Barcode / SKU Command Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2.5 rounded-xl border border-border bg-surface shadow-xs">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2.5 rounded-xl border border-border bg-surface shadow-2xs">
         <div className="relative flex-1 min-w-0">
           <Input
             ref={searchInputRef}
@@ -432,7 +432,7 @@ export function POSPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={handleSearchKeyDown}
-            className="w-full pl-9 pr-9 bg-bg h-10 text-xs sm:text-sm font-medium"
+            className="w-full pl-9 pr-9 bg-bg h-10 text-xs sm:text-sm font-normal"
           />
           <Barcode
             size={17}
@@ -459,9 +459,9 @@ export function POSPage() {
             type="button"
             onClick={() => setSelectedCategory('all')}
             className={cn(
-              'px-2.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap cursor-pointer transition-colors shrink-0',
+              'px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap cursor-pointer transition-colors shrink-0',
               selectedCategory === 'all'
-                ? 'bg-accent text-accent-fg shadow-xs'
+                ? 'bg-accent text-accent-fg shadow-2xs'
                 : 'bg-bg text-muted hover:text-text border border-border'
             )}
           >
@@ -473,9 +473,9 @@ export function POSPage() {
               type="button"
               onClick={() => setSelectedCategory(cat.id)}
               className={cn(
-                'px-2.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap cursor-pointer transition-colors shrink-0',
+                'px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap cursor-pointer transition-colors shrink-0',
                 selectedCategory === cat.id
-                  ? 'bg-accent text-accent-fg shadow-xs'
+                  ? 'bg-accent text-accent-fg shadow-2xs'
                   : 'bg-bg text-muted hover:text-text border border-border'
               )}
             >
@@ -486,14 +486,15 @@ export function POSPage() {
       </div>
 
       {/* 4. NEW SECTION: Available Store Items (Quick-Add Product Palette) */}
-      <Card className="p-5 rounded-xl border border-border bg-surface space-y-3.5 shadow-xs">
+      {/* 4. Available Store Items (Quick-Add Product Palette) */}
+      <Card className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-3.5 shadow-2xs">
         <div className="flex items-center justify-between pb-2 border-b border-border">
           <div className="flex items-center gap-2">
             <Package size={15} className="text-muted" />
-            <h2 className="text-xs font-bold text-text uppercase tracking-wider">
+            <h2 className="text-xs font-medium text-text uppercase tracking-wider">
               Available Store Items
             </h2>
-            <Badge variant="default" className="text-[10px]">
+            <Badge variant="default" className="text-[10px] font-medium">
               {displayItems.length} products
             </Badge>
           </div>
@@ -519,9 +520,9 @@ export function POSPage() {
                   disabled={!inStock}
                   onClick={() => handleAddProduct(prod)}
                   className={cn(
-                    'group rounded-xl border border-border bg-bg p-3 flex flex-col justify-between text-left transition-all cursor-pointer min-w-0 select-none shadow-xs',
+                    'group rounded-lg border border-border bg-bg p-3 flex flex-col justify-between text-left transition-all cursor-pointer min-w-0 select-none shadow-2xs',
                     inStock
-                      ? 'hover:border-accent hover:bg-surface'
+                      ? 'hover:border-text/40 hover:bg-surface'
                       : 'opacity-50 cursor-not-allowed bg-bg/50'
                   )}
                   title={inStock ? `Add ${prod.name} to bill` : 'Out of Stock'}
@@ -560,7 +561,7 @@ export function POSPage() {
                         ) : (
                           <span
                             className={cn(
-                              'text-[10px] font-semibold px-1.5 py-0 rounded-full border shrink-0',
+                              'text-[10px] font-medium px-1.5 py-0 rounded-md border shrink-0',
                               inStock
                                 ? 'bg-surface border-border text-muted'
                                 : 'bg-danger/10 border-danger/30 text-danger'
@@ -572,7 +573,7 @@ export function POSPage() {
                       </div>
 
                       <div
-                        className="font-semibold text-xs text-text line-clamp-2 leading-snug group-hover:text-accent transition-colors"
+                        className="font-medium text-xs text-text line-clamp-2 leading-snug group-hover:text-accent transition-colors"
                         title={prod.name}
                       >
                         {prod.name}
@@ -583,7 +584,7 @@ export function POSPage() {
                   {/* Price & Add Footer */}
                   <div className="mt-3 pt-2.5 border-t border-border flex items-center justify-between gap-1">
                     <div>
-                      <div className="text-sm font-bold text-text truncate">
+                      <div className="text-xs sm:text-sm font-medium text-text truncate">
                         {formatCurrency(prod.selling_price)}
                       </div>
                       <div className="text-[10px] text-muted">+{prod.gst_rate}% GST</div>
@@ -591,7 +592,7 @@ export function POSPage() {
 
                     <span
                       className={cn(
-                        'text-xs font-semibold px-2.5 py-1 rounded-lg border flex items-center gap-1 transition-colors',
+                        'text-xs font-medium px-2.5 py-1 rounded-lg border flex items-center gap-1 transition-colors',
                         inStock
                           ? 'bg-surface border-border text-text group-hover:bg-accent group-hover:text-accent-fg group-hover:border-accent'
                           : 'bg-bg border-border text-muted'
@@ -631,7 +632,7 @@ export function POSPage() {
                   <div className="w-10 h-10 rounded-full border border-dashed border-border bg-bg flex items-center justify-center text-muted">
                     <Layers size={18} className="opacity-50" />
                   </div>
-                  <div className="text-xs font-semibold text-text">No Items in Current Bill</div>
+                  <div className="text-xs font-medium text-text">No Items in Current Bill</div>
                   <p className="text-[11px] text-muted max-w-sm">
                     Click any item from the Available Store Items section above, or scan barcode to add lines to this bill.
                   </p>
@@ -651,14 +652,14 @@ export function POSPage() {
                   </TableCell>
 
                   <TableCell>
-                    <div className="font-semibold text-text text-xs leading-snug">
+                    <div className="font-medium text-text text-xs leading-snug">
                       {item.name}
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-[10px] text-muted font-mono">{item.sku}</span>
                       {item.serial_number && (
                         <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[10px] font-mono bg-bg border border-border text-text">
-                          <CheckCircle size={10} className="text-success" />
+                          <CheckCircle size={10} className="text-emerald-600" />
                           SN: {item.serial_number}
                           {item.condition_grade && <span>({item.condition_grade})</span>}
                         </span>
@@ -676,7 +677,7 @@ export function POSPage() {
 
                   <TableCell className="text-center">
                     {!item.is_serialized ? (
-                      <div className="inline-flex items-center border border-border rounded-full bg-bg">
+                      <div className="inline-flex items-center border border-border rounded-lg bg-bg">
                         <button
                           type="button"
                           onClick={() => handleUpdateQuantity(index, -1)}
@@ -684,7 +685,7 @@ export function POSPage() {
                         >
                           <Minus size={11} />
                         </button>
-                        <span className="px-2 text-xs font-semibold">{item.quantity}</span>
+                        <span className="px-2 text-xs font-medium">{item.quantity}</span>
                         <button
                           type="button"
                           onClick={() => handleUpdateQuantity(index, 1)}
@@ -694,7 +695,7 @@ export function POSPage() {
                         </button>
                       </div>
                     ) : (
-                      <span className="text-xs font-mono font-semibold text-muted bg-bg px-2.5 py-0.5 rounded-full border border-border">
+                      <span className="text-xs font-mono font-medium text-muted bg-bg px-2.5 py-0.5 rounded-md border border-border">
                         1 Unit
                       </span>
                     )}
@@ -708,7 +709,7 @@ export function POSPage() {
                     {formatCurrency(lineTaxable)}
                   </TableCell>
 
-                  <TableCell className="text-right text-xs font-bold text-text">
+                  <TableCell className="text-right text-xs font-medium text-text">
                     {formatCurrency(lineTotal)}
                   </TableCell>
 
@@ -732,9 +733,9 @@ export function POSPage() {
       {/* 6. Financial Settlement & Payment Tender Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-w-0">
         {/* Left: Tender Mode & Reference Number (7 Cols) */}
-        <Card className="lg:col-span-7 p-5 rounded-xl border border-border bg-surface space-y-4 shadow-xs">
+        <Card className="lg:col-span-7 p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs">
           <div className="flex items-center justify-between pb-2 border-b border-border">
-            <span className="text-xs font-bold text-text uppercase tracking-wider">
+            <span className="text-xs font-medium text-text uppercase tracking-wider">
               Payment Method & Settlement
             </span>
             <span className="text-xs text-muted">Select collection tender:</span>
@@ -745,9 +746,9 @@ export function POSPage() {
               type="button"
               onClick={() => setPaymentMode('cash')}
               className={cn(
-                'py-2.5 px-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-colors',
+                'py-2 px-2 rounded-lg border text-xs font-medium flex items-center justify-center gap-2 cursor-pointer transition-colors',
                 paymentMode === 'cash'
-                  ? 'bg-accent text-accent-fg border-accent shadow-xs'
+                  ? 'bg-accent text-accent-fg border-accent shadow-2xs'
                   : 'bg-bg text-muted border-border hover:text-text'
               )}
             >
@@ -757,9 +758,9 @@ export function POSPage() {
               type="button"
               onClick={() => setPaymentMode('upi')}
               className={cn(
-                'py-2.5 px-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-colors',
+                'py-2 px-2 rounded-lg border text-xs font-medium flex items-center justify-center gap-2 cursor-pointer transition-colors',
                 paymentMode === 'upi'
-                  ? 'bg-accent text-accent-fg border-accent shadow-xs'
+                  ? 'bg-accent text-accent-fg border-accent shadow-2xs'
                   : 'bg-bg text-muted border-border hover:text-text'
               )}
             >
@@ -769,9 +770,9 @@ export function POSPage() {
               type="button"
               onClick={() => setPaymentMode('card')}
               className={cn(
-                'py-2.5 px-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-colors',
+                'py-2 px-2 rounded-lg border text-xs font-medium flex items-center justify-center gap-2 cursor-pointer transition-colors',
                 paymentMode === 'card'
-                  ? 'bg-accent text-accent-fg border-accent shadow-xs'
+                  ? 'bg-accent text-accent-fg border-accent shadow-2xs'
                   : 'bg-bg text-muted border-border hover:text-text'
               )}
             >
@@ -781,7 +782,7 @@ export function POSPage() {
 
           {paymentMode !== 'cash' && (
             <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-text block">
+              <label className="text-[11px] font-medium text-text block">
                 {paymentMode === 'upi' ? 'UPI UTR / Transaction ID' : 'Card Auth / Slip Ref No.'} *
               </label>
               <Input
@@ -806,7 +807,7 @@ export function POSPage() {
         </Card>
 
         {/* Right: Grand Financial Summary & Execution Button (5 Cols) */}
-        <Card className="lg:col-span-5 p-5 rounded-xl border border-border bg-surface space-y-4 shadow-xs flex flex-col justify-between">
+        <Card className="lg:col-span-5 p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs flex flex-col justify-between">
           <div className="space-y-2 text-xs">
             <div className="flex justify-between text-muted">
               <span>Taxable Subtotal</span>
@@ -822,12 +823,12 @@ export function POSPage() {
             </div>
             <div className="pt-2 border-t border-border flex items-baseline justify-between">
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-muted block">
+                <span className="text-xs font-medium uppercase tracking-wider text-muted block">
                   Total Payable
                 </span>
                 <span className="text-[10px] text-muted">Inclusive of all taxes</span>
               </div>
-              <span className="text-2xl sm:text-3xl font-extrabold text-text tracking-tight font-mono">
+              <span className="text-2xl sm:text-3xl font-medium text-text tracking-tight font-mono">
                 {formatCurrency(grandTotal)}
               </span>
             </div>
@@ -839,7 +840,7 @@ export function POSPage() {
             disabled={cart.length === 0 || placeSaleMutation.isPending}
             pending={placeSaleMutation.isPending}
             onClick={handleCompleteSale}
-            className="w-full h-12 text-sm font-bold gap-2"
+            className="w-full h-11 text-xs sm:text-sm font-medium gap-2 rounded-lg"
           >
             <Printer size={16} />
             {cart.length === 0
@@ -877,7 +878,7 @@ export function POSPage() {
                   className="p-3 flex items-center justify-between hover:bg-bg/60 transition-colors"
                 >
                   <div>
-                    <div className="font-mono text-xs font-bold text-text">
+                    <div className="font-mono text-xs font-medium text-text">
                       {unit.serial_number}
                     </div>
                     <div className="text-[11px] text-muted flex gap-2 mt-0.5">

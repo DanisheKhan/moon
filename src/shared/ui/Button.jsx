@@ -1,7 +1,7 @@
 import { cn } from '@/shared/lib/cn';
 
 const base =
-  'inline-flex items-center justify-center gap-1.5 font-semibold ' +
+  'inline-flex items-center justify-center gap-1.5 font-medium ' +
   'transition-all duration-150 focus-visible:outline focus-visible:outline-2 ' +
   'focus-visible:outline-offset-2 focus-visible:outline-accent ' +
   'disabled:opacity-50 disabled:pointer-events-none cursor-pointer';
@@ -14,10 +14,10 @@ const variants = {
 };
 
 const sizes = {
-  sm: 'min-h-8 px-3 text-xs rounded-full',
-  md: 'min-h-11 px-5 text-sm rounded-full',
-  lg: 'min-h-12 px-7 text-base rounded-full',
-  pill: 'min-h-11 px-5 text-sm rounded-full',
+  sm: 'min-h-8 px-3 text-xs rounded-lg',
+  md: 'min-h-10 px-4 text-xs sm:text-sm rounded-lg',
+  lg: 'min-h-11 px-5 text-sm rounded-lg',
+  pill: 'min-h-10 px-4 text-xs sm:text-sm rounded-full',
 };
 
 /**

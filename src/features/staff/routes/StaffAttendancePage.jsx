@@ -127,88 +127,88 @@ export function StaffAttendancePage() {
   return (
     <div className="space-y-6">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-muted block mb-1">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-muted block mb-1">
             STAFF & HUMAN RESOURCES
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
             Staff Daily Attendance
           </h1>
-          <p className="text-xs sm:text-sm text-muted mt-1">
+          <p className="text-xs sm:text-sm text-muted mt-0.5">
             Track daily check-in / check-out times, biometric shifts, and record attendance logs.
           </p>
         </div>
 
         {/* Date picker */}
-        <div className="flex items-center gap-2 bg-surface border border-border rounded-xl p-1.5 shadow-xs shrink-0">
+        <div className="flex items-center gap-2 bg-surface border border-border rounded-lg p-1.5 shadow-2xs shrink-0">
           <Calendar size={15} className="text-muted ml-2 shrink-0" />
           <input
             type="date"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="text-xs font-semibold bg-transparent text-text border-none outline-none pr-2 cursor-pointer"
+            className="text-xs font-medium bg-transparent text-text border-none outline-none pr-2 cursor-pointer"
           />
         </div>
       </div>
 
-      {/* Stats Cards (Pastel Style matching image) */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="p-4 rounded-2xl border border-pastel-mint-border bg-pastel-mint flex items-center justify-between">
+        <div className="p-4 sm:p-5 rounded-xl border border-border bg-surface flex items-center justify-between shadow-2xs">
           <div>
-            <span className="text-[10px] uppercase font-bold text-pastel-mint-text tracking-wider block">
+            <span className="text-[10px] uppercase font-medium text-muted tracking-wider block">
               Present Today
             </span>
-            <span className="text-2xl font-bold text-text">{stats.present}</span>
+            <span className="text-2xl font-medium text-text">{stats.present}</span>
             <span className="text-[10px] text-muted block mt-0.5">Checked in</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-surface border border-pastel-mint-border flex items-center justify-center text-emerald-600">
-            <CheckCircle2 size={20} />
+          <div className="w-9 h-9 rounded-lg bg-bg border border-border flex items-center justify-center text-emerald-600">
+            <CheckCircle2 size={18} />
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl border border-danger/20 bg-danger/5 flex items-center justify-between">
+        <div className="p-4 sm:p-5 rounded-xl border border-border bg-surface flex items-center justify-between shadow-2xs">
           <div>
-            <span className="text-[10px] uppercase font-bold text-danger tracking-wider block">
+            <span className="text-[10px] uppercase font-medium text-muted tracking-wider block">
               Absent
             </span>
-            <span className="text-2xl font-bold text-text">{stats.absent}</span>
+            <span className="text-2xl font-medium text-text">{stats.absent}</span>
             <span className="text-[10px] text-muted block mt-0.5">Unexcused</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-surface border border-danger/20 flex items-center justify-center text-danger">
-            <XCircle size={20} />
+          <div className="w-9 h-9 rounded-lg bg-bg border border-border flex items-center justify-center text-danger">
+            <XCircle size={18} />
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl border border-pastel-amber-border bg-pastel-amber flex items-center justify-between">
+        <div className="p-4 sm:p-5 rounded-xl border border-border bg-surface flex items-center justify-between shadow-2xs">
           <div>
-            <span className="text-[10px] uppercase font-bold text-pastel-amber-text tracking-wider block">
+            <span className="text-[10px] uppercase font-medium text-muted tracking-wider block">
               Half-Day
             </span>
-            <span className="text-2xl font-bold text-text">{stats.halfDay}</span>
+            <span className="text-2xl font-medium text-text">{stats.halfDay}</span>
             <span className="text-[10px] text-muted block mt-0.5">Short shift</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-surface border border-pastel-amber-border flex items-center justify-center text-amber-600">
-            <Clock size={20} />
+          <div className="w-9 h-9 rounded-lg bg-bg border border-border flex items-center justify-center text-amber-600">
+            <Clock size={18} />
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl border border-pastel-purple-border bg-pastel-purple flex items-center justify-between">
+        <div className="p-4 sm:p-5 rounded-xl border border-border bg-surface flex items-center justify-between shadow-2xs">
           <div>
-            <span className="text-[10px] uppercase font-bold text-pastel-purple-text tracking-wider block">
+            <span className="text-[10px] uppercase font-medium text-muted tracking-wider block">
               On Leave
             </span>
-            <span className="text-2xl font-bold text-text">{stats.onLeave}</span>
+            <span className="text-2xl font-medium text-text">{stats.onLeave}</span>
             <span className="text-[10px] text-muted block mt-0.5">Approved leave</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-surface border border-pastel-purple-border flex items-center justify-center text-purple-600">
-            <Calendar size={20} />
+          <div className="w-9 h-9 rounded-lg bg-bg border border-border flex items-center justify-center text-purple-600">
+            <Calendar size={18} />
           </div>
         </div>
       </div>
 
       {/* Filter and Search */}
-      <div className="flex flex-col sm:flex-row gap-3 p-4 rounded-2xl border border-border bg-surface">
+      <div className="flex flex-col sm:flex-row gap-3 p-4 rounded-xl border border-border bg-surface shadow-2xs">
         <div className="flex-1">
           <Input
             id="search-attendance"
@@ -223,20 +223,20 @@ export function StaffAttendancePage() {
       {isLoading ? (
         <div className="py-16 text-center text-muted">Loading staff members...</div>
       ) : filteredStaff.length === 0 ? (
-        <div className="py-16 text-center border border-dashed border-border rounded-2xl bg-surface text-muted text-xs">
+        <div className="py-16 text-center border border-dashed border-border rounded-xl bg-surface text-muted text-xs">
           No staff records found.
         </div>
       ) : (
-        <div className="rounded-2xl border border-border bg-surface overflow-hidden">
+        <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-2xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-bg/60 border-b border-border text-muted font-bold uppercase tracking-wider text-[10px]">
+              <thead className="bg-bg/60 border-b border-border text-muted font-medium uppercase tracking-wider text-[10px]">
                 <tr>
-                  <th className="py-3.5 px-4">Employee</th>
-                  <th className="py-3.5 px-4">Role & Store</th>
-                  <th className="py-3.5 px-4">Shift Timings</th>
-                  <th className="py-3.5 px-4">Attendance Status</th>
-                  <th className="py-3.5 px-4 text-right">Quick Mark Action</th>
+                  <th className="py-3 px-4">Employee</th>
+                  <th className="py-3 px-4">Role & Store</th>
+                  <th className="py-3 px-4">Shift Timings</th>
+                  <th className="py-3 px-4">Attendance Status</th>
+                  <th className="py-3 px-4 text-right">Quick Mark Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -245,24 +245,24 @@ export function StaffAttendancePage() {
 
                   return (
                     <tr key={emp.id} className="hover:bg-bg/40 transition-colors">
-                      <td className="py-3.5 px-4">
+                      <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-bg border border-border flex items-center justify-center font-bold text-text text-xs uppercase shrink-0">
+                          <div className="w-7 h-7 rounded-lg bg-bg border border-border flex items-center justify-center font-medium text-text text-xs uppercase shrink-0">
                             {emp.full_name?.slice(0, 2) || 'ST'}
                           </div>
                           <div>
-                            <div className="font-semibold text-text text-xs">{emp.full_name}</div>
+                            <div className="font-medium text-text text-xs">{emp.full_name}</div>
                             <div className="font-mono text-[10px] text-muted">{emp.employee_code}</div>
                           </div>
                         </div>
                       </td>
 
-                      <td className="py-3.5 px-4">
+                      <td className="py-3 px-4">
                         <div className="font-medium text-text">{emp.designation}</div>
                         <div className="text-[10px] text-muted">{emp.stores?.name || 'All Branches'}</div>
                       </td>
 
-                      <td className="py-3.5 px-4">
+                      <td className="py-3 px-4">
                         <button
                           type="button"
                           onClick={() => openPunchModal(emp)}
@@ -276,35 +276,35 @@ export function StaffAttendancePage() {
                         </button>
                       </td>
 
-                      <td className="py-3.5 px-4">
+                      <td className="py-3 px-4">
                         {att.status === 'present' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
                             • PRESENT
                           </span>
                         )}
                         {att.status === 'absent' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-danger/10 text-danger border border-danger/20">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-danger/10 text-danger border border-danger/20">
                             • ABSENT
                           </span>
                         )}
                         {att.status === 'half_day' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-amber-500/10 text-amber-600 border border-amber-500/20">
                             • HALF DAY
                           </span>
                         )}
                         {att.status === 'on_leave' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-500/10 text-purple-600 border border-purple-500/20">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-purple-500/10 text-purple-600 border border-purple-500/20">
                             • ON LEAVE
                           </span>
                         )}
                       </td>
 
-                      <td className="py-3.5 px-4 text-right">
+                      <td className="py-3 px-4 text-right">
                         <div className="inline-flex items-center gap-1">
                           <button
                             type="button"
                             onClick={() => updateStatus(emp.id, 'present')}
-                            className={`px-2 py-1 rounded-md text-[10px] font-bold cursor-pointer transition-colors ${
+                            className={`px-2 py-0.5 rounded-md text-[10px] font-medium cursor-pointer transition-colors ${
                               att.status === 'present'
                                 ? 'bg-emerald-600 text-white'
                                 : 'bg-bg text-muted hover:text-text border border-border'
@@ -316,7 +316,7 @@ export function StaffAttendancePage() {
                           <button
                             type="button"
                             onClick={() => updateStatus(emp.id, 'absent')}
-                            className={`px-2 py-1 rounded-md text-[10px] font-bold cursor-pointer transition-colors ${
+                            className={`px-2 py-0.5 rounded-md text-[10px] font-medium cursor-pointer transition-colors ${
                               att.status === 'absent'
                                 ? 'bg-danger text-white'
                                 : 'bg-bg text-muted hover:text-text border border-border'
@@ -328,7 +328,7 @@ export function StaffAttendancePage() {
                           <button
                             type="button"
                             onClick={() => updateStatus(emp.id, 'half_day')}
-                            className={`px-2 py-1 rounded-md text-[10px] font-bold cursor-pointer transition-colors ${
+                            className={`px-2 py-0.5 rounded-md text-[10px] font-medium cursor-pointer transition-colors ${
                               att.status === 'half_day'
                                 ? 'bg-amber-600 text-white'
                                 : 'bg-bg text-muted hover:text-text border border-border'
@@ -340,7 +340,7 @@ export function StaffAttendancePage() {
                           <button
                             type="button"
                             onClick={() => updateStatus(emp.id, 'on_leave')}
-                            className={`px-2 py-1 rounded-md text-[10px] font-bold cursor-pointer transition-colors ${
+                            className={`px-2 py-0.5 rounded-md text-[10px] font-medium cursor-pointer transition-colors ${
                               att.status === 'on_leave'
                                 ? 'bg-purple-600 text-white'
                                 : 'bg-bg text-muted hover:text-text border border-border'

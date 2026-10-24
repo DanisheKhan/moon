@@ -87,7 +87,7 @@ export function StaffManagementPage() {
   }
 
   return (
-    <Container size="xl" className="py-8 space-y-6 min-w-0">
+    <div className="space-y-6 min-w-0">
       <Seo
         title="Staff Management System & Payroll | Star Enterprises"
         description="Comprehensive HRMS for staff directory, leave approvals, and monthly salary disbursement."
@@ -96,23 +96,23 @@ export function StaffManagementPage() {
       />
 
       {/* Top Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm" onClick={() => navigate('/admin')}>
-            <ArrowLeft size={16} /> Launcher
+          <Button variant="outline" size="sm" onClick={() => navigate('/admin')} className="rounded-lg font-medium text-xs">
+            <ArrowLeft size={15} /> Launcher
           </Button>
           <div>
-            <h1 className="text-xl sm:text-2xl font-semibold text-text">
+            <h1 className="text-xl sm:text-2xl font-medium text-text">
               Staff Management System (HRMS)
             </h1>
-            <p className="text-xs sm:text-sm text-muted">
+            <p className="text-xs sm:text-sm text-muted mt-0.5">
               Manage employees, review leave requests, and disburse monthly store payroll.
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant="accent" className="gap-1.5 py-1 px-3">
+          <Badge variant="accent" className="gap-1.5 py-1 px-3 rounded-lg font-medium">
             <Shield size={13} /> Owner Master Control
           </Badge>
           <Button
@@ -122,7 +122,7 @@ export function StaffManagementPage() {
               setGrantStaffTarget(null);
               setIsGrantLeaveOpen(true);
             }}
-            className="text-xs gap-1.5"
+            className="text-xs gap-1.5 rounded-lg font-medium"
           >
             <Calendar size={14} /> Grant Leave
           </Button>
@@ -133,7 +133,7 @@ export function StaffManagementPage() {
               setStaffToEdit(null);
               setIsStaffModalOpen(true);
             }}
-            className="text-xs gap-1.5"
+            className="text-xs gap-1.5 rounded-lg font-medium"
           >
             <Plus size={14} /> Onboard Staff
           </Button>
@@ -145,10 +145,10 @@ export function StaffManagementPage() {
         <button
           type="button"
           onClick={() => setActiveTab('directory')}
-          className={`px-4 py-2 text-xs rounded-full border cursor-pointer font-medium transition-colors flex items-center gap-1.5 whitespace-nowrap ${
+          className={`px-3.5 py-1.5 text-xs rounded-lg border cursor-pointer font-medium transition-colors flex items-center gap-1.5 whitespace-nowrap ${
             activeTab === 'directory'
-              ? 'bg-accent text-accent-fg border-accent'
-              : 'bg-surface text-text border-border hover:bg-bg'
+              ? 'bg-accent text-accent-fg border-accent shadow-2xs'
+              : 'bg-surface text-muted border-border hover:text-text hover:bg-bg'
           }`}
         >
           <Users size={14} /> Staff Directory ({staffList.length})
@@ -157,15 +157,15 @@ export function StaffManagementPage() {
         <button
           type="button"
           onClick={() => setActiveTab('leaves')}
-          className={`px-4 py-2 text-xs rounded-full border cursor-pointer font-medium transition-colors flex items-center gap-1.5 whitespace-nowrap ${
+          className={`px-3.5 py-1.5 text-xs rounded-lg border cursor-pointer font-medium transition-colors flex items-center gap-1.5 whitespace-nowrap ${
             activeTab === 'leaves'
-              ? 'bg-accent text-accent-fg border-accent'
-              : 'bg-surface text-text border-border hover:bg-bg'
+              ? 'bg-accent text-accent-fg border-accent shadow-2xs'
+              : 'bg-surface text-muted border-border hover:text-text hover:bg-bg'
           }`}
         >
           <Calendar size={14} /> Leave Management
           {pendingLeaves.length > 0 && (
-            <span className="bg-danger text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1">
+            <span className="bg-danger text-white text-[10px] px-1.5 py-0.2 rounded-md font-medium ml-1">
               {pendingLeaves.length} Pending
             </span>
           )}
@@ -174,10 +174,10 @@ export function StaffManagementPage() {
         <button
           type="button"
           onClick={() => setActiveTab('salaries')}
-          className={`px-4 py-2 text-xs rounded-full border cursor-pointer font-medium transition-colors flex items-center gap-1.5 whitespace-nowrap ${
+          className={`px-3.5 py-1.5 text-xs rounded-lg border cursor-pointer font-medium transition-colors flex items-center gap-1.5 whitespace-nowrap ${
             activeTab === 'salaries'
-              ? 'bg-accent text-accent-fg border-accent'
-              : 'bg-surface text-text border-border hover:bg-bg'
+              ? 'bg-accent text-accent-fg border-accent shadow-2xs'
+              : 'bg-surface text-muted border-border hover:text-text hover:bg-bg'
           }`}
         >
           <CreditCard size={14} /> Salary & Payroll Register
@@ -223,14 +223,14 @@ export function StaffManagementPage() {
               <TableBody>
                 {staffList.map((emp) => (
                   <TableRow key={emp.id}>
-                    <TableCell className="font-mono text-xs font-semibold">{emp.employee_code}</TableCell>
+                    <TableCell className="font-mono text-xs font-medium">{emp.employee_code}</TableCell>
                     <TableCell>
-                      <div className="font-semibold text-text text-xs">{emp.full_name}</div>
+                      <div className="font-medium text-text text-xs">{emp.full_name}</div>
                       <div className="text-[10px] text-muted">{emp.department}</div>
                     </TableCell>
                     <TableCell>
                       <div className="text-xs font-medium text-text">{emp.designation}</div>
-                      <Badge variant="default" className="text-[10px] py-0 px-1.5 mt-0.5">
+                      <Badge variant="default" className="text-[10px] py-0 px-1.5 mt-0.5 font-medium">
                         {emp.stores?.name || 'All Stores'}
                       </Badge>
                     </TableCell>
@@ -239,10 +239,10 @@ export function StaffManagementPage() {
                       <div className="text-[10px] text-muted font-mono">{emp.email}</div>
                     </TableCell>
                     <TableCell>
-                      <div className="font-semibold text-xs text-text">
+                      <div className="font-medium text-xs text-text">
                         {formatCurrency(emp.base_salary)}
                       </div>
-                      <div className="text-[11px] text-muted font-mono font-medium">
+                      <div className="text-[11px] text-muted font-mono font-normal">
                         {formatCurrency(Math.round(Number(emp.base_salary || 0) / 30))}/day
                       </div>
                     </TableCell>
@@ -251,15 +251,15 @@ export function StaffManagementPage() {
                     </TableCell>
                     <TableCell>
                       {emp.status === 'active' ? (
-                        <Badge variant="success" className="text-[10px]">
+                        <Badge variant="success" className="text-[10px] font-medium">
                           Active
                         </Badge>
                       ) : emp.status === 'on_leave' ? (
-                        <Badge variant="accent" className="text-[10px]">
+                        <Badge variant="accent" className="text-[10px] font-medium">
                           On Leave
                         </Badge>
                       ) : (
-                        <Badge variant="default" className="text-[10px]">
+                        <Badge variant="default" className="text-[10px] font-medium">
                           Inactive
                         </Badge>
                       )}
@@ -273,7 +273,7 @@ export function StaffManagementPage() {
                             setGrantStaffTarget(emp);
                             setIsGrantLeaveOpen(true);
                           }}
-                          className="text-xs py-1 px-2.5 gap-1 text-accent border-accent/40 hover:border-accent"
+                          className="text-xs py-1 px-2.5 gap-1 text-accent border-accent/40 hover:border-accent rounded-lg font-medium"
                           title="Grant Leave & Deduct Salary"
                         >
                           <Calendar size={12} /> Leave
@@ -285,7 +285,7 @@ export function StaffManagementPage() {
                             setStaffToEdit(emp);
                             setIsStaffModalOpen(true);
                           }}
-                          className="text-xs py-1 px-2.5"
+                          className="text-xs py-1 px-2.5 rounded-lg font-medium"
                         >
                           Edit
                         </Button>
@@ -296,7 +296,7 @@ export function StaffManagementPage() {
                             const newStatus = emp.status === 'active' ? 'inactive' : 'active';
                             updateStatusMutation.mutate({ staffId: emp.id, status: newStatus });
                           }}
-                          className="text-xs py-1 px-2.5 text-muted hover:text-text"
+                          className="text-xs py-1 px-2.5 text-muted hover:text-text rounded-lg font-medium"
                         >
                           {emp.status === 'active' ? 'Deactivate' : 'Activate'}
                         </Button>
@@ -487,7 +487,7 @@ export function StaffManagementPage() {
                         </div>
                       )}
                     </TableCell>
-                    <TableCell className="text-xs font-bold text-text">
+                    <TableCell className="text-xs font-medium text-text">
                       {formatCurrency(sal.net_salary)}
                     </TableCell>
                     <TableCell>
@@ -579,10 +579,10 @@ export function StaffManagementPage() {
           size="lg"
         >
           <form onSubmit={handleConfirmPayment} className="space-y-4 text-text min-w-0">
-            <div className="p-3.5 rounded-2xl border border-border bg-bg space-y-1 text-xs">
+            <div className="p-3.5 rounded-lg border border-border bg-bg space-y-1 text-xs">
               <div className="flex justify-between">
                 <span className="text-muted">Net Payable Amount:</span>
-                <span className="text-base font-bold text-text">{formatCurrency(salaryToPay.net_salary)}</span>
+                <span className="text-base font-medium text-text">{formatCurrency(salaryToPay.net_salary)}</span>
               </div>
               <div className="flex justify-between text-muted">
                 <span>Month Cycle:</span>
@@ -623,6 +623,6 @@ export function StaffManagementPage() {
           </form>
         </Modal>
       )}
-    </Container>
+    </div>
   );
 }

@@ -25,14 +25,14 @@ export function ConsoleSettingsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6">
       {/* Header bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-muted block mb-1">
+          <span className="text-[10px] font-medium uppercase tracking-widest text-muted block mb-1">
             SYSTEM CONFIGURATION
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
             Console Settings
           </h1>
           <p className="text-xs sm:text-sm text-muted mt-1">
@@ -43,7 +43,7 @@ export function ConsoleSettingsPage() {
         <button
           type="button"
           onClick={handleSave}
-          className="inline-flex items-center gap-2 bg-text text-bg hover:opacity-90 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-all cursor-pointer shrink-0 shadow-xs"
+          className="inline-flex items-center gap-2 bg-text text-bg hover:opacity-90 font-medium text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-all cursor-pointer shrink-0 shadow-xs"
         >
           {isSaved ? (
             <>
@@ -61,13 +61,13 @@ export function ConsoleSettingsPage() {
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* General Store Details */}
-        <div className="p-5 rounded-2xl border border-border bg-surface space-y-4 shadow-2xs">
+        <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs">
           <div className="flex items-center gap-2.5 border-b border-border pb-3">
             <div className="w-8 h-8 rounded-lg bg-bg border border-border flex items-center justify-center text-text">
               <Building size={16} />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-text">Station & Operations Profile</h2>
+              <h2 className="text-sm font-medium text-text">Station & Operations Profile</h2>
               <p className="text-xs text-muted">Primary name appearing on headers and customer invoices.</p>
             </div>
           </div>
@@ -91,13 +91,13 @@ export function ConsoleSettingsPage() {
         </div>
 
         {/* Invoicing and Printing Settings */}
-        <div className="p-5 rounded-2xl border border-border bg-surface space-y-4 shadow-2xs">
+        <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs">
           <div className="flex items-center gap-2.5 border-b border-border pb-3">
             <div className="w-8 h-8 rounded-lg bg-bg border border-border flex items-center justify-center text-text">
               <Printer size={16} />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-text">Tax Invoice & Printing Configuration</h2>
+              <h2 className="text-sm font-medium text-text">Tax Invoice & Printing Configuration</h2>
               <p className="text-xs text-muted">Receipt dimensions, layout rules, and paper output.</p>
             </div>
           </div>
@@ -141,23 +141,23 @@ export function ConsoleSettingsPage() {
         </div>
 
         {/* Security & Access */}
-        <div className="p-5 rounded-2xl border border-border bg-surface space-y-4 shadow-2xs">
+        <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs">
           <div className="flex items-center gap-2.5 border-b border-border pb-3">
             <div className="w-8 h-8 rounded-lg bg-bg border border-border flex items-center justify-center text-text">
               <Shield size={16} />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-text">Security & Multi-Station Telemetry</h2>
+              <h2 className="text-sm font-medium text-text">Security & Multi-Station Telemetry</h2>
               <p className="text-xs text-muted">Role verification and session management.</p>
             </div>
           </div>
 
-          <div className="p-3 rounded-xl border border-border bg-bg/50 flex items-center justify-between text-xs">
+          <div className="p-3 rounded-lg border border-border bg-bg/50 flex items-center justify-between text-xs">
             <div>
-              <span className="font-bold text-text block">Superadmin Owner Protection</span>
+              <span className="font-medium text-text block">Superadmin Owner Protection</span>
               <span className="text-muted text-[11px]">Enforce dual authentication for salary disbursement.</span>
             </div>
-            <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-pastel-mint text-pastel-mint-text border border-pastel-mint-border">
+            <span className="text-[10px] font-medium px-2.5 py-1 rounded-md bg-pastel-mint text-pastel-mint-text border border-pastel-mint-border">
               ENABLED
             </span>
           </div>

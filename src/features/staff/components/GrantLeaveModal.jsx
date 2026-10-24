@@ -127,14 +127,14 @@ export function GrantLeaveModal({ isOpen, onClose, staffList = [], defaultStaff 
     >
       <form onSubmit={handleSubmit} className="space-y-4 min-w-0">
         {error && (
-          <div className="rounded-2xl border border-danger/30 bg-danger/10 p-3 text-xs text-danger flex items-center gap-2">
+          <div className="rounded-lg border border-danger/30 bg-danger/10 p-3 text-xs text-danger flex items-center gap-2">
             <AlertCircle size={15} className="shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {successMsg && (
-          <div className="rounded-2xl border border-success/30 bg-success/10 p-3 text-xs text-success flex items-center gap-2">
+          <div className="rounded-lg border border-success/30 bg-success/10 p-3 text-xs text-success flex items-center gap-2">
             <CheckCircle size={15} className="shrink-0" />
             <span>{successMsg}</span>
           </div>
@@ -152,10 +152,10 @@ export function GrantLeaveModal({ isOpen, onClose, staffList = [], defaultStaff 
 
         {/* Employee Summary & Daily Cost Card */}
         {activeStaff && (
-          <div className="p-3.5 rounded-2xl border border-border bg-bg text-xs space-y-2">
+          <div className="p-3.5 rounded-xl border border-border bg-bg text-xs space-y-2">
             <div className="flex justify-between items-center">
               <div>
-                <span className="font-semibold text-text text-sm">{activeStaff.full_name}</span>
+                <span className="font-medium text-text text-sm">{activeStaff.full_name}</span>
                 <span className="text-muted ml-2">({activeStaff.designation})</span>
               </div>
               <span className="font-mono text-muted text-[11px]">{activeStaff.employee_code}</span>
@@ -163,11 +163,11 @@ export function GrantLeaveModal({ isOpen, onClose, staffList = [], defaultStaff 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1 border-t border-border">
               <div>
                 <span className="text-muted text-[11px] block">Monthly Base:</span>
-                <span className="font-bold text-text">{formatCurrency(baseSalary)}</span>
+                <span className="font-medium text-text">{formatCurrency(baseSalary)}</span>
               </div>
               <div>
                 <span className="text-muted text-[11px] block">Per Day Cost:</span>
-                <span className="font-bold text-accent">{formatCurrency(dailyCost)} / day</span>
+                <span className="font-medium text-accent">{formatCurrency(dailyCost)} / day</span>
               </div>
               <div>
                 <span className="text-muted text-[11px] block">Annual Quota:</span>
@@ -232,7 +232,7 @@ export function GrantLeaveModal({ isOpen, onClose, staffList = [], defaultStaff 
           <div className="flex items-center justify-between pb-2 border-b border-border">
             <div className="flex items-center gap-2">
               <IndianRupee size={16} className="text-text" />
-              <span className="font-semibold text-text text-sm">
+              <span className="font-medium text-text text-sm">
                 Salary Deduction Calculator
               </span>
             </div>
@@ -257,13 +257,13 @@ export function GrantLeaveModal({ isOpen, onClose, staffList = [], defaultStaff 
               </div>
               <div className="flex justify-between text-muted">
                 <span>Loss of Pay (LOP) Deduction:</span>
-                <span className="font-bold text-danger">-{formatCurrency(calculatedDeduction)}</span>
+                <span className="font-medium text-danger">-{formatCurrency(calculatedDeduction)}</span>
               </div>
               <div className="flex justify-between text-muted">
                 <span>Base Monthly Salary:</span>
                 <span>{formatCurrency(baseSalary)}</span>
               </div>
-              <div className="flex justify-between font-bold text-sm pt-1.5 border-t border-border text-text">
+              <div className="flex justify-between font-medium text-sm pt-1.5 border-t border-border text-text">
                 <span>Estimated Net Salary:</span>
                 <span className="text-accent">{formatCurrency(estimatedNetSalary)}</span>
               </div>

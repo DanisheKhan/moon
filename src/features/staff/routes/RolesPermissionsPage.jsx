@@ -202,15 +202,15 @@ export function RolesPermissionsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-muted block mb-1">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-muted block mb-1">
             ACCESS CONTROL & SECURITY
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
             Roles & Permissions
           </h1>
-          <p className="text-xs sm:text-sm text-muted mt-1">
+          <p className="text-xs sm:text-sm text-muted mt-0.5">
             Configure system capabilities, module access, and managerial override powers by position.
           </p>
         </div>
@@ -218,7 +218,7 @@ export function RolesPermissionsPage() {
         <button
           type="button"
           onClick={handleSave}
-          className="inline-flex items-center gap-2 bg-text text-bg hover:opacity-90 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-all cursor-pointer shrink-0 shadow-xs"
+          className="inline-flex items-center gap-2 bg-text text-bg hover:opacity-90 font-medium text-xs sm:text-sm px-4 py-2 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs"
         >
           {savedSuccess ? (
             <>
@@ -234,7 +234,7 @@ export function RolesPermissionsPage() {
         </button>
       </div>
 
-      {/* Role Cards (Pastel + Modern design) */}
+      {/* Role Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {INITIAL_ROLES.map((role) => {
           const isSelected = selectedRole === role.id;
@@ -243,15 +243,15 @@ export function RolesPermissionsPage() {
               key={role.id}
               type="button"
               onClick={() => setSelectedRole(role.id)}
-              className={`p-4 rounded-2xl border text-left transition-all cursor-pointer space-y-2.5 ${
+              className={`p-4 sm:p-5 rounded-xl border text-left transition-all cursor-pointer space-y-2.5 shadow-2xs ${
                 isSelected
-                  ? 'border-text bg-surface ring-2 ring-text/20 shadow-xs'
-                  : 'border-border bg-surface hover:border-text/30'
+                  ? 'border-text bg-surface ring-1 ring-text/20'
+                  : 'border-border bg-surface hover:border-text/40'
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="font-bold text-sm text-text">{role.name}</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-bg border border-border text-muted">
+                <span className="font-medium text-sm text-text">{role.name}</span>
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-bg border border-border text-muted">
                   {role.badge}
                 </span>
               </div>
@@ -260,7 +260,7 @@ export function RolesPermissionsPage() {
               </p>
               <div className="pt-2 border-t border-border flex items-center justify-between text-[11px] text-muted">
                 <span>{role.usersCount} Active Staff</span>
-                <span className="font-semibold text-text">
+                <span className="font-medium text-text">
                   {isSelected ? 'Editing' : 'Select'}
                 </span>
               </div>
@@ -270,14 +270,14 @@ export function RolesPermissionsPage() {
       </div>
 
       {/* Permissions Matrix */}
-      <div className="rounded-2xl border border-border bg-surface overflow-hidden space-y-6 p-5">
+      <div className="rounded-xl border border-border bg-surface overflow-hidden space-y-6 p-5 sm:p-6 shadow-2xs">
         <div className="flex items-center justify-between border-b border-border pb-4">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-bg border border-border flex items-center justify-center text-text">
-              <Key size={16} />
+              <Key size={15} />
             </div>
             <div>
-              <h2 className="text-base font-bold text-text">
+              <h2 className="text-base font-medium text-text">
                 Permissions for {INITIAL_ROLES.find((r) => r.id === selectedRole)?.name}
               </h2>
               <p className="text-xs text-muted">
@@ -287,7 +287,7 @@ export function RolesPermissionsPage() {
               </p>
             </div>
           </div>
-          <Badge variant={selectedRole === 'superadmin' ? 'accent' : 'default'}>
+          <Badge variant={selectedRole === 'superadmin' ? 'accent' : 'default'} className="font-medium">
             {selectedRole === 'superadmin' ? 'Immutable Root' : 'Customizable'}
           </Badge>
         </div>
@@ -297,12 +297,12 @@ export function RolesPermissionsPage() {
             const ModIcon = module.icon;
             return (
               <div key={module.name} className="space-y-3">
-                <div className="flex items-center gap-2 text-xs font-bold text-text uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-xs font-medium text-text uppercase tracking-wider">
                   <ModIcon size={14} className="text-muted" />
                   <span>{module.name}</span>
                 </div>
 
-                <div className="divide-y divide-border border border-border rounded-xl bg-bg/40 overflow-hidden">
+                <div className="divide-y divide-border border border-border rounded-lg bg-bg/40 overflow-hidden">
                   {module.permissions.map((perm) => {
                     const isGranted = Boolean(matrix[selectedRole]?.[perm.id]);
                     const isSuper = selectedRole === 'superadmin';

@@ -96,13 +96,13 @@ export function InventoryCardsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header bar matching image layout */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-muted block mb-1">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-muted block mb-1">
             CATALOG MANAGEMENT
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
             Inventory & Products
           </h1>
           <p className="text-xs sm:text-sm text-muted mt-1">
@@ -113,15 +113,15 @@ export function InventoryCardsPage() {
         <button
           type="button"
           onClick={() => setIsAddModalOpen(true)}
-          className="inline-flex items-center gap-2 bg-text text-bg hover:opacity-90 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-all cursor-pointer shrink-0 shadow-xs"
+          className="inline-flex items-center gap-2 bg-text text-bg hover:opacity-90 font-medium text-xs sm:text-sm px-4 py-2 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs"
         >
           <Plus size={16} />
           <span>+ Add new Product</span>
         </button>
       </div>
 
-      {/* Filter Ribbon (Search + Category, strictly locked to this store) */}
-      <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 p-4 rounded-2xl border border-border bg-surface">
+      {/* Filter Ribbon */}
+      <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 p-4 rounded-xl border border-border bg-surface shadow-2xs">
         <div className="sm:col-span-8 relative">
           <Input
             id="search-cards"
@@ -147,13 +147,13 @@ export function InventoryCardsPage() {
       {/* Product Summary stats */}
       <div className="flex items-center justify-between text-xs text-muted px-1">
         <span>
-          Showing <span className="font-semibold text-text">{filteredProducts.length}</span> of {rawProducts.length} products
+          Showing <span className="font-medium text-text">{filteredProducts.length}</span> of {rawProducts.length} products
         </span>
         {search && (
           <button
             type="button"
             onClick={() => setSearch('')}
-            className="text-muted hover:text-text underline cursor-pointer"
+            className="text-muted hover:text-text underline cursor-pointer font-medium"
           >
             Clear search
           </button>
@@ -167,9 +167,9 @@ export function InventoryCardsPage() {
           <p className="text-xs text-muted">Loading product catalog cards...</p>
         </div>
       ) : filteredProducts.length === 0 ? (
-        <div className="py-20 text-center border border-dashed border-border rounded-2xl bg-surface space-y-3">
+        <div className="py-20 text-center border border-dashed border-border rounded-xl bg-surface space-y-3">
           <Package size={36} className="mx-auto text-muted" />
-          <h3 className="text-base font-semibold text-text">No products found</h3>
+          <h3 className="text-base font-medium text-text">No products found</h3>
           <p className="text-xs text-muted max-w-sm mx-auto">
             Try adjusting your search query, selecting another category, or add a new product.
           </p>
@@ -177,7 +177,7 @@ export function InventoryCardsPage() {
             variant="solid"
             size="sm"
             onClick={() => setIsAddModalOpen(true)}
-            className="text-xs gap-1.5"
+            className="text-xs gap-1.5 font-medium rounded-lg"
           >
             <Plus size={14} /> Add Product
           </Button>
@@ -191,11 +191,11 @@ export function InventoryCardsPage() {
             return (
               <div
                 key={prod.id}
-                className="group rounded-2xl border border-border bg-surface p-4 flex flex-col justify-between hover:border-text/30 transition-all select-none space-y-4"
+                className="group rounded-xl border border-border bg-surface p-4 flex flex-col justify-between hover:border-text/40 transition-all select-none space-y-4 shadow-2xs"
               >
                 {/* Card Top: Image & Status Badges */}
                 <div className="space-y-3">
-                  <div className="relative w-full h-40 rounded-xl overflow-hidden border border-border bg-bg/40 flex items-center justify-center">
+                  <div className="relative w-full h-40 rounded-lg overflow-hidden border border-border bg-bg/40 flex items-center justify-center">
                     {prod.image_url ? (
                       <img
                         src={prod.image_url}
@@ -216,11 +216,11 @@ export function InventoryCardsPage() {
                     {/* Stock status badge overlay */}
                     <div className="absolute top-2.5 right-2.5">
                       {isLowStock ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-danger/10 text-danger border border-danger/20">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-danger/10 text-danger border border-danger/20">
                           <AlertCircle size={10} /> Low ({qtyOnHand})
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
                           <CheckCircle2 size={10} /> In Stock ({qtyOnHand})
                         </span>
                       )}
@@ -229,7 +229,7 @@ export function InventoryCardsPage() {
                     {/* Serialized badge */}
                     {prod.is_serialized && (
                       <div className="absolute bottom-2.5 left-2.5">
-                        <span className="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-sidebar-bg text-white">
+                        <span className="px-2 py-0.5 rounded-md text-[9px] font-medium uppercase tracking-wider bg-bg text-text border border-border">
                           Serialized
                         </span>
                       </div>
@@ -250,7 +250,7 @@ export function InventoryCardsPage() {
 
                   {/* Title & SKU */}
                   <div>
-                    <h3 className="font-semibold text-sm text-text line-clamp-1" title={prod.name}>
+                    <h3 className="font-medium text-sm text-text line-clamp-1" title={prod.name}>
                       {prod.name}
                     </h3>
                     <div className="text-[11px] font-mono text-muted flex items-center gap-2 mt-0.5">
@@ -263,7 +263,7 @@ export function InventoryCardsPage() {
                 {/* Card Middle: Price & GST info */}
                 <div className="pt-2 border-t border-border flex items-baseline justify-between">
                   <div>
-                    <div className="text-base font-bold text-text">
+                    <div className="text-base font-medium text-text">
                       {formatCurrency(prod.selling_price)}
                     </div>
                     <div className="text-[10px] text-muted">
@@ -272,18 +272,18 @@ export function InventoryCardsPage() {
                   </div>
                   {prod.cost_price > 0 && (
                     <div className="text-right">
-                      <span className="text-[9px] uppercase tracking-wider text-muted font-bold block">Cost</span>
+                      <span className="text-[9px] uppercase tracking-wider text-muted font-medium block">Cost</span>
                       <span className="text-xs font-mono text-muted">{formatCurrency(prod.cost_price)}</span>
                     </div>
                   )}
                 </div>
 
-                {/* Card Bottom: Edit & Delete Buttons (Requested by user) */}
+                {/* Card Bottom: Edit & Delete Buttons */}
                 <div className="pt-3 border-t border-border grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => setProductToEdit(prod)}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border border-border bg-bg hover:bg-surface text-text hover:border-text/40 transition-colors cursor-pointer"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-border bg-bg hover:bg-surface text-text hover:border-text/40 transition-colors cursor-pointer"
                     title="Edit Product Details & Pricing"
                   >
                     <Pencil size={13} />
@@ -293,7 +293,7 @@ export function InventoryCardsPage() {
                   <button
                     type="button"
                     onClick={() => setProductToDelete(prod)}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border border-danger/30 bg-danger/5 hover:bg-danger/10 text-danger transition-colors cursor-pointer"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-danger/30 bg-danger/5 hover:bg-danger/10 text-danger transition-colors cursor-pointer"
                     title="Delete Product"
                   >
                     <Trash2 size={13} />

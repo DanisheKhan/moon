@@ -27,7 +27,7 @@ export function InvoicesListPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-semibold text-text">
+          <h1 className="text-xl sm:text-2xl font-medium text-text">
             {store?.name} Sales Invoices
           </h1>
           <p className="text-sm text-muted">
@@ -59,7 +59,7 @@ export function InvoicesListPage() {
           <TableBody>
             {invoices.map((inv) => (
               <TableRow key={inv.id}>
-                <TableCell className="font-mono text-xs font-semibold">
+                <TableCell className="font-mono text-xs font-medium">
                   {inv.invoice_number}
                 </TableCell>
                 <TableCell className="text-xs text-muted">
@@ -75,7 +75,7 @@ export function InvoicesListPage() {
                 <TableCell>
                   {formatCurrency((inv.cgst_amount || 0) + (inv.sgst_amount || 0))}
                 </TableCell>
-                <TableCell className="font-semibold text-text">
+                <TableCell className="font-medium text-text">
                   {formatCurrency(inv.grand_total)}
                 </TableCell>
                 <TableCell>

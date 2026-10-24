@@ -193,7 +193,7 @@ export function Select({
       {label && (
         <label
           htmlFor={id}
-          className="text-xs font-semibold text-text uppercase tracking-wider block"
+          className="text-xs font-medium text-text uppercase tracking-wider block"
         >
           {label}
         </label>
@@ -211,7 +211,7 @@ export function Select({
         onClick={() => !disabled && setIsOpen((prev) => !prev)}
         onKeyDown={handleKeyDown}
         className={cn(
-          'w-full min-h-11 rounded-2xl border bg-surface px-4 py-2.5 text-sm text-text',
+          'w-full min-h-10 rounded-lg border bg-surface px-3.5 py-2 text-xs sm:text-sm text-text',
           'flex items-center justify-between gap-2 cursor-pointer transition-all',
           'border-border hover:border-text/40',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent',
@@ -265,7 +265,7 @@ export function Select({
             zIndex: 99999,
           }}
           className={cn(
-            'rounded-2xl border border-border bg-surface text-text shadow-sm p-1.5',
+            'rounded-xl border border-border bg-surface text-text shadow-sm p-1.5',
             'overflow-y-auto animate-in fade-in-0 duration-150',
             coords.openAbove ? 'slide-in-from-bottom-2' : 'slide-in-from-top-2',
             'focus:outline-none'
@@ -285,10 +285,10 @@ export function Select({
                   aria-selected={isSelected}
                   onClick={() => triggerChange(opt.value)}
                   className={cn(
-                    'flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs sm:text-sm cursor-pointer',
+                    'flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs sm:text-sm cursor-pointer',
                     'transition-colors select-none',
                     isSelected
-                      ? 'bg-bg font-semibold text-text'
+                      ? 'bg-bg font-medium text-text'
                       : 'text-text hover:bg-bg/80 hover:text-text'
                   )}
                 >

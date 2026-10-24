@@ -152,12 +152,12 @@ export function OperationsDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Top Welcome Header - Star Enterprises */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-muted block mb-1">
+          <span className="text-[10px] font-medium uppercase tracking-widest text-muted block mb-1">
             STORE OPERATIONS REGISTER
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
             Welcome, {user?.user_metadata?.full_name || 'Sami'}
           </h1>
           <p className="text-xs sm:text-sm text-muted mt-1">
@@ -165,7 +165,7 @@ export function OperationsDashboardPage() {
           </p>
         </div>
 
-        {/* Clean white / high contrast button (zero yellow) */}
+        {/* Clean button */}
         <button
           type="button"
           onClick={() => {
@@ -178,71 +178,71 @@ export function OperationsDashboardPage() {
             setStatus('active');
             setIsAddOpen(true);
           }}
-          className="inline-flex items-center gap-2 bg-text text-bg hover:opacity-90 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-all cursor-pointer shrink-0 shadow-xs"
+          className="inline-flex items-center gap-2 bg-text text-bg hover:opacity-90 font-medium text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-all cursor-pointer shrink-0 shadow-xs"
         >
           <Plus size={16} />
           <span>+ Add new Store</span>
         </button>
       </div>
 
-      {/* Three Pastel Stat Cards - Total Stores, Active, Inactive */}
+      {/* Three Stat Cards - Total Stores, Active, Inactive */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-        {/* Card 1: Warm Amber / Peach */}
-        <div className="p-5 rounded-2xl border border-pastel-amber-border bg-pastel-amber flex items-start justify-between min-w-0">
+        {/* Card 1: Total Stores */}
+        <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs flex items-start justify-between min-w-0">
           <div className="space-y-1">
-            <span className="text-[10px] uppercase font-extrabold text-muted tracking-wider block">
+            <span className="text-[10px] uppercase font-medium text-muted tracking-wider block">
               TOTAL STORES
             </span>
-            <div className="text-3xl sm:text-4xl font-bold text-text">{totalCount}</div>
+            <div className="text-3xl sm:text-4xl font-medium tracking-tight text-text">{totalCount}</div>
             <span className="text-xs text-muted block">{totalCount} registered branches</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-surface border border-pastel-amber-border flex items-center justify-center text-muted shrink-0 shadow-2xs">
+          <div className="w-10 h-10 rounded-lg bg-bg border border-border flex items-center justify-center text-muted shrink-0">
             <Home size={18} />
           </div>
         </div>
 
-        {/* Card 2: Soft Lavender / Purple */}
-        <div className="p-5 rounded-2xl border border-pastel-purple-border bg-pastel-purple flex items-start justify-between min-w-0">
+        {/* Card 2: Active */}
+        <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs flex items-start justify-between min-w-0">
           <div className="space-y-1">
-            <span className="text-[10px] uppercase font-extrabold text-muted tracking-wider block">
+            <span className="text-[10px] uppercase font-medium text-muted tracking-wider block">
               ACTIVE
             </span>
-            <div className="text-3xl sm:text-4xl font-bold text-text">{activeCount}</div>
+            <div className="text-3xl sm:text-4xl font-medium tracking-tight text-text">{activeCount}</div>
             <span className="text-xs text-muted block">{activePct}% operational</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-surface border border-pastel-purple-border flex items-center justify-center text-muted shrink-0 shadow-2xs">
+          <div className="w-10 h-10 rounded-lg bg-bg border border-border flex items-center justify-center text-muted shrink-0">
             <Building size={18} />
           </div>
         </div>
 
-        {/* Card 3: Soft Mint / Cyan */}
-        <div className="p-5 rounded-2xl border border-pastel-mint-border bg-pastel-mint flex items-start justify-between min-w-0">
+        {/* Card 3: Inactive */}
+        <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs flex items-start justify-between min-w-0">
           <div className="space-y-1">
-            <span className="text-[10px] uppercase font-extrabold text-muted tracking-wider block">
+            <span className="text-[10px] uppercase font-medium text-muted tracking-wider block">
               INACTIVE
             </span>
-            <div className="text-3xl sm:text-4xl font-bold text-text">{inactiveCount}</div>
+            <div className="text-3xl sm:text-4xl font-medium tracking-tight text-text">{inactiveCount}</div>
             <span className="text-xs text-muted block">Awaiting administrator</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-surface border border-pastel-mint-border flex items-center justify-center text-muted shrink-0 shadow-2xs">
+          <div className="w-10 h-10 rounded-lg bg-bg border border-border flex items-center justify-center text-muted shrink-0">
             <MapPin size={18} />
           </div>
         </div>
       </div>
 
       {/* Stores Register Table */}
-      <div className="rounded-2xl border border-border bg-surface overflow-hidden shadow-2xs">
+      <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-2xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-bg/40 border-b border-border text-muted font-bold uppercase tracking-wider text-[10px]">
+            <thead className="bg-bg/40 border-b border-border text-muted font-medium uppercase tracking-wider text-[10px]">
               <tr>
-                <th className="py-3.5 px-4 font-bold">STORE</th>
-                <th className="py-3.5 px-4 font-bold">LOCATION</th>
-                <th className="py-3.5 px-4 font-bold">CATEGORY</th>
-                <th className="py-3.5 px-4 font-bold">OPERATING HOURS</th>
-                <th className="py-3.5 px-4 font-bold">GST</th>
-                <th className="py-3.5 px-4 font-bold">STATUS</th>
-                <th className="py-3.5 px-4 font-bold text-right">ACTIONS</th>
+                <th className="py-3.5 px-4 font-medium">STORE</th>
+                <th className="py-3.5 px-4 font-medium">LOCATION</th>
+                <th className="py-3.5 px-4 font-medium">CATEGORY</th>
+                <th className="py-3.5 px-4 font-medium">OPERATING HOURS</th>
+                <th className="py-3.5 px-4 font-medium">GST</th>
+                <th className="py-3.5 px-4 font-medium">STATUS</th>
+                <th className="py-3.5 px-4 font-medium text-right">ACTIONS</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -252,12 +252,12 @@ export function OperationsDashboardPage() {
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-3">
                       <div
-                        className={`w-9 h-9 rounded-lg border flex items-center justify-center font-bold text-xs uppercase shrink-0 ${item.avatarBg}`}
+                        className={`w-9 h-9 rounded-lg border flex items-center justify-center font-medium text-xs uppercase shrink-0 ${item.avatarBg}`}
                       >
                         {item.code}
                       </div>
                       <div>
-                        <div className="font-bold text-text text-sm leading-tight">{item.name}</div>
+                        <div className="font-medium text-text text-sm leading-tight">{item.name}</div>
                         <div className="text-[11px] text-muted">{item.subtext}</div>
                       </div>
                     </div>
@@ -265,12 +265,12 @@ export function OperationsDashboardPage() {
 
                   {/* LOCATION */}
                   <td className="py-4 px-4">
-                    <span className="font-bold text-text text-xs">{item.station}</span>
+                    <span className="font-medium text-text text-xs">{item.station}</span>
                   </td>
 
                   {/* CATEGORY */}
                   <td className="py-4 px-4">
-                    <span className="font-semibold text-text text-xs">{item.platform}</span>
+                    <span className="font-medium text-text text-xs">{item.platform}</span>
                   </td>
 
                   {/* OPERATING HOURS */}
@@ -279,19 +279,19 @@ export function OperationsDashboardPage() {
                   </td>
 
                   {/* GST */}
-                  <td className="py-4 px-4 font-mono text-xs font-semibold text-text">
+                  <td className="py-4 px-4 font-mono text-xs font-medium text-text">
                     {item.gstin}
                   </td>
 
                   {/* STATUS */}
                   <td className="py-4 px-4">
                     {item.status === 'active' ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-pastel-mint text-pastel-mint-text border border-pastel-mint-border">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-medium bg-pastel-mint text-pastel-mint-text border border-pastel-mint-border">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                         ACTIVE
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-pastel-amber text-pastel-amber-text border border-pastel-amber-border">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-medium bg-pastel-amber text-pastel-amber-text border border-pastel-amber-border">
                         <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                         INACTIVE
                       </span>
@@ -327,18 +327,18 @@ export function OperationsDashboardPage() {
 
         {/* Footer row */}
         <div className="p-3.5 border-t border-border bg-bg/30 flex items-center justify-between text-xs text-muted">
-          <span className="font-semibold text-text">
+          <span className="font-medium text-text">
             Showing {storeList.length} of {storeList.length} registered Stores
           </span>
-          <span className="font-semibold text-text">All stores synchronized</span>
+          <span className="font-medium text-text">All stores synchronized</span>
         </div>
       </div>
 
       {/* Real Branches & Stores Quick Launchers */}
       {stores.length > 0 && (
-        <div className="p-4 rounded-2xl border border-border bg-surface space-y-3">
+        <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs space-y-3">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-text uppercase tracking-wider text-[11px]">
+            <span className="font-medium text-text uppercase tracking-wider text-[11px]">
               Direct Store Workspaces
             </span>
             <span className="text-muted">Launch POS Terminals</span>
@@ -348,13 +348,13 @@ export function OperationsDashboardPage() {
               <div
                 key={s.id}
                 onClick={() => navigate(`/admin/${s.code}/billing`)}
-                className="p-3.5 rounded-xl border border-border bg-bg/60 hover:bg-surface hover:border-text/30 flex items-center justify-between transition-colors cursor-pointer"
+                className="p-3.5 rounded-lg border border-border bg-bg/60 hover:bg-surface hover:border-text/30 flex items-center justify-between transition-colors cursor-pointer"
               >
                 <div>
-                  <div className="font-bold text-text text-xs">{s.name}</div>
+                  <div className="font-medium text-text text-xs">{s.name}</div>
                   <div className="text-[11px] text-muted font-mono">{s.gstin}</div>
                 </div>
-                <div className="inline-flex items-center gap-1 text-xs font-semibold text-text">
+                <div className="inline-flex items-center gap-1 text-xs font-medium text-text">
                   <span>Open POS</span>
                   <ExternalLink size={13} />
                 </div>
@@ -475,7 +475,7 @@ export function OperationsDashboardPage() {
         >
           <div className="space-y-4 text-text min-w-0">
             <p className="text-xs text-muted">
-              Are you sure you want to remove <span className="font-bold text-text">"{deletingItem.name}"</span> from the store register?
+              Are you sure you want to remove <span className="font-medium text-text">"{deletingItem.name}"</span> from the store register?
             </p>
             <div className="pt-2 border-t border-border flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => setDeletingItem(null)}>

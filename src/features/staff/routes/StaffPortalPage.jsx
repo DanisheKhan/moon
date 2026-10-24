@@ -151,16 +151,16 @@ export function StaffPortalPage() {
             {currentStaff?.designation} • {currentStaff?.employee_code}
           </div>
           <div className="pt-2 text-xs text-text border-t border-border">
-            Assigned: <span className="font-semibold">{currentStaff?.stores?.name || 'Star Mobiles'}</span>
+            Assigned: <span className="font-medium">{currentStaff?.stores?.name || 'Star Mobiles'}</span>
           </div>
         </Card>
 
         <Card className="p-5 space-y-2">
           <div className="flex items-center justify-between text-muted">
-            <span className="text-xs font-semibold uppercase tracking-wider">Annual Leave Balance</span>
+            <span className="text-xs font-medium uppercase tracking-wider">Annual Leave Balance</span>
             <Calendar size={18} />
           </div>
-          <div className="text-2xl font-bold text-text">{remainingQuota} Days Left</div>
+          <div className="text-2xl font-medium tracking-tight text-text">{remainingQuota} Days Left</div>
           <div className="text-xs text-muted">
             Total Quota: {totalQuota} days • Used: {approvedLeavesDays} days
           </div>
@@ -171,10 +171,10 @@ export function StaffPortalPage() {
 
         <Card className="p-5 space-y-2">
           <div className="flex items-center justify-between text-muted">
-            <span className="text-xs font-semibold uppercase tracking-wider">Base Salary Package</span>
+            <span className="text-xs font-medium uppercase tracking-wider">Base Salary Package</span>
             <CreditCard size={18} />
           </div>
-          <div className="text-2xl font-bold text-text">
+          <div className="text-2xl font-medium tracking-tight text-text">
             {formatCurrency(currentStaff?.base_salary || 0)}
           </div>
           <div className="text-xs text-muted">Monthly Gross Compensation</div>
@@ -280,13 +280,13 @@ export function StaffPortalPage() {
             <TableBody>
               {mySalaries.map((sal) => (
                 <TableRow key={sal.id}>
-                  <TableCell className="font-mono text-xs font-semibold text-text">
+                  <TableCell className="font-mono text-xs font-medium text-text">
                     {sal.month_year}
                   </TableCell>
                   <TableCell className="text-xs">{formatCurrency(sal.base_salary)}</TableCell>
                   <TableCell className="text-xs text-muted">+{formatCurrency(sal.allowances)}</TableCell>
                   <TableCell className="text-xs text-danger">-{formatCurrency(sal.deductions)}</TableCell>
-                  <TableCell className="text-xs font-bold text-text">
+                  <TableCell className="text-xs font-medium text-text">
                     {formatCurrency(sal.net_salary)}
                   </TableCell>
                   <TableCell>

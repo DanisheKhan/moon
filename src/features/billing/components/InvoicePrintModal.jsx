@@ -297,14 +297,14 @@ export function InvoicePrintModal({ isOpen, onClose, invoiceDetail }) {
         onClick={onClose}
       >
         <div
-          className="relative invoice-dialog-window rounded-3xl border border-border bg-surface text-text shadow-sm"
+          className="relative invoice-dialog-window rounded-xl border border-border bg-surface text-text shadow-2xs"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header Bar */}
           <div className="px-5 py-3.5 border-b border-border flex items-center justify-between bg-surface">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base sm:text-lg font-semibold tracking-tight">
+                <h3 className="text-base sm:text-lg font-medium tracking-tight">
                   GST Tax Invoice
                 </h3>
                 <Badge variant="outline" className="font-mono text-xs">
@@ -320,7 +320,7 @@ export function InvoicePrintModal({ isOpen, onClose, invoiceDetail }) {
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 text-muted hover:text-text rounded-full hover:bg-bg transition-colors cursor-pointer"
+              className="p-1.5 text-muted hover:text-text rounded-lg hover:bg-bg transition-colors cursor-pointer"
               aria-label="Close"
             >
               <X size={18} />

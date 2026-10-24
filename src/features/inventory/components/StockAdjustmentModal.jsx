@@ -40,32 +40,32 @@ function StockAdjustmentForm({ product, storeId, onClose }) {
   return (
     <form onSubmit={handleAdjustSubmit} className="space-y-5 text-text min-w-0">
       {error && (
-        <div className="rounded-2xl border border-danger/30 bg-danger/10 p-3.5 text-xs text-danger font-medium">
+        <div className="rounded-lg border border-danger/30 bg-danger/10 p-3.5 text-xs text-danger font-medium">
           {error}
         </div>
       )}
 
       {/* Structured Product Summary Card */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-2xl border border-border bg-bg/60">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-xl border border-border bg-bg/60">
         <div>
-          <span className="text-[10px] uppercase tracking-wider text-muted font-bold block mb-1">
+          <span className="text-[10px] uppercase tracking-wider text-muted font-medium block mb-1">
             Current Stock on Hand
           </span>
           <div className="flex items-baseline gap-2">
-            <span className="text-xl font-bold text-text">{currentQty}</span>
+            <span className="text-xl font-medium text-text">{currentQty}</span>
             <span className="text-xs text-muted">units</span>
           </div>
         </div>
         <div>
-          <span className="text-[10px] uppercase tracking-wider text-muted font-bold block mb-1">
+          <span className="text-[10px] uppercase tracking-wider text-muted font-medium block mb-1">
             Product SKU
           </span>
-          <span className="font-mono text-xs font-semibold text-text bg-surface px-2.5 py-1 rounded-lg border border-border inline-block">
+          <span className="font-mono text-xs font-medium text-text bg-surface px-2.5 py-1 rounded-lg border border-border inline-block">
             {product.sku}
           </span>
         </div>
         <div>
-          <span className="text-[10px] uppercase tracking-wider text-muted font-bold block mb-1">
+          <span className="text-[10px] uppercase tracking-wider text-muted font-medium block mb-1">
             Tracking Mode
           </span>
           <Badge variant="outline" className="text-xs">
@@ -115,7 +115,7 @@ function StockAdjustmentForm({ product, storeId, onClose }) {
           type="button"
           variant="outline"
           onClick={onClose}
-          className="px-6 h-11 text-xs font-semibold"
+          className="px-6 h-11 text-xs font-medium"
         >
           Cancel
         </Button>
@@ -123,7 +123,7 @@ function StockAdjustmentForm({ product, storeId, onClose }) {
           type="submit"
           variant="solid"
           pending={adjustMutation.isPending}
-          className="gap-2 px-6 h-11 text-xs font-semibold"
+          className="gap-2 px-6 h-11 text-xs font-medium"
         >
           <Sliders size={15} /> Update Stock Level
         </Button>

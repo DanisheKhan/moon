@@ -335,7 +335,7 @@ export function PublicHomePage() {
                   <div className="pt-4 border-t border-border space-y-3">
                     <div className="flex items-baseline justify-between">
                       <div>
-                        <div className="text-lg font-bold text-text">
+                        <div className="text-lg font-medium text-text">
                           {formatCurrency(product.selling_price)}
                         </div>
                         <div className="text-[10px] text-muted">

@@ -51,17 +51,17 @@ export function Modal({ isOpen, onClose, title, size = 'lg', className, children
     >
       <div
         className={cn(
-          'relative w-full rounded-2xl border border-border bg-surface text-text',
-          'max-h-[92vh] flex flex-col min-w-0 shadow-sm animate-in zoom-in-95 duration-150',
+          'relative w-full rounded-xl border border-border bg-surface text-text',
+          'max-h-[92vh] flex flex-col min-w-0 shadow-2xs animate-in zoom-in-95 duration-150',
           resolvedSizeClass,
           className
         )}
         onClick={(e) => e.stopPropagation()}
       >
         {(title || onClose) && (
-          <div className="flex items-center justify-between px-6 py-4.5 sm:px-8 sm:py-5 border-b border-border bg-surface rounded-t-3xl shrink-0">
+          <div className="flex items-center justify-between px-6 py-4.5 sm:px-8 sm:py-5 border-b border-border bg-surface rounded-t-xl shrink-0">
             {title ? (
-              <h3 className="text-base sm:text-xl font-bold tracking-tight text-text truncate pr-4">
+              <h3 className="text-base sm:text-lg font-medium tracking-tight text-text truncate pr-4">
                 {title}
               </h3>
             ) : (
@@ -71,7 +71,7 @@ export function Modal({ isOpen, onClose, title, size = 'lg', className, children
               <button
                 type="button"
                 onClick={onClose}
-                className="p-2 text-muted hover:text-text rounded-full hover:bg-bg transition-colors cursor-pointer ml-auto shrink-0"
+                className="p-2 text-muted hover:text-text rounded-lg hover:bg-bg transition-colors cursor-pointer ml-auto shrink-0"
                 aria-label="Close"
               >
                 <X size={18} />

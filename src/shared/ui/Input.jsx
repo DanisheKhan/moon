@@ -16,7 +16,7 @@ export const Input = forwardRef(function Input(
   return (
     <div className="flex flex-col gap-1.5 w-full text-left">
       {label && (
-        <label htmlFor={id} className="text-xs font-semibold text-text uppercase tracking-wider">
+        <label htmlFor={id} className="text-xs font-medium text-text uppercase tracking-wider">
           {label}
         </label>
       )}
@@ -24,7 +24,7 @@ export const Input = forwardRef(function Input(
         ref={ref}
         id={id}
         className={cn(
-          'w-full min-h-11 rounded-2xl border bg-surface px-4 py-2.5 text-sm text-text transition-colors',
+          'w-full min-h-10 rounded-lg border bg-surface px-3.5 py-2 text-xs sm:text-sm text-text transition-colors',
           'border-border placeholder:text-muted',
           'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent',
           error && 'border-danger focus-visible:outline-danger',

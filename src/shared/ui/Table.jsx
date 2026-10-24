@@ -26,7 +26,7 @@ export function TableHead({ className, children, ...rest }) {
   return (
     <thead
       className={cn(
-        'bg-bg/70 border-b border-border text-[11px] sm:text-xs uppercase font-semibold text-muted tracking-wider select-none',
+        'bg-bg/70 border-b border-border text-[11px] sm:text-xs uppercase font-medium text-muted tracking-wider select-none',
         className
       )}
       {...rest}
@@ -54,7 +54,7 @@ export function TableRow({ className, children, ...rest }) {
 
 export function TableCell({ className, children, ...rest }) {
   return (
-    <td className={cn('px-3.5 sm:px-4 py-3 align-middle', className)} {...rest}>
+    <td className={cn('px-3.5 sm:px-4 py-3 align-middle font-normal', className)} {...rest}>
       {children}
     </td>
   );
@@ -62,7 +62,7 @@ export function TableCell({ className, children, ...rest }) {
 
 export function TableHeaderCell({ className, children, ...rest }) {
   return (
-    <th className={cn('px-3.5 sm:px-4 py-3 align-middle font-semibold whitespace-nowrap', className)} {...rest}>
+    <th className={cn('px-3.5 sm:px-4 py-3 align-middle font-medium whitespace-nowrap', className)} {...rest}>
       {children}
     </th>
   );

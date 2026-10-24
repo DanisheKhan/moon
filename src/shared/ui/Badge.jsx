@@ -2,9 +2,9 @@ import { cn } from '@/shared/lib/cn';
 
 const variants = {
   default: 'border-border bg-bg text-text',
-  success: 'border-border bg-surface text-text font-semibold',
+  success: 'border-border bg-surface text-text font-medium',
   danger: 'border-danger/30 bg-danger/10 text-danger font-medium',
-  accent: 'border-accent bg-accent text-accent-fg',
+  accent: 'border-accent bg-accent text-accent-fg font-medium',
 };
 
 /**

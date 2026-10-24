@@ -34,11 +34,11 @@ export function ProductDetailModal({ product, isOpen, onClose }) {
         {/* Brand & Store Header */}
         <div className="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-border">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full border border-border bg-bg flex items-center justify-center text-text">
+            <div className="w-8 h-8 rounded-lg border border-border bg-bg flex items-center justify-center text-text">
               {isMobileStore ? <Smartphone size={16} /> : <Tv size={16} />}
             </div>
             <div>
-              <div className="text-xs font-semibold">{product.brands?.name || 'Star Certified'}</div>
+              <div className="text-xs font-medium">{product.brands?.name || 'Star Certified'}</div>
               <div className="text-[11px] text-muted">{product.stores?.name}</div>
             </div>
           </div>
@@ -61,7 +61,7 @@ export function ProductDetailModal({ product, isOpen, onClose }) {
 
         {/* Product Image Showcase */}
         {product.image_url && (
-          <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden bg-surface border border-border flex items-center justify-center shadow-sm">
+          <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-xl overflow-hidden bg-surface border border-border flex items-center justify-center shadow-2xs">
             <img
               src={product.image_url}
               alt={product.name}
@@ -74,10 +74,10 @@ export function ProductDetailModal({ product, isOpen, onClose }) {
         )}
 
         {/* Pricing Banner */}
-        <div className="p-4 rounded-2xl border border-border bg-bg flex items-baseline justify-between flex-wrap gap-2">
+        <div className="p-4 rounded-xl border border-border bg-bg flex items-baseline justify-between flex-wrap gap-2">
           <div>
             <div className="text-xs text-muted">Special Store Price:</div>
-            <div className="text-2xl font-bold tracking-tight text-text">
+            <div className="text-2xl font-medium tracking-tight text-text">
               {formatCurrency(product.selling_price)}
             </div>
           </div>
@@ -95,26 +95,26 @@ export function ProductDetailModal({ product, isOpen, onClose }) {
 
         {/* Description */}
         <div className="space-y-1">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-muted">Description</h4>
+          <h4 className="text-xs font-medium uppercase tracking-wider text-muted">Description</h4>
           <p className="text-sm text-text leading-relaxed">{product.description}</p>
         </div>
 
         {/* Technical Specifications Grid */}
         {product.specs && Object.keys(product.specs).length > 0 && (
           <div className="space-y-2">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted">
+            <h4 className="text-xs font-medium uppercase tracking-wider text-muted">
               Technical Specifications
             </h4>
             <div className="grid grid-cols-2 gap-2 text-xs">
               {Object.entries(product.specs).map(([key, val]) => (
                 <div
                   key={key}
-                  className="p-2.5 rounded-xl border border-border bg-surface flex flex-col justify-center min-w-0"
+                  className="p-2.5 rounded-lg border border-border bg-surface flex flex-col justify-center min-w-0"
                 >
                   <span className="text-muted capitalize text-[11px]">
                     {key.replace(/_/g, ' ')}:
                   </span>
-                  <span className="font-semibold text-text truncate">{String(val)}</span>
+                  <span className="font-medium text-text truncate">{String(val)}</span>
                 </div>
               ))}
             </div>
@@ -122,7 +122,7 @@ export function ProductDetailModal({ product, isOpen, onClose }) {
         )}
 
         {/* Warranty & Assurance */}
-        <div className="p-3 rounded-xl border border-border bg-bg flex items-center gap-3 text-xs text-muted">
+        <div className="p-3 rounded-lg border border-border bg-bg flex items-center gap-3 text-xs text-muted">
           <ShieldCheck size={18} className="text-text shrink-0" />
           <span>
             100% Genuine Certified Product with Star Enterprises store warranty & doorstep servicing support.

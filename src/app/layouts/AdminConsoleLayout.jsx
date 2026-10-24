@@ -90,7 +90,7 @@ export function AdminConsoleLayout() {
         />
       )}
 
-      {/* SIDE DRAWER - Deep Navy with White Active Highlight */}
+      {/* SIDE DRAWER - Cohesive Light Theme matching Website Canvas */}
       <aside
         className={cn(
           'fixed inset-y-0 left-0 z-50 w-64 bg-sidebar-bg text-sidebar-text flex flex-col justify-between transition-transform duration-200 ease-in-out border-r border-sidebar-border select-none',
@@ -101,15 +101,14 @@ export function AdminConsoleLayout() {
         <div className="flex flex-col">
           <div className="p-5 flex items-center justify-between border-b border-sidebar-border">
             <Link to={basePath} className="flex items-center gap-3 min-w-0">
-              {/* White rounded badge with dark text (zero yellow) */}
-              <div className="w-9 h-9 rounded-lg bg-white text-slate-950 font-extrabold flex items-center justify-center text-sm shadow-xs shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-text text-bg font-medium flex items-center justify-center text-xs shadow-2xs shrink-0">
                 SE
               </div>
               <div className="min-w-0">
-                <div className="text-white font-bold text-sm tracking-tight leading-tight truncate">
+                <div className="text-text font-medium text-sm tracking-tight leading-tight truncate">
                   Star Enterprises
                 </div>
-                <div className="text-sidebar-text text-[9px] font-bold tracking-widest uppercase">
+                <div className="text-muted text-[10px] font-medium tracking-wider uppercase">
                   OPERATIONS CONSOLE
                 </div>
               </div>
@@ -119,7 +118,7 @@ export function AdminConsoleLayout() {
             <button
               type="button"
               onClick={() => setIsMobileDrawerOpen(false)}
-              className="lg:hidden p-1 text-sidebar-text hover:text-white rounded-lg cursor-pointer"
+              className="lg:hidden p-1 text-sidebar-text hover:text-text rounded-lg cursor-pointer"
             >
               <X size={18} />
             </button>
@@ -131,10 +130,10 @@ export function AdminConsoleLayout() {
             <Link
               to={basePath}
               className={cn(
-                'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-colors',
+                'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs transition-colors',
                 isDashboardActive
-                  ? 'bg-white text-slate-900 font-bold shadow-xs'
-                  : 'text-sidebar-text hover:text-white hover:bg-sidebar-surface'
+                  ? 'bg-sidebar-active text-sidebar-active-fg font-medium border border-sidebar-border shadow-2xs'
+                  : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
               )}
             >
               <LayoutGrid size={16} className="shrink-0" />
@@ -145,24 +144,24 @@ export function AdminConsoleLayout() {
             <Link
               to={`${basePath}/billing`}
               className={cn(
-                'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-colors',
+                'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs transition-colors',
                 isBillingActive
-                  ? 'bg-white text-slate-900 font-bold shadow-xs'
-                  : 'text-sidebar-text hover:text-white hover:bg-sidebar-surface'
+                  ? 'bg-sidebar-active text-sidebar-active-fg font-medium border border-sidebar-border shadow-2xs'
+                  : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
               )}
             >
               <CreditCard size={16} className="shrink-0" />
               <span>Billing</span>
             </Link>
 
-            {/* 3. Inventory Tab (Card Format) */}
+            {/* 3. Inventory Tab */}
             <Link
               to={`${basePath}/inventory`}
               className={cn(
-                'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-colors',
+                'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs transition-colors',
                 isInventoryActive
-                  ? 'bg-white text-slate-900 font-bold shadow-xs'
-                  : 'text-sidebar-text hover:text-white hover:bg-sidebar-surface'
+                  ? 'bg-sidebar-active text-sidebar-active-fg font-medium border border-sidebar-border shadow-2xs'
+                  : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
               )}
             >
               <Package size={16} className="shrink-0" />
@@ -175,10 +174,10 @@ export function AdminConsoleLayout() {
                 type="button"
                 onClick={() => setUserToggledStaff(!isStaffMenuOpen)}
                 className={cn(
-                  'w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer text-left',
+                  'w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs transition-colors cursor-pointer text-left',
                   isStaffRoute && !isStaffMenuOpen
-                    ? 'bg-sidebar-surface text-white'
-                    : 'text-sidebar-text hover:text-white hover:bg-sidebar-surface'
+                    ? 'bg-sidebar-surface text-sidebar-active-fg font-medium'
+                    : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -189,7 +188,7 @@ export function AdminConsoleLayout() {
                   size={14}
                   className={cn(
                     'transition-transform duration-200 text-sidebar-text',
-                    isStaffMenuOpen && 'rotate-180 text-white'
+                    isStaffMenuOpen && 'rotate-180 text-sidebar-active-fg'
                   )}
                 />
               </button>
@@ -201,10 +200,10 @@ export function AdminConsoleLayout() {
                   <Link
                     to={`${basePath}/staff`}
                     className={cn(
-                      'flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors',
+                      'flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors',
                       isStaffDirectoryActive
-                        ? 'bg-white text-slate-900 font-bold shadow-xs'
-                        : 'text-sidebar-text hover:text-white hover:bg-sidebar-surface/70'
+                        ? 'bg-sidebar-active text-sidebar-active-fg font-medium border border-sidebar-border shadow-2xs'
+                        : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
                     )}
                   >
                     <Users size={14} className="shrink-0" />
@@ -215,10 +214,10 @@ export function AdminConsoleLayout() {
                   <Link
                     to={`${basePath}/staff/attendance`}
                     className={cn(
-                      'flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors',
+                      'flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors',
                       isAttendanceActive
-                        ? 'bg-white text-slate-900 font-bold shadow-xs'
-                        : 'text-sidebar-text hover:text-white hover:bg-sidebar-surface/70'
+                        ? 'bg-sidebar-active text-sidebar-active-fg font-medium border border-sidebar-border shadow-2xs'
+                        : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
                     )}
                   >
                     <CalendarCheck size={14} className="shrink-0" />
@@ -229,10 +228,10 @@ export function AdminConsoleLayout() {
                   <Link
                     to={`${basePath}/staff/roles`}
                     className={cn(
-                      'flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors',
+                      'flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors',
                       isRolesActive
-                        ? 'bg-white text-slate-900 font-bold shadow-xs'
-                        : 'text-sidebar-text hover:text-white hover:bg-sidebar-surface/70'
+                        ? 'bg-sidebar-active text-sidebar-active-fg font-medium border border-sidebar-border shadow-2xs'
+                        : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
                     )}
                   >
                     <ShieldCheck size={14} className="shrink-0" />
@@ -246,10 +245,10 @@ export function AdminConsoleLayout() {
             <Link
               to={`${basePath}/reports`}
               className={cn(
-                'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-colors',
+                'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs transition-colors',
                 isReportsActive
-                  ? 'bg-white text-slate-900 font-bold shadow-xs'
-                  : 'text-sidebar-text hover:text-white hover:bg-sidebar-surface'
+                  ? 'bg-sidebar-active text-sidebar-active-fg font-medium border border-sidebar-border shadow-2xs'
+                  : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
               )}
             >
               <BarChart3 size={16} className="shrink-0" />
@@ -260,10 +259,10 @@ export function AdminConsoleLayout() {
             <Link
               to={`${basePath}/settings`}
               className={cn(
-                'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-colors',
+                'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs transition-colors',
                 isSettingsActive
-                  ? 'bg-white text-slate-900 font-bold shadow-xs'
-                  : 'text-sidebar-text hover:text-white hover:bg-sidebar-surface'
+                  ? 'bg-sidebar-active text-sidebar-active-fg font-medium border border-sidebar-border shadow-2xs'
+                  : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
               )}
             >
               <Settings size={16} className="shrink-0" />
@@ -273,14 +272,14 @@ export function AdminConsoleLayout() {
         </div>
 
         {/* Bottom Profile Section */}
-        <div className="p-5 border-t border-sidebar-border space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 ring-4 ring-emerald-400/20 shrink-0" />
+        <div className="p-4 border-t border-sidebar-border space-y-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20 shrink-0" />
             <div className="min-w-0">
-              <div className="text-[10px] font-extrabold uppercase tracking-widest text-sidebar-text">
+              <div className="text-[10px] font-medium uppercase tracking-wider text-muted">
                 OWNER / ADMIN
               </div>
-              <div className="text-sm font-bold text-white truncate">{userName}</div>
+              <div className="text-xs font-medium text-text truncate">{userName}</div>
             </div>
           </div>
 
@@ -290,9 +289,9 @@ export function AdminConsoleLayout() {
               await signOut();
               navigate('/');
             }}
-            className="flex items-center gap-2 text-xs font-semibold text-sidebar-text hover:text-white transition-colors cursor-pointer w-full text-left"
+            className="flex items-center gap-2 text-xs font-normal text-muted hover:text-text transition-colors cursor-pointer w-full text-left"
           >
-            <LogOut size={14} />
+            <LogOut size={13} />
             <span>Sign out</span>
           </button>
         </div>
@@ -317,38 +316,38 @@ export function AdminConsoleLayout() {
             {/* Back to 3 Stores Launcher Card Button */}
             <Link
               to="/admin"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-bg hover:bg-surface text-muted hover:text-text text-xs font-semibold transition-colors shrink-0"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface hover:bg-bg text-muted hover:text-text text-xs font-medium transition-colors shrink-0"
               title="Return to 3 Stores Launcher"
             >
               <ArrowLeft size={13} />
               <span className="hidden sm:inline">Store Launcher</span>
             </Link>
 
-            {/* Current Store Pill (Store-isolated, no switcher dropdown) */}
-            <div className="bg-pastel-amber border border-pastel-amber-border rounded-xl px-3 py-1.5 flex items-center gap-2.5 shadow-2xs select-none">
+            {/* Current Store Pill (Consistent with website layout) */}
+            <div className="bg-bg border border-border rounded-lg px-3 py-1.5 flex items-center gap-2.5 shadow-2xs select-none">
               <div className="w-5 h-5 rounded-md flex items-center justify-center text-muted shrink-0">
-                <Store size={15} />
+                <Store size={14} />
               </div>
               <div className="min-w-0 pr-1">
-                <div className="text-[9px] font-extrabold uppercase tracking-widest text-muted leading-tight">
+                <div className="text-[9px] font-medium uppercase tracking-wider text-muted leading-tight">
                   CURRENT STORE
                 </div>
-                <div className="text-xs font-bold text-text truncate max-w-36 sm:max-w-64 leading-tight">
+                <div className="text-xs font-medium text-text truncate max-w-36 sm:max-w-64 leading-tight">
                   {activeStoreName}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right Header Items (Zero Yellow) */}
-          <div className="flex items-center gap-3 shrink-0">
-            {/* Live Clock e.g. 11:52 */}
-            <div className="text-xs sm:text-sm font-bold font-mono text-text tracking-wider">
+          {/* Right Header Items */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            {/* Live Clock */}
+            <div className="text-xs font-mono font-medium text-muted px-2 py-1">
               {currentTime}
             </div>
 
-            {/* Owner / Admin Pill Badge (White with dark text) */}
-            <span className="bg-white text-slate-900 border border-border font-bold text-xs px-3 py-1 rounded-md shadow-2xs select-none">
+            {/* Owner / Admin Pill Badge */}
+            <span className="bg-bg text-text border border-border font-medium text-xs px-2.5 py-1 rounded-lg shadow-2xs select-none">
               Owner / Admin
             </span>
 
@@ -356,7 +355,7 @@ export function AdminConsoleLayout() {
             <button
               type="button"
               onClick={() => navigate(`${basePath}/settings`)}
-              className="w-8 h-8 rounded-md bg-sidebar-bg text-white font-bold text-xs flex items-center justify-center cursor-pointer hover:bg-sidebar-surface transition-colors shadow-2xs"
+              className="w-8 h-8 rounded-lg bg-text text-bg font-medium text-xs flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity shadow-2xs"
               title="Console Settings"
             >
               {userInitials}
@@ -365,7 +364,7 @@ export function AdminConsoleLayout() {
         </header>
 
         {/* Content Body */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 min-w-0 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-6 sm:p-8 min-w-0 max-w-7xl w-full mx-auto space-y-6">
           <Outlet context={{ store: currentStore, storeCode: currentStoreCode }} />
         </main>
       </div>

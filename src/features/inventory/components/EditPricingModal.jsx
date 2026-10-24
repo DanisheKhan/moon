@@ -50,31 +50,31 @@ function EditPricingForm({ product, onClose }) {
   return (
     <form onSubmit={handlePriceSubmit} className="space-y-5 text-text min-w-0">
       {error && (
-        <div className="rounded-2xl border border-danger/30 bg-danger/10 p-3.5 text-xs text-danger font-medium">
+        <div className="rounded-lg border border-danger/30 bg-danger/10 p-3.5 text-xs text-danger font-medium">
           {error}
         </div>
       )}
 
       {/* Structured Pricing Snapshot Card */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-2xl border border-border bg-bg/60">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-xl border border-border bg-bg/60">
         <div>
-          <span className="text-[10px] uppercase tracking-wider text-muted font-bold block mb-1">
+          <span className="text-[10px] uppercase tracking-wider text-muted font-medium block mb-1">
             Current Listed Price
           </span>
-          <span className="text-xl font-bold text-text">
+          <span className="text-xl font-medium text-text">
             {formatCurrency(product.selling_price)}
           </span>
         </div>
         <div>
-          <span className="text-[10px] uppercase tracking-wider text-muted font-bold block mb-1">
+          <span className="text-[10px] uppercase tracking-wider text-muted font-medium block mb-1">
             Product SKU
           </span>
-          <span className="font-mono text-xs font-semibold text-text bg-surface px-2.5 py-1 rounded-lg border border-border inline-block">
+          <span className="font-mono text-xs font-medium text-text bg-surface px-2.5 py-1 rounded-lg border border-border inline-block">
             {product.sku}
           </span>
         </div>
         <div>
-          <span className="text-[10px] uppercase tracking-wider text-muted font-bold block mb-1">
+          <span className="text-[10px] uppercase tracking-wider text-muted font-medium block mb-1">
             Est. Gross Margin
           </span>
           <Badge variant={marginAmt >= 0 ? 'success' : 'danger'} className="text-xs">
@@ -133,7 +133,7 @@ function EditPricingForm({ product, onClose }) {
           type="button"
           variant="outline"
           onClick={onClose}
-          className="px-6 h-11 text-xs font-semibold"
+          className="px-6 h-11 text-xs font-medium"
         >
           Cancel
         </Button>
@@ -141,7 +141,7 @@ function EditPricingForm({ product, onClose }) {
           type="submit"
           variant="solid"
           pending={updatePricingMutation.isPending}
-          className="gap-2 px-6 h-11 text-xs font-semibold"
+          className="gap-2 px-6 h-11 text-xs font-medium"
         >
           <Tag size={15} /> Save Pricing Changes
         </Button>

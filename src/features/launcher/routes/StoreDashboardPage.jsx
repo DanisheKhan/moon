@@ -129,21 +129,21 @@ export function StoreDashboardPage() {
   const storeManager = currentStore?.manager_name || 'Rajesh Kulkarni';
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto min-w-0">
+    <div className="space-y-6 min-w-0">
       {/* Store Header & Period Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border min-w-0">
         <div className="space-y-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-muted">
+            <span className="text-[10px] font-medium uppercase tracking-wider text-muted">
               STORE WORKSPACE
             </span>
             <span className="text-xs text-muted">•</span>
-            <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
+            <span className="text-xs font-medium text-emerald-600 flex items-center gap-1">
               <CheckCircle2 size={12} />
               Active Branch
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
             {storeName} Dashboard
           </h1>
           <p className="text-xs sm:text-sm text-muted">
@@ -153,7 +153,7 @@ export function StoreDashboardPage() {
 
         <div className="flex items-center gap-2 shrink-0">
           {/* Period selector */}
-          <div className="flex items-center bg-surface border border-border rounded-xl p-1 text-xs">
+          <div className="flex items-center bg-surface border border-border rounded-lg p-1 text-xs">
             <Calendar size={13} className="text-muted ml-2 mr-1.5 shrink-0" />
             <div className="flex items-center gap-1">
               {PERIODS.map((period) => (
@@ -161,7 +161,7 @@ export function StoreDashboardPage() {
                   key={period.id}
                   type="button"
                   onClick={() => setSelectedPeriod(period.id)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors ${
                     selectedPeriod === period.id
                       ? 'bg-text text-bg shadow-2xs'
                       : 'text-muted hover:text-text hover:bg-bg'
@@ -176,7 +176,7 @@ export function StoreDashboardPage() {
           <Button
             size="sm"
             onClick={() => navigate(`/admin/${effectiveStoreCode}/billing`)}
-            className="rounded-xl gap-1.5 font-semibold text-xs"
+            className="rounded-lg gap-1.5 font-medium text-xs"
           >
             <PlusCircle size={14} />
             <span className="hidden sm:inline">New Bill</span>
@@ -187,17 +187,17 @@ export function StoreDashboardPage() {
       {/* 3 CORE FINANCIAL CARDS: TOTAL SALES, TOTAL EXPENSES, TOTAL PROFIT */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 min-w-0">
         {/* Card 1: Total Sales */}
-        <div className="p-5 rounded-2xl border border-pastel-amber-border bg-pastel-amber/60 flex flex-col justify-between space-y-3 shadow-2xs">
+        <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-4 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-pastel-amber-text">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-muted">
               TOTAL SALES
             </span>
-            <div className="w-8 h-8 rounded-xl bg-pastel-amber border border-pastel-amber-border text-pastel-amber-text flex items-center justify-center shrink-0">
-              <IndianRupee size={16} />
+            <div className="w-8 h-8 rounded-lg bg-bg border border-border text-muted flex items-center justify-center shrink-0">
+              <IndianRupee size={15} />
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text">
+            <div className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
               {formatCurrency(financialSummary.totalSales)}
             </div>
             <p className="text-xs text-muted flex items-center gap-1">
@@ -208,17 +208,17 @@ export function StoreDashboardPage() {
         </div>
 
         {/* Card 2: Total Expenses */}
-        <div className="p-5 rounded-2xl border border-pastel-purple-border bg-pastel-purple/60 flex flex-col justify-between space-y-3 shadow-2xs">
+        <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-4 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-pastel-purple-text">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-muted">
               TOTAL EXPENSES
             </span>
-            <div className="w-8 h-8 rounded-xl bg-pastel-purple border border-pastel-purple-border text-pastel-purple-text flex items-center justify-center shrink-0">
-              <Receipt size={16} />
+            <div className="w-8 h-8 rounded-lg bg-bg border border-border text-muted flex items-center justify-center shrink-0">
+              <Receipt size={15} />
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text">
+            <div className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
               {formatCurrency(financialSummary.totalExpenses)}
             </div>
             <p className="text-xs text-muted">
@@ -228,21 +228,21 @@ export function StoreDashboardPage() {
         </div>
 
         {/* Card 3: Total Profit */}
-        <div className="p-5 rounded-2xl border border-pastel-mint-border bg-pastel-mint/60 flex flex-col justify-between space-y-3 shadow-2xs">
+        <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-4 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-pastel-mint-text">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-muted">
               TOTAL PROFIT
             </span>
-            <div className="w-8 h-8 rounded-xl bg-pastel-mint border border-pastel-mint-border text-pastel-mint-text flex items-center justify-center shrink-0">
-              <PiggyBank size={16} />
+            <div className="w-8 h-8 rounded-lg bg-bg border border-border text-muted flex items-center justify-center shrink-0">
+              <PiggyBank size={15} />
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-emerald-700">
+            <div className="text-2xl sm:text-3xl font-medium tracking-tight text-emerald-600">
               {formatCurrency(financialSummary.totalProfit)}
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-pastel-mint border border-pastel-mint-border text-pastel-mint-text">
+              <span className="text-[10px] font-medium uppercase px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
                 {financialSummary.profitMargin}% Net Margin
               </span>
               <span className="text-xs text-muted">Sales minus expenses</span>
@@ -251,24 +251,24 @@ export function StoreDashboardPage() {
         </div>
       </div>
 
-      {/* TWO COLUMN SECTION: STOCK ALERTS (MAX 3 + BUTTON) & STORE OPERATIONS */}
+      {/* TWO COLUMN SECTION: STOCK ALERTS & STORE OPERATIONS */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-w-0">
         {/* Left Column (col-span-7): Stock Alert (3 at most) + Button below it */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="p-5 rounded-2xl border border-border bg-surface space-y-4 shadow-2xs">
+          <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs">
             <div className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 flex items-center justify-center shrink-0">
-                  <AlertTriangle size={16} />
+                <div className="w-8 h-8 rounded-lg bg-bg border border-border text-amber-600 flex items-center justify-center shrink-0">
+                  <AlertTriangle size={15} />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-text">Stock Alerts</h2>
+                  <h2 className="text-sm sm:text-base font-medium text-text">Stock Alerts</h2>
                   <p className="text-xs text-muted">
                     At most 3 critical items below reorder threshold
                   </p>
                 </div>
               </div>
-              <Badge variant="warning" className="text-[10px] font-bold">
+              <Badge variant="default" className="text-[10px] font-medium">
                 {stockAlerts.length} {stockAlerts.length === 1 ? 'Alert' : 'Alerts'}
               </Badge>
             </div>
@@ -279,9 +279,9 @@ export function StoreDashboardPage() {
                 Checking inventory stock levels...
               </div>
             ) : stockAlerts.length === 0 ? (
-              <div className="p-6 rounded-xl border border-dashed border-border text-center space-y-2">
+              <div className="p-6 rounded-lg border border-dashed border-border text-center space-y-2">
                 <CheckCircle2 size={24} className="text-emerald-500 mx-auto" />
-                <p className="text-xs font-semibold text-text">
+                <p className="text-xs font-medium text-text">
                   All inventory healthy for {storeName}
                 </p>
                 <p className="text-[11px] text-muted">
@@ -293,7 +293,7 @@ export function StoreDashboardPage() {
                 {stockAlerts.map((item) => (
                   <div
                     key={item.id}
-                    className="p-3.5 rounded-xl border border-border bg-bg/60 flex items-center justify-between gap-3 transition-colors hover:bg-bg"
+                    className="p-3.5 rounded-lg border border-border bg-bg/40 flex items-center justify-between gap-3 transition-colors hover:bg-bg/80"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center shrink-0 overflow-hidden">
@@ -311,7 +311,7 @@ export function StoreDashboardPage() {
                         )}
                       </div>
                       <div className="min-w-0">
-                        <div className="text-xs font-bold text-text truncate">
+                        <div className="text-xs font-medium text-text truncate">
                           {item.name}
                         </div>
                         <div className="text-[10px] text-muted flex items-center gap-1.5 font-mono">
@@ -327,7 +327,7 @@ export function StoreDashboardPage() {
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
                         {item.currentStock} {item.currentStock === 1 ? 'unit left' : 'units left'}
                       </span>
                       <div className="text-[10px] text-muted mt-0.5">
@@ -344,7 +344,7 @@ export function StoreDashboardPage() {
               <Button
                 variant="outline"
                 onClick={() => navigate(`/admin/${effectiveStoreCode}/inventory`)}
-                className="w-full justify-center gap-2 text-xs font-semibold py-2.5 rounded-xl"
+                className="w-full justify-center gap-2 text-xs font-medium py-2 rounded-lg"
               >
                 <Package size={15} />
                 <span>Go to Inventory & View All Products</span>
@@ -356,13 +356,13 @@ export function StoreDashboardPage() {
 
         {/* Right Column (col-span-5): Store Quick Actions & Profile */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="p-5 rounded-2xl border border-border bg-surface space-y-4 shadow-2xs">
+          <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs">
             <div className="flex items-center gap-2.5 pb-3 border-b border-border">
-              <div className="w-8 h-8 rounded-xl bg-bg border border-border flex items-center justify-center text-text shrink-0">
-                <Building size={16} />
+              <div className="w-8 h-8 rounded-lg bg-bg border border-border flex items-center justify-center text-text shrink-0">
+                <Building size={15} />
               </div>
               <div>
-                <h2 className="text-sm font-bold text-text">Store Administration</h2>
+                <h2 className="text-sm sm:text-base font-medium text-text">Store Administration</h2>
                 <p className="text-xs text-muted">Manage isolated branch operations</p>
               </div>
             </div>
@@ -371,14 +371,14 @@ export function StoreDashboardPage() {
               <button
                 type="button"
                 onClick={() => navigate(`/admin/${effectiveStoreCode}/billing`)}
-                className="w-full p-3 rounded-xl border border-border bg-bg/50 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
+                className="w-full p-3 rounded-lg border border-border bg-bg/40 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-7 h-7 rounded-lg bg-surface border border-border flex items-center justify-center text-text shrink-0">
                     <Receipt size={14} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-text">POS Billing Terminal</div>
+                    <div className="text-xs font-medium text-text">POS Billing Terminal</div>
                     <div className="text-[10px] text-muted">Issue tax invoices with GST calculation</div>
                   </div>
                 </div>
@@ -388,14 +388,14 @@ export function StoreDashboardPage() {
               <button
                 type="button"
                 onClick={() => navigate(`/admin/${effectiveStoreCode}/staff/attendance`)}
-                className="w-full p-3 rounded-xl border border-border bg-bg/50 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
+                className="w-full p-3 rounded-lg border border-border bg-bg/40 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-7 h-7 rounded-lg bg-surface border border-border flex items-center justify-center text-text shrink-0">
                     <CalendarCheck size={14} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-text">Staff Attendance</div>
+                    <div className="text-xs font-medium text-text">Staff Attendance</div>
                     <div className="text-[10px] text-muted">Punch logs, shifts & presence tracking</div>
                   </div>
                 </div>
@@ -405,14 +405,14 @@ export function StoreDashboardPage() {
               <button
                 type="button"
                 onClick={() => navigate(`/admin/${effectiveStoreCode}/staff/roles`)}
-                className="w-full p-3 rounded-xl border border-border bg-bg/50 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
+                className="w-full p-3 rounded-lg border border-border bg-bg/40 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-7 h-7 rounded-lg bg-surface border border-border flex items-center justify-center text-text shrink-0">
                     <ShieldCheck size={14} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-text">Roles & Permissions</div>
+                    <div className="text-xs font-medium text-text">Roles & Permissions</div>
                     <div className="text-[10px] text-muted">Cashier, manager & staff access gates</div>
                   </div>
                 </div>
@@ -422,14 +422,14 @@ export function StoreDashboardPage() {
               <button
                 type="button"
                 onClick={() => navigate(`/admin/${effectiveStoreCode}/reports`)}
-                className="w-full p-3 rounded-xl border border-border bg-bg/50 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
+                className="w-full p-3 rounded-lg border border-border bg-bg/40 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-7 h-7 rounded-lg bg-surface border border-border flex items-center justify-center text-text shrink-0">
                     <BarChart3 size={14} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-text">Sales & Tax Reports</div>
+                    <div className="text-xs font-medium text-text">Sales & Tax Reports</div>
                     <div className="text-[10px] text-muted">GSTR summary, payment split & analytics</div>
                   </div>
                 </div>

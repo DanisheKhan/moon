@@ -22,9 +22,9 @@ export function PayslipModal({ salaryRecord, isOpen, onClose }) {
     >
       <div className="space-y-4 text-text min-w-0" id="printable-payslip">
         {/* Company Header */}
-        <div className="p-4 rounded-2xl border border-border bg-bg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div className="p-4 rounded-xl border border-border bg-bg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <div className="text-base font-bold text-text tracking-tight flex items-center gap-2">
+            <div className="text-base font-medium text-text tracking-tight flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-accent inline-block" />
               <span>STAR ENTERPRISES</span>
             </div>
@@ -40,34 +40,34 @@ export function PayslipModal({ salaryRecord, isOpen, onClose }) {
         </div>
 
         {/* Employee Summary Card */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl border border-border bg-surface text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-xl border border-border bg-surface text-xs">
           <div>
             <span className="text-muted block text-[11px]">Employee Code:</span>
-            <span className="font-semibold text-text font-mono">{staff?.employee_code}</span>
+            <span className="font-medium text-text font-mono">{staff?.employee_code}</span>
           </div>
           <div>
             <span className="text-muted block text-[11px]">Employee Name:</span>
-            <span className="font-semibold text-text">{staff?.full_name}</span>
+            <span className="font-medium text-text">{staff?.full_name}</span>
           </div>
           <div>
             <span className="text-muted block text-[11px]">Designation:</span>
-            <span className="font-semibold text-text">{staff?.designation}</span>
+            <span className="font-medium text-text">{staff?.designation}</span>
           </div>
           <div>
             <span className="text-muted block text-[11px]">Assigned Store:</span>
-            <span className="font-semibold text-text">{staff?.stores?.name || 'Star Enterprises'}</span>
+            <span className="font-medium text-text">{staff?.stores?.name || 'Star Enterprises'}</span>
           </div>
         </div>
 
         {/* Salary Ledger Breakdown */}
-        <div className="border border-border rounded-2xl overflow-hidden">
+        <div className="border border-border rounded-xl overflow-hidden">
           <table className="w-full text-xs text-left">
             <thead className="bg-bg border-b border-border text-muted uppercase tracking-wider text-[10px]">
               <tr>
-                <th className="p-3 font-semibold">Earnings & Allowances</th>
-                <th className="p-3 font-semibold text-right">Amount (₹)</th>
-                <th className="p-3 font-semibold border-l border-border">Deductions</th>
-                <th className="p-3 font-semibold text-right">Amount (₹)</th>
+                <th className="p-3 font-medium">Earnings & Allowances</th>
+                <th className="p-3 font-medium text-right">Amount (₹)</th>
+                <th className="p-3 font-medium border-l border-border">Deductions</th>
+                <th className="p-3 font-medium text-right">Amount (₹)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -84,7 +84,7 @@ export function PayslipModal({ salaryRecord, isOpen, onClose }) {
                 <td className="p-3 text-right font-medium">₹0</td>
               </tr>
             </tbody>
-            <tfoot className="bg-bg font-semibold text-xs border-t border-border">
+            <tfoot className="bg-bg font-medium text-xs border-t border-border">
               <tr>
                 <td className="p-3">Gross Earnings:</td>
                 <td className="p-3 text-right">
@@ -100,10 +100,10 @@ export function PayslipModal({ salaryRecord, isOpen, onClose }) {
         </div>
 
         {/* Net Salary Summary */}
-        <div className="p-4 rounded-2xl border border-border bg-bg flex items-center justify-between flex-wrap gap-3">
+        <div className="p-4 rounded-xl border border-border bg-bg flex items-center justify-between flex-wrap gap-3">
           <div>
             <div className="text-xs text-muted">Net Disbursed Take-Home Salary:</div>
-            <div className="text-2xl font-bold tracking-tight text-text">
+            <div className="text-2xl font-medium tracking-tight text-text">
               {formatCurrency(salaryRecord.net_salary)}
             </div>
           </div>

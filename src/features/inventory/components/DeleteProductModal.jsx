@@ -39,11 +39,11 @@ export function DeleteProductModal({ product, isOpen, onClose }) {
             <AlertTriangle size={20} />
           </div>
           <div className="space-y-1 text-xs">
-            <p className="font-semibold text-text text-sm">
+            <p className="font-medium text-text text-sm">
               Are you sure you want to delete this product?
             </p>
             <p className="text-muted leading-relaxed">
-              You are about to remove <span className="font-bold text-text">"{product.name}"</span> (SKU: <span className="font-mono">{product.sku}</span>) from the active catalog.
+              You are about to remove <span className="font-medium text-text">"{product.name}"</span> (SKU: <span className="font-mono">{product.sku}</span>) from the active catalog.
             </p>
           </div>
         </div>

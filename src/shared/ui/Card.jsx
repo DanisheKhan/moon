@@ -11,7 +11,7 @@ export function Card({ as: Tag = 'div', className, children, ...rest }) {
   return (
     <Tag
       className={cn(
-        'rounded-xl border border-border bg-surface p-6 sm:p-7 text-text transition-all',
+        'rounded-xl border border-border bg-surface p-5 sm:p-6 text-text transition-all shadow-2xs',
         className
       )}
       {...rest}
