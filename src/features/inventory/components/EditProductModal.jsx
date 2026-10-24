@@ -41,7 +41,7 @@ export function EditProductModal({ product, isOpen, onClose }) {
           selling_price: sp,
           cost_price: parseFloat(costPrice) || 0,
           min_selling_price: parseFloat(minSellingPrice) || sp,
-          gst_rate: parseInt(gstRate, 10) || 18,
+          gst_rate: !isNaN(parseInt(gstRate, 10)) ? parseInt(gstRate, 10) : 18,
           reorder_level: parseInt(reorderLevel, 10) || 5,
         },
       });
@@ -127,8 +127,9 @@ export function EditProductModal({ product, isOpen, onClose }) {
             options={[
               { value: '18', label: '18% GST (Mobiles/Elec)' },
               { value: '12', label: '12% GST (Furniture)' },
-              { value: '28', label: '28% GST (Luxury)' },
               { value: '5', label: '5% GST (Accessories)' },
+              { value: '28', label: '28% GST (Luxury)' },
+              { value: '0', label: '0% GST (Nil Rated / Exempt)' },
             ]}
           />
           <Input

@@ -223,8 +223,9 @@ export function Select({
         {...rest}
       >
         <span
+          title={selectedOption ? selectedOption.label : placeholder}
           className={cn(
-            'truncate block text-left',
+            'truncate block text-left min-w-0 flex-1',
             selectedOption ? 'text-text font-medium' : 'text-muted'
           )}
         >
@@ -292,7 +293,9 @@ export function Select({
                       : 'text-text hover:bg-bg/80 hover:text-text'
                   )}
                 >
-                  <span className="truncate">{opt.label}</span>
+                  <span className="truncate min-w-0 flex-1 text-left" title={opt.label}>
+                    {opt.label}
+                  </span>
                   {isSelected && (
                     <Check size={15} className="text-text shrink-0 ml-1.5" />
                   )}

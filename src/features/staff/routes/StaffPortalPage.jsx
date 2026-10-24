@@ -219,32 +219,32 @@ export function StaffPortalPage() {
             <TableBody>
               {myLeaves.map((leave) => (
                 <TableRow key={leave.id}>
-                  <TableCell className="capitalize text-xs font-semibold text-text">
+                  <TableCell className="capitalize text-xs font-semibold text-text whitespace-nowrap">
                     {leave.leave_type} Leave
                   </TableCell>
-                  <TableCell className="text-xs text-muted">
+                  <TableCell className="text-xs text-muted whitespace-nowrap">
                     {leave.start_date} to {leave.end_date}
                   </TableCell>
-                  <TableCell className="text-xs font-semibold">{leave.total_days} d</TableCell>
-                  <TableCell className="text-xs italic text-muted max-w-xs truncate">
+                  <TableCell className="text-xs font-semibold whitespace-nowrap">{leave.total_days} d</TableCell>
+                  <TableCell className="text-xs italic text-muted max-w-xs truncate" title={leave.reason}>
                     {leave.reason}
                   </TableCell>
                   <TableCell>
                     {leave.status === 'approved' ? (
-                      <Badge variant="success" className="text-[10px]">
+                      <Badge variant="success" className="h-5 text-[10px]">
                         Approved
                       </Badge>
                     ) : leave.status === 'rejected' ? (
-                      <Badge variant="default" className="text-[10px] text-danger border-danger/30">
+                      <Badge variant="default" className="h-5 text-[10px] text-danger border-danger/30">
                         Declined
                       </Badge>
                     ) : (
-                      <Badge variant="accent" className="text-[10px]">
+                      <Badge variant="accent" className="h-5 text-[10px]">
                         Pending Review
                       </Badge>
                     )}
                   </TableCell>
-                  <TableCell className="text-xs text-muted">
+                  <TableCell className="text-xs text-muted max-w-xs truncate" title={leave.review_notes || 'Pending owner decision'}>
                     {leave.review_notes || 'Pending owner decision'}
                   </TableCell>
                 </TableRow>
@@ -280,35 +280,37 @@ export function StaffPortalPage() {
             <TableBody>
               {mySalaries.map((sal) => (
                 <TableRow key={sal.id}>
-                  <TableCell className="font-mono text-xs font-medium text-text">
+                  <TableCell className="font-mono text-xs font-medium text-text whitespace-nowrap">
                     {sal.month_year}
                   </TableCell>
-                  <TableCell className="text-xs">{formatCurrency(sal.base_salary)}</TableCell>
-                  <TableCell className="text-xs text-muted">+{formatCurrency(sal.allowances)}</TableCell>
-                  <TableCell className="text-xs text-danger">-{formatCurrency(sal.deductions)}</TableCell>
-                  <TableCell className="text-xs font-medium text-text">
+                  <TableCell className="text-xs whitespace-nowrap">{formatCurrency(sal.base_salary)}</TableCell>
+                  <TableCell className="text-xs text-muted whitespace-nowrap">+{formatCurrency(sal.allowances)}</TableCell>
+                  <TableCell className="text-xs text-danger whitespace-nowrap">-{formatCurrency(sal.deductions)}</TableCell>
+                  <TableCell className="text-xs font-medium text-text whitespace-nowrap">
                     {formatCurrency(sal.net_salary)}
                   </TableCell>
                   <TableCell>
                     {sal.payment_status === 'paid' ? (
-                      <Badge variant="success" className="text-[10px] gap-1">
+                      <Badge variant="success" className="h-5 text-[10px] gap-1">
                         <CheckCircle size={11} /> Disbursed ({sal.payment_method?.toUpperCase()})
                       </Badge>
                     ) : (
-                      <Badge variant="default" className="text-[10px] gap-1">
+                      <Badge variant="default" className="h-5 text-[10px] gap-1">
                         <Clock size={11} /> Processing
                       </Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedPayslip(sal)}
-                      className="text-xs py-1 px-2.5 gap-1.5"
-                    >
-                      <Printer size={12} /> View & Print
-                    </Button>
+                    <div className="flex items-center justify-end h-8">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedPayslip(sal)}
+                        className="h-7 py-1 px-2.5 inline-flex items-center gap-1.5 cursor-pointer text-xs"
+                      >
+                        <Printer size={12} /> View & Print
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

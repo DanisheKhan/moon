@@ -7,7 +7,6 @@ import {
   LayoutGrid,
   CreditCard,
   Package,
-  Users,
   BarChart3,
   Settings,
   Menu,
@@ -55,7 +54,6 @@ export function AdminConsoleLayout() {
   const isDashboardActive = path === basePath || path === `${basePath}/` || path === `${basePath}/dashboard`;
   const isBillingActive = path.startsWith(`${basePath}/billing`) || path.includes('/invoices');
   const isInventoryActive = path.startsWith(`${basePath}/inventory`);
-  const isStaffActive = path.startsWith(`${basePath}/staff`);
   const isReportsActive = path.startsWith(`${basePath}/reports`);
   const isSettingsActive = path.startsWith(`${basePath}/settings`);
 
@@ -157,20 +155,7 @@ export function AdminConsoleLayout() {
               <span>Inventory</span>
             </Link>
 
-            {/* 4. Staff Tab */}
-            <Link
-              to={`${basePath}/staff`}
-              onClick={handleNavClick}
-              className={cn(
-                'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs transition-colors',
-                isStaffActive
-                  ? 'bg-sidebar-active text-sidebar-active-fg font-medium border border-sidebar-border shadow-2xs'
-                  : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
-              )}
-            >
-              <Users size={16} className="shrink-0" />
-              <span>Staff</span>
-            </Link>
+
 
             {/* 5. Reports Tab */}
             <Link

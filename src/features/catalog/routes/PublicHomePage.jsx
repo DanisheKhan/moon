@@ -29,16 +29,19 @@ export function PublicHomePage() {
   const { addToCart } = useCart();
   const { data: allProducts = [], isLoading } = usePublicProducts();
 
-  // Unique categories derived from current products
+  // Unique categories derived from current products and scoped to selected store
   const availableCategories = useMemo(() => {
     const map = new Map();
     allProducts.forEach((p) => {
+      if (selectedStore !== 'all' && p.stores?.code !== selectedStore) {
+        return;
+      }
       if (p.categories?.slug && p.categories?.name) {
         map.set(p.categories.slug, p.categories.name);
       }
     });
     return Array.from(map.entries()).map(([slug, name]) => ({ slug, name }));
-  }, [allProducts]);
+  }, [allProducts, selectedStore]);
 
   // Instant local filtering without network round trips
   const products = useMemo(() => {
@@ -253,12 +256,12 @@ export function PublicHomePage() {
                         {isMobiles ? 'Star Mobiles' : 'Furniture & Electronics'}
                       </Badge>
                       {isAvailable ? (
-                        <Badge variant="success" className="text-[10px]">
-                          {inStockQty > 2 ? 'In Stock' : `Only ${inStockQty} Left`}
+                        <Badge variant={inStockQty < 2 ? 'danger' : 'success'} className="text-[10px]">
+                          In Stock ({inStockQty})
                         </Badge>
                       ) : (
-                        <Badge variant="default" className="text-[10px]">
-                          On Order
+                        <Badge variant="danger" className="text-[10px]">
+                          Out of Stock
                         </Badge>
                       )}
                     </div>

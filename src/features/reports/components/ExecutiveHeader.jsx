@@ -1,4 +1,4 @@
-import { Download, RefreshCw, Printer, Building2 } from 'lucide-react';
+import { RefreshCw, Building2 } from 'lucide-react';
 
 const DATE_RANGES = [
   { id: 'today', label: 'Today' },
@@ -82,26 +82,6 @@ export function ExecutiveHeader({
         >
           <RefreshCw size={13} className={isFetching ? 'animate-spin text-accent' : ''} />
           <span className="hidden sm:inline">Refresh</span>
-        </button>
-
-        {/* Print GSTR-1 / Statement */}
-        <button
-          type="button"
-          onClick={() => window.print()}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-border bg-surface text-text hover:bg-bg cursor-pointer transition-colors"
-        >
-          <Printer size={13} />
-          <span className="hidden sm:inline">Print GSTR-1</span>
-        </button>
-
-        {/* Export Statement */}
-        <button
-          type="button"
-          onClick={() => window.print()}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-border bg-surface text-text hover:bg-bg cursor-pointer transition-colors"
-        >
-          <Download size={13} />
-          <span>Export</span>
         </button>
       </div>
     </div>

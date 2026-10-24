@@ -42,11 +42,11 @@ export function LiveTransactionsFeed({ invoices = [] }) {
               return (
                 <div
                   key={inv.id}
-                  className="py-2.5 flex items-center justify-between gap-3 text-xs min-w-0"
+                  className="h-14 min-h-14 flex items-center justify-between gap-3 text-xs min-w-0"
                 >
                   <div className="min-w-0 space-y-0.5">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <Badge variant="default" className="text-[10px] px-1.5 py-0 shrink-0 font-normal">
+                    <div className="flex items-center gap-1.5 flex-nowrap">
+                      <Badge variant="default" className="h-5 text-[10px] px-1.5 py-0 shrink-0 font-normal inline-flex items-center">
                         {isMobiles ? 'Mobiles' : 'Furniture'}
                       </Badge>
                       <span className="font-mono font-medium text-text truncate">

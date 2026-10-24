@@ -3,6 +3,102 @@ import { getProductImageUrl, FALLBACK_PRODUCTS } from '@/features/catalog';
 
 const INVENTORY_CACHE_PREFIX = 'star_inv_prods_';
 
+export const STORE_UUID_MAP = {
+  mobiles: '83a779be-95ac-4b81-9c96-9589dfb7df38',
+  'store-1': '83a779be-95ac-4b81-9c96-9589dfb7df38',
+  '83a779be-95ac-4b81-9c96-9589dfb7df38': '83a779be-95ac-4b81-9c96-9589dfb7df38',
+  'furniture-electronics': '098552f2-915e-4b58-ad03-96fc66ec2c29',
+  'store-2': '098552f2-915e-4b58-ad03-96fc66ec2c29',
+  '098552f2-915e-4b58-ad03-96fc66ec2c29': '098552f2-915e-4b58-ad03-96fc66ec2c29',
+};
+
+export function resolveStoreUuid(storeIdOrCode) {
+  if (!storeIdOrCode) return null;
+  return STORE_UUID_MAP[storeIdOrCode] || storeIdOrCode;
+}
+
+/**
+ * Lists all active categories for a store (or all stores if storeId not passed)
+ * @param {string} [storeId]
+ */
+export async function listCategoriesByStore(storeId) {
+  const resolvedId = resolveStoreUuid(storeId);
+  try {
+    let query = supabase
+      .from('categories')
+      .select('id, store_id, name, slug, hsn_code, is_active, created_at')
+      .eq('is_active', true)
+      .order('name');
+
+    if (resolvedId) {
+      query = query.eq('store_id', resolvedId);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return data || [];
+  } catch (err) {
+    console.warn('Network error listing categories, returning empty list:', err);
+    return [];
+  }
+}
+
+/**
+ * Creates a custom category in Supabase
+ * @param {{ storeId: string, name: string, hsnCode?: string }} param0
+ */
+export async function createCategory({ storeId, name, hsnCode = '' }) {
+  const resolvedId = resolveStoreUuid(storeId);
+  if (!resolvedId) {
+    throw new Error('Valid Store ID is required to create a category.');
+  }
+  const trimmedName = (name || '').trim();
+  if (!trimmedName) {
+    throw new Error('Category name cannot be empty.');
+  }
+
+  const baseSlug = trimmedName
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  const slug = baseSlug || `cat-${Date.now()}`;
+
+  const { data, error } = await supabase
+    .from('categories')
+    .insert({
+      store_id: resolvedId,
+      name: trimmedName,
+      slug,
+      hsn_code: hsnCode ? hsnCode.trim() : null,
+      is_active: true,
+    })
+    .select('id, store_id, name, slug, hsn_code, is_active, created_at')
+    .single();
+
+  if (error) {
+    // If slug collision, append unique suffix
+    if (error.code === '23505') {
+      const fallbackSlug = `${slug}-${Math.floor(100 + Math.random() * 900)}`;
+      const { data: retryData, error: retryError } = await supabase
+        .from('categories')
+        .insert({
+          store_id: resolvedId,
+          name: trimmedName,
+          slug: fallbackSlug,
+          hsn_code: hsnCode ? hsnCode.trim() : null,
+          is_active: true,
+        })
+        .select('id, store_id, name, slug, hsn_code, is_active, created_at')
+        .single();
+      if (retryError) throw retryError;
+      return retryData;
+    }
+    throw error;
+  }
+  return data;
+}
+
 export function getCachedStoreProducts(storeId) {
   if (!storeId) return null;
   try {
@@ -115,9 +211,10 @@ export async function checkSerialAvailability(serialNumber) {
  * Creates a new product
  */
 export async function createProduct(payload) {
+  const storeId = resolveStoreUuid(payload.store_id) || payload.store_id;
   const { data, error } = await supabase
     .from('products')
-    .insert([payload])
+    .insert([{ ...payload, store_id: storeId }])
     .select('id, store_id, name, sku, selling_price')
     .single();
 

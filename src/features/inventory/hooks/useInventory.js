@@ -10,12 +10,15 @@ import {
   listAllProducts,
   updateProduct,
   deleteProduct,
+  listCategoriesByStore,
+  createCategory,
 } from '../api/inventory.api';
 
 export const inventoryKeys = {
   all: ['inventory'],
   products: (storeId, filters) => [...inventoryKeys.all, 'products', storeId, filters],
   units: (storeId, productId, status) => [...inventoryKeys.all, 'units', storeId, productId, status],
+  categories: (storeId) => [...inventoryKeys.all, 'categories', storeId],
 };
 
 export function useProducts(storeId, filters = {}) {
@@ -102,6 +105,24 @@ export function useDeleteProduct() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
+    },
+  });
+}
+
+export function useCategories(storeId) {
+  return useQuery({
+    queryKey: inventoryKeys.categories(storeId),
+    queryFn: () => listCategoriesByStore(storeId),
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useCreateCategory() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createCategory,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
     },

@@ -85,7 +85,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'staff',
-        element: <StaffManagementPage />,
+        element: <Navigate to="../dashboard" replace />,
       },
       {
         path: 'reports',

@@ -59,38 +59,45 @@ export function InvoicesListPage() {
           <TableBody>
             {invoices.map((inv) => (
               <TableRow key={inv.id}>
-                <TableCell className="font-mono text-xs font-medium">
+                <TableCell className="font-mono text-xs font-medium whitespace-nowrap">
                   {inv.invoice_number}
                 </TableCell>
-                <TableCell className="text-xs text-muted">
+                <TableCell className="text-xs text-muted whitespace-nowrap">
                   {formatDate(inv.created_at)}
                 </TableCell>
                 <TableCell>
-                  <div className="font-medium text-text">{inv.customer_name}</div>
+                  <div className="font-medium text-text truncate max-w-48 leading-tight" title={inv.customer_name}>
+                    {inv.customer_name}
+                  </div>
                   {inv.customer_phone && (
-                    <div className="text-xs text-muted">{inv.customer_phone}</div>
+                    <div className="text-xs text-muted truncate max-w-48 leading-tight" title={inv.customer_phone}>
+                      {inv.customer_phone}
+                    </div>
                   )}
                 </TableCell>
-                <TableCell>{formatCurrency(inv.subtotal)}</TableCell>
-                <TableCell>
+                <TableCell className="whitespace-nowrap">{formatCurrency(inv.subtotal)}</TableCell>
+                <TableCell className="whitespace-nowrap">
                   {formatCurrency((inv.cgst_amount || 0) + (inv.sgst_amount || 0))}
                 </TableCell>
-                <TableCell className="font-medium text-text">
+                <TableCell className="font-medium text-text whitespace-nowrap">
                   {formatCurrency(inv.grand_total)}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={inv.status === 'paid' ? 'success' : 'danger'}>
+                  <Badge variant={inv.status === 'paid' ? 'success' : 'danger'} className="h-5">
                     {inv.status}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setSelectedInvoiceId(inv.id)}
-                  >
-                    <Eye size={14} /> View
-                  </Button>
+                  <div className="flex items-center justify-end h-8">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 py-1 px-2.5 inline-flex items-center gap-1.5 cursor-pointer"
+                      onClick={() => setSelectedInvoiceId(inv.id)}
+                    >
+                      <Eye size={14} /> View
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

@@ -46,7 +46,7 @@ export function TableBody({ className, children, ...rest }) {
 
 export function TableRow({ className, children, ...rest }) {
   return (
-    <tr className={cn('hover:bg-bg/40 transition-colors', className)} {...rest}>
+    <tr className={cn('h-14 min-h-14 hover:bg-bg/40 transition-colors', className)} {...rest}>
       {children}
     </tr>
   );
@@ -54,7 +54,7 @@ export function TableRow({ className, children, ...rest }) {
 
 export function TableCell({ className, children, ...rest }) {
   return (
-    <td className={cn('px-3.5 sm:px-4 py-3 align-middle font-normal', className)} {...rest}>
+    <td className={cn('px-3.5 sm:px-4 py-2.5 align-middle font-normal', className)} {...rest}>
       {children}
     </td>
   );
@@ -62,7 +62,7 @@ export function TableCell({ className, children, ...rest }) {
 
 export function TableHeaderCell({ className, children, ...rest }) {
   return (
-    <th className={cn('px-3.5 sm:px-4 py-3 align-middle font-medium whitespace-nowrap', className)} {...rest}>
+    <th className={cn('h-11 px-3.5 sm:px-4 py-0 align-middle font-medium whitespace-nowrap', className)} {...rest}>
       {children}
     </th>
   );

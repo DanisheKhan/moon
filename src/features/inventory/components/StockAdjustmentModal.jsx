@@ -69,7 +69,11 @@ function StockAdjustmentForm({ product, storeId, onClose }) {
             Tracking Mode
           </span>
           <Badge variant="outline" className="text-xs">
-            {product.is_serialized ? 'Serialized (Unique IMEI)' : 'Standard Batch'}
+            {product.is_serialized
+              ? (product?.stores?.code === 'mobiles' || storeId === '83a779be-95ac-4b81-9c96-9589dfb7df38' || storeId === 'store-1')
+                ? 'Serialized (Unique IMEI)'
+                : 'Serialized (Serial No.)'
+              : 'Standard Batch'}
           </Badge>
         </div>
       </div>

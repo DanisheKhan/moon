@@ -5,6 +5,7 @@ export { EditPricingModal } from './components/EditPricingModal';
 export { EditProductModal } from './components/EditProductModal';
 export { DeleteProductModal } from './components/DeleteProductModal';
 export { AddProductModal } from './components/AddProductModal';
+export { AddCategoryModal } from './components/AddCategoryModal';
 export {
   useProducts,
   useProductUnits,
@@ -15,6 +16,8 @@ export {
   useAllProducts,
   useUpdateProduct,
   useDeleteProduct,
+  useCategories,
+  useCreateCategory,
   inventoryKeys,
 } from './hooks/useInventory';
 export {
@@ -28,5 +31,7 @@ export {
   updateProduct,
   deleteProduct,
   listAllProducts,
+  listCategoriesByStore,
+  createCategory,
 } from './api/inventory.api';
 

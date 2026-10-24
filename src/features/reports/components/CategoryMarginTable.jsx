@@ -31,13 +31,13 @@ export function CategoryMarginTable({ categories = [] }) {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-bg/60 border-b border-border text-[11px] font-semibold text-muted uppercase tracking-wider">
-              <tr>
-                <th className="py-3 px-4">Product Category</th>
-                <th className="py-3 px-4 text-center">Units Sold</th>
-                <th className="py-3 px-4 text-right">Gross Revenue</th>
-                <th className="py-3 px-4 text-right">Cost of Goods (COGS)</th>
-                <th className="py-3 px-4 text-right">Gross Profit (₹)</th>
-                <th className="py-3 px-4 text-center">Margin %</th>
+              <tr className="h-11">
+                <th className="px-4 py-0 align-middle">Product Category</th>
+                <th className="px-4 py-0 align-middle text-center">Units Sold</th>
+                <th className="px-4 py-0 align-middle text-right">Gross Revenue</th>
+                <th className="px-4 py-0 align-middle text-right">Cost of Goods (COGS)</th>
+                <th className="px-4 py-0 align-middle text-right">Gross Profit (₹)</th>
+                <th className="px-4 py-0 align-middle text-center">Margin %</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -51,28 +51,28 @@ export function CategoryMarginTable({ categories = [] }) {
                 }
 
                 return (
-                  <tr key={cat.slug} className="hover:bg-bg/40 transition-colors">
-                    <td className="py-3 px-4">
-                      <div className="font-medium text-text">{cat.name}</div>
-                      <div className="text-[10px] text-muted font-mono">{cat.slug}</div>
+                  <tr key={cat.slug} className="h-14 min-h-14 hover:bg-bg/40 transition-colors">
+                    <td className="px-4 py-2.5 align-middle">
+                      <div className="font-medium text-text leading-tight">{cat.name}</div>
+                      <div className="text-[10px] text-muted font-mono leading-tight">{cat.slug}</div>
                     </td>
-                    <td className="py-3 px-4 text-center font-mono text-text">
+                    <td className="px-4 py-2.5 align-middle text-center font-mono text-text">
                       {cat.units}
                     </td>
-                    <td className="py-3 px-4 text-right font-medium text-text">
-                      <div>{formatCurrency(cat.revenue)}</div>
-                      <div className="text-[10px] text-muted font-mono">
+                    <td className="px-4 py-2.5 align-middle text-right font-medium text-text">
+                      <div className="leading-tight">{formatCurrency(cat.revenue)}</div>
+                      <div className="text-[10px] text-muted font-mono leading-tight">
                         {(cat.revenueShare || (totalRevenue > 0 ? (cat.revenue / totalRevenue) * 100 : 0)).toFixed(1)}% share
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-right font-mono text-muted">
+                    <td className="px-4 py-2.5 align-middle text-right font-mono text-muted">
                       {formatCurrency(cat.cogs)}
                     </td>
-                    <td className="py-3 px-4 text-right font-medium text-text">
+                    <td className="px-4 py-2.5 align-middle text-right font-medium text-text">
                       {formatCurrency(cat.profit)}
                     </td>
-                    <td className="py-3 px-4 text-center">
-                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border ${badgeClass}`}>
+                    <td className="px-4 py-2.5 align-middle text-center">
+                      <span className={`inline-flex items-center justify-center h-5 px-2 py-0 rounded text-[10px] font-semibold border ${badgeClass}`}>
                         {margin.toFixed(1)}%
                       </span>
                     </td>
@@ -82,14 +82,14 @@ export function CategoryMarginTable({ categories = [] }) {
             </tbody>
             {/* Total Row */}
             <tfoot className="bg-bg/60 border-t border-border font-semibold text-text">
-              <tr>
-                <td className="py-3 px-4 uppercase text-[11px] tracking-wider">Consolidated Total</td>
-                <td className="py-3 px-4 text-center font-mono">{totalUnits} units</td>
-                <td className="py-3 px-4 text-right">{formatCurrency(totalRevenue)}</td>
-                <td className="py-3 px-4 text-right font-mono text-muted">{formatCurrency(totalCogs)}</td>
-                <td className="py-3 px-4 text-right text-emerald-600">{formatCurrency(totalProfit)}</td>
-                <td className="py-3 px-4 text-center">
-                  <span className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/15 text-emerald-600 border border-emerald-500/40">
+              <tr className="h-14 min-h-14">
+                <td className="px-4 py-2.5 align-middle uppercase text-[11px] tracking-wider">Consolidated Total</td>
+                <td className="px-4 py-2.5 align-middle text-center font-mono">{totalUnits} units</td>
+                <td className="px-4 py-2.5 align-middle text-right">{formatCurrency(totalRevenue)}</td>
+                <td className="px-4 py-2.5 align-middle text-right font-mono text-muted">{formatCurrency(totalCogs)}</td>
+                <td className="px-4 py-2.5 align-middle text-right text-emerald-600">{formatCurrency(totalProfit)}</td>
+                <td className="px-4 py-2.5 align-middle text-center">
+                  <span className="inline-flex items-center justify-center h-5 px-2 py-0 rounded text-[10px] font-semibold bg-emerald-500/15 text-emerald-600 border border-emerald-500/40">
                     {overallMargin.toFixed(1)}% avg
                   </span>
                 </td>

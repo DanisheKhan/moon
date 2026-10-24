@@ -190,7 +190,7 @@ export const FALLBACK_PRODUCTS = [
     selling_price: 34999,
     mrp: 44999,
     gst_rate: 12,
-    is_serialized: true,
+    is_serialized: false,
     description: 'Ergonomic manual reclining 3-seater sofa with high density foam and suede upholstery.',
     specs: {
       dimensions: '210cm W x 90cm D x 95cm H',

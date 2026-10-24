@@ -326,9 +326,15 @@ export function StoreDashboardPage() {
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                        {item.currentStock} {item.currentStock === 1 ? 'unit left' : 'units left'}
-                      </span>
+                      {item.currentStock <= 0 ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-danger/10 text-danger border border-danger/20">
+                          Out of Stock
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                          {item.currentStock} {item.currentStock === 1 ? 'unit left' : 'units left'}
+                        </span>
+                      )}
                       <div className="text-[10px] text-muted mt-0.5">
                         Min Reorder: {item.reorderLevel}
                       </div>

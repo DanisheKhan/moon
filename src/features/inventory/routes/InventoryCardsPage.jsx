@@ -7,6 +7,8 @@ import {
   EditProductModal,
   DeleteProductModal,
   StockAdjustmentModal,
+  useCategories,
+  AddCategoryModal,
 } from '@/features/inventory';
 import { formatCurrency } from '@/shared/lib/format';
 import {
@@ -16,6 +18,7 @@ import {
   Package,
   CheckCircle2,
   AlertCircle,
+  FolderPlus,
 } from 'lucide-react';
 
 export function InventoryCardsPage() {
@@ -29,12 +32,14 @@ export function InventoryCardsPage() {
 
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null);
   const [productToDelete, setProductToDelete] = useState(null);
   const [productToAdjust, setProductToAdjust] = useState(null);
 
   // Strictly isolate products to selected store
   const { data: allProds = [], isLoading } = useAllProducts();
+  const { data: dbCategories = [] } = useCategories(storeId);
 
   const rawProducts = useMemo(() => {
     return allProds.filter((p) => {
@@ -62,16 +67,25 @@ export function InventoryCardsPage() {
     });
   }, [allProds, storeCode, storeId]);
 
-  // Derive categories
+  // Derive categories combining Supabase database categories and product categories
   const categories = useMemo(() => {
     const map = new Map();
+    // 1. All categories saved in DB for this store
+    dbCategories.forEach((c) => {
+      if (c.id && c.name) {
+        map.set(c.id, c.name);
+      }
+    });
+    // 2. Any active product categories
     rawProducts.forEach((p) => {
-      if (p.categories?.id) {
+      if (p.categories?.id && p.categories?.name) {
         map.set(p.categories.id, p.categories.name);
       }
     });
-    return Array.from(map.entries()).map(([id, name]) => ({ value: id, label: name }));
-  }, [rawProducts]);
+    return Array.from(map.entries())
+      .map(([id, name]) => ({ value: id, label: name }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [dbCategories, rawProducts]);
 
   // Filter products
   const filteredProducts = useMemo(() => {
@@ -110,14 +124,25 @@ export function InventoryCardsPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setIsAddModalOpen(true)}
-          className="inline-flex items-center gap-2 bg-text text-bg hover:opacity-90 font-medium text-xs sm:text-sm px-4 py-2 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs"
-        >
-          <Plus size={16} />
-          <span>+ Add new Product</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsAddCategoryModalOpen(true)}
+            className="inline-flex items-center gap-1.5 bg-surface hover:bg-bg border border-border text-text font-medium text-xs sm:text-sm px-3.5 py-2 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs"
+          >
+            <FolderPlus size={15} />
+            <span>+ Add Category</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsAddModalOpen(true)}
+            className="inline-flex items-center gap-2 bg-text text-bg hover:opacity-90 font-medium text-xs sm:text-sm px-4 py-2 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs"
+          >
+            <Plus size={16} />
+            <span>+ Add new Product</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter Ribbon */}
@@ -137,9 +162,16 @@ export function InventoryCardsPage() {
             options={[
               { value: '', label: 'All Categories' },
               ...categories,
+              { value: '__add_category__', label: '+ Add Custom Category...' },
             ]}
             value={selectedCategoryId}
-            onChange={(e) => setSelectedCategoryId(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value === '__add_category__') {
+                setIsAddCategoryModalOpen(true);
+              } else {
+                setSelectedCategoryId(e.target.value);
+              }
+            }}
           />
         </div>
       </div>
@@ -186,12 +218,12 @@ export function InventoryCardsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredProducts.map((prod) => {
             const qtyOnHand = prod.inventory?.[0]?.quantity_on_hand ?? 0;
-            const isLowStock = qtyOnHand <= (prod.reorder_level || 5);
+            const isOutOfStock = qtyOnHand <= 0;
 
             return (
               <div
                 key={prod.id}
-                className="group rounded-xl border border-border bg-surface p-4 flex flex-col justify-between hover:border-text/40 transition-all select-none space-y-4 shadow-2xs"
+                className="group rounded-xl border border-border bg-surface p-4 flex flex-col justify-between hover:border-text/40 transition-all select-none space-y-4 shadow-2xs h-full"
               >
                 {/* Card Top: Image & Status Badges */}
                 <div className="space-y-3">
@@ -215,12 +247,16 @@ export function InventoryCardsPage() {
 
                     {/* Stock status badge overlay */}
                     <div className="absolute top-2.5 right-2.5">
-                      {isLowStock ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-danger/10 text-danger border border-danger/20">
-                          <AlertCircle size={10} /> Low ({qtyOnHand})
+                      {isOutOfStock ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-surface text-danger border border-danger/30 shadow-2xs">
+                          <AlertCircle size={10} /> Out of Stock
+                        </span>
+                      ) : qtyOnHand < 2 ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-surface text-danger border border-danger/30 shadow-2xs">
+                          <AlertCircle size={10} /> In Stock ({qtyOnHand})
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-surface text-emerald-600 border border-emerald-500/30 shadow-2xs">
                           <CheckCircle2 size={10} /> In Stock ({qtyOnHand})
                         </span>
                       )}
@@ -307,10 +343,23 @@ export function InventoryCardsPage() {
       )}
 
       {/* Modals */}
+      <AddCategoryModal
+        storeId={storeId}
+        storeName={currentStore?.name || (storeCode === 'mobiles' ? 'Star Mobiles' : 'Star Furniture & Electronics')}
+        isOpen={isAddCategoryModalOpen}
+        onClose={() => setIsAddCategoryModalOpen(false)}
+        onSuccess={(newCat) => {
+          if (newCat?.id) {
+            setSelectedCategoryId(newCat.id);
+          }
+        }}
+      />
+
       <AddProductModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         storeId={storeId}
+        storeCode={storeCode}
       />
 
       {productToEdit && (

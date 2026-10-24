@@ -158,7 +158,7 @@ export function POSPage() {
           sku: product.sku,
           hsn_code: product.hsn_code || '8517',
           selling_price: parseFloat(product.selling_price) || 0,
-          gst_rate: parseFloat(product.gst_rate) || 18,
+          gst_rate: !isNaN(parseFloat(product.gst_rate)) ? parseFloat(product.gst_rate) : 18,
           is_serialized: false,
           serial_number: null,
           quantity: 1,
@@ -207,7 +207,7 @@ export function POSPage() {
         sku: pendingProduct.sku,
         hsn_code: pendingProduct.hsn_code || (store.code === 'mobiles' ? '8517' : '9401'),
         selling_price: parseFloat(pendingProduct.selling_price) || 0,
-        gst_rate: parseFloat(pendingProduct.gst_rate) || 18,
+        gst_rate: !isNaN(parseFloat(pendingProduct.gst_rate)) ? parseFloat(pendingProduct.gst_rate) : 18,
         is_serialized: true,
         serial_number: unit.serial_number,
         condition_grade: unit.condition_grade,
@@ -520,7 +520,7 @@ export function POSPage() {
                   disabled={!inStock}
                   onClick={() => handleAddProduct(prod)}
                   className={cn(
-                    'group rounded-lg border border-border bg-bg p-3 flex flex-col justify-between text-left transition-all cursor-pointer min-w-0 select-none shadow-2xs',
+                    'group rounded-lg border border-border bg-bg p-3 flex flex-col justify-between text-left transition-all cursor-pointer min-w-0 select-none shadow-2xs h-36',
                     inStock
                       ? 'hover:border-text/40 hover:bg-surface'
                       : 'opacity-50 cursor-not-allowed bg-bg/50'
@@ -652,13 +652,13 @@ export function POSPage() {
                   </TableCell>
 
                   <TableCell>
-                    <div className="font-medium text-text text-xs leading-snug">
+                    <div className="font-medium text-text text-xs leading-tight truncate max-w-64" title={item.name}>
                       {item.name}
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-[10px] text-muted font-mono">{item.sku}</span>
                       {item.serial_number && (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[10px] font-mono bg-bg border border-border text-text">
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[10px] font-mono bg-bg border border-border text-text shrink-0">
                           <CheckCircle size={10} className="text-emerald-600" />
                           SN: {item.serial_number}
                           {item.condition_grade && <span>({item.condition_grade})</span>}
@@ -857,11 +857,17 @@ export function POSPage() {
           setIsUnitSelectorOpen(false);
           setPendingProduct(null);
         }}
-        title={`Select Serial Unit / IMEI - ${pendingProduct?.name}`}
+        title={
+          store?.code === 'mobiles'
+            ? `Select Device IMEI - ${pendingProduct?.name}`
+            : `Select Unit Serial Number - ${pendingProduct?.name}`
+        }
       >
         <div className="space-y-4">
           <p className="text-xs text-muted">
-            This product is serialized. Please select the specific unit from available in-store inventory:
+            {store?.code === 'mobiles'
+              ? 'This mobile device requires IMEI registration. Please select the specific unit from in-store inventory:'
+              : 'This electronic appliance is serialized. Please select the specific unit from in-store inventory:'}
           </p>
 
           {unitsLoading ? (

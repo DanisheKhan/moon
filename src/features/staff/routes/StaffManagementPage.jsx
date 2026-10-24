@@ -86,7 +86,7 @@ export function StaffManagementPage() {
   }
 
   return (
-    <div className="space-y-6 min-w-0">
+    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6 min-w-0">
       <Seo
         title="Staff Management System & Payroll | Star Enterprises"
         description="Comprehensive HRMS for staff directory, leave approvals, and monthly salary disbursement."
@@ -193,7 +193,7 @@ export function StaffManagementPage() {
           {staffLoading ? (
             <div className="py-16 text-center text-muted">Loading staff profiles...</div>
           ) : staffList.length === 0 ? (
-            <div className="py-16 text-center border border-border rounded-2xl bg-surface space-y-2">
+            <div className="py-16 text-center border border-border rounded-xl bg-surface space-y-2">
               <Users size={32} className="mx-auto text-muted" />
               <p className="text-sm font-semibold text-text">No staff profiles registered yet</p>
               <Button
@@ -224,24 +224,24 @@ export function StaffManagementPage() {
                   <TableRow key={emp.id}>
                     <TableCell className="font-mono text-xs font-medium">{emp.employee_code}</TableCell>
                     <TableCell>
-                      <div className="font-medium text-text text-xs">{emp.full_name}</div>
-                      <div className="text-[10px] text-muted">{emp.department}</div>
+                      <div className="font-medium text-text text-xs truncate max-w-44" title={emp.full_name}>{emp.full_name}</div>
+                      <div className="text-[10px] text-muted truncate max-w-44">{emp.department}</div>
                     </TableCell>
                     <TableCell>
-                      <div className="text-xs font-medium text-text">{emp.designation}</div>
-                      <Badge variant="default" className="text-[10px] py-0 px-1.5 mt-0.5 font-medium">
+                      <div className="text-xs font-medium text-text truncate max-w-44">{emp.designation}</div>
+                      <Badge variant="default" className="text-[10px] py-0 px-1.5 mt-0.5 font-medium shrink-0">
                         {emp.stores?.name || 'All Stores'}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="text-xs text-text">{emp.phone}</div>
-                      <div className="text-[10px] text-muted font-mono">{emp.email}</div>
+                      <div className="text-xs text-text truncate max-w-44">{emp.phone}</div>
+                      <div className="text-[10px] text-muted font-mono truncate max-w-44">{emp.email}</div>
                     </TableCell>
                     <TableCell>
                       <div className="font-medium text-xs text-text">
                         {formatCurrency(emp.base_salary)}
                       </div>
-                      <div className="text-[11px] text-muted font-mono font-normal">
+                      <div className="text-[10px] text-muted font-mono font-normal">
                         {formatCurrency(Math.round(Number(emp.base_salary || 0) / 30))}/day
                       </div>
                     </TableCell>
@@ -250,21 +250,21 @@ export function StaffManagementPage() {
                     </TableCell>
                     <TableCell>
                       {emp.status === 'active' ? (
-                        <Badge variant="success" className="text-[10px] font-medium">
+                        <Badge variant="success" className="text-[10px] h-5 font-medium">
                           Active
                         </Badge>
                       ) : emp.status === 'on_leave' ? (
-                        <Badge variant="accent" className="text-[10px] font-medium">
+                        <Badge variant="accent" className="text-[10px] h-5 font-medium">
                           On Leave
                         </Badge>
                       ) : (
-                        <Badge variant="default" className="text-[10px] font-medium">
+                        <Badge variant="default" className="text-[10px] h-5 font-medium">
                           Inactive
                         </Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1.5">
+                      <div className="flex items-center justify-end gap-1.5 h-8">
                         <Button
                           variant="outline"
                           size="sm"
@@ -272,7 +272,7 @@ export function StaffManagementPage() {
                             setGrantStaffTarget(emp);
                             setIsGrantLeaveOpen(true);
                           }}
-                          className="text-xs py-1 px-2.5 gap-1 text-accent border-accent/40 hover:border-accent rounded-lg font-medium"
+                          className="text-xs py-1 px-2.5 h-7 gap-1 text-accent border-accent/40 hover:border-accent rounded-lg font-medium cursor-pointer"
                           title="Grant Leave & Deduct Salary"
                         >
                           <Calendar size={12} /> Leave
@@ -284,7 +284,7 @@ export function StaffManagementPage() {
                             setStaffToEdit(emp);
                             setIsStaffModalOpen(true);
                           }}
-                          className="text-xs py-1 px-2.5 rounded-lg font-medium"
+                          className="text-xs py-1 px-2.5 h-7 rounded-lg font-medium cursor-pointer"
                         >
                           Edit
                         </Button>
@@ -295,7 +295,7 @@ export function StaffManagementPage() {
                             const newStatus = emp.status === 'active' ? 'inactive' : 'active';
                             updateStatusMutation.mutate({ staffId: emp.id, status: newStatus });
                           }}
-                          className="text-xs py-1 px-2.5 text-muted hover:text-text rounded-lg font-medium"
+                          className="text-xs py-1 px-2.5 h-7 text-muted hover:text-text rounded-lg font-medium cursor-pointer"
                         >
                           {emp.status === 'active' ? 'Deactivate' : 'Activate'}
                         </Button>
@@ -404,20 +404,20 @@ export function StaffManagementPage() {
                         {l.start_date} to {l.end_date}
                       </TableCell>
                       <TableCell className="text-xs font-semibold">{l.total_days} d</TableCell>
-                      <TableCell className="text-xs italic text-muted max-w-xs truncate">
+                      <TableCell className="text-xs italic text-muted max-w-xs truncate" title={l.reason}>
                         {l.reason}
                       </TableCell>
                       <TableCell>
                         {l.status === 'approved' ? (
-                          <Badge variant="success" className="text-[10px]">
+                          <Badge variant="success" className="text-[10px] h-5 font-medium">
                             Approved
                           </Badge>
                         ) : l.status === 'rejected' ? (
-                          <Badge variant="default" className="text-[10px] text-danger border-danger/30">
+                          <Badge variant="default" className="text-[10px] h-5 text-danger border-danger/30 font-medium">
                             Rejected
                           </Badge>
                         ) : (
-                          <Badge variant="accent" className="text-[10px]">
+                          <Badge variant="accent" className="text-[10px] h-5 font-medium">
                             Pending
                           </Badge>
                         )}
@@ -469,10 +469,10 @@ export function StaffManagementPage() {
                 {salaries.map((sal) => (
                   <TableRow key={sal.id}>
                     <TableCell>
-                      <div className="font-semibold text-xs text-text">{sal.staff_profiles?.full_name}</div>
+                      <div className="font-semibold text-xs text-text truncate max-w-40" title={sal.staff_profiles?.full_name}>{sal.staff_profiles?.full_name}</div>
                       <div className="text-[10px] text-muted font-mono">{sal.staff_profiles?.employee_code}</div>
                     </TableCell>
-                    <TableCell className="text-xs text-muted">{sal.staff_profiles?.designation}</TableCell>
+                    <TableCell className="text-xs text-muted truncate max-w-36">{sal.staff_profiles?.designation}</TableCell>
                     <TableCell>
                       <div className="text-xs font-medium text-text">{formatCurrency(sal.base_salary)}</div>
                       <div className="text-[10px] text-muted font-mono">{formatCurrency(Math.round(Number(sal.base_salary || 0) / 30))}/day</div>
@@ -481,7 +481,7 @@ export function StaffManagementPage() {
                     <TableCell>
                       <div className="text-xs text-danger font-medium">-{formatCurrency(sal.deductions)}</div>
                       {sal.notes && (
-                        <div className="text-[10px] text-muted max-w-xs leading-normal mt-0.5" title={sal.notes}>
+                        <div className="text-[10px] text-muted truncate max-w-44 leading-tight" title={sal.notes}>
                           {sal.notes}
                         </div>
                       )}
@@ -491,17 +491,17 @@ export function StaffManagementPage() {
                     </TableCell>
                     <TableCell>
                       {sal.payment_status === 'paid' ? (
-                        <Badge variant="success" className="text-[10px] gap-1">
-                          <CheckCircle size={11} /> Paid ({sal.payment_method?.toLowerCase() === 'bank_transfer' ? 'Bank Transfer' : sal.payment_method?.toUpperCase()})
+                        <Badge variant="success" className="text-[10px] h-5 gap-1 shrink-0 whitespace-nowrap">
+                          <CheckCircle size={11} /> Paid ({sal.payment_method?.toLowerCase() === 'bank_transfer' ? 'Bank' : sal.payment_method?.toUpperCase()})
                         </Badge>
                       ) : (
-                        <Badge variant="default" className="text-[10px] gap-1">
+                        <Badge variant="default" className="text-[10px] h-5 gap-1 shrink-0 whitespace-nowrap">
                           <Clock size={11} /> Unpaid
                         </Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1.5">
+                      <div className="flex items-center justify-end gap-1.5 h-8">
                         {sal.payment_status !== 'paid' && (
                           <Button
                             variant="solid"
@@ -510,7 +510,7 @@ export function StaffManagementPage() {
                               setSalaryToPay(sal);
                               setTransRef(`TXN-STAR-${Math.floor(1000 + Math.random() * 9000)}`);
                             }}
-                            className="text-xs py-1 px-2.5"
+                            className="text-xs py-1 px-2.5 h-7 cursor-pointer"
                           >
                             Mark Paid
                           </Button>
@@ -519,7 +519,7 @@ export function StaffManagementPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => setSelectedPayslip(sal)}
-                          className="text-xs py-1 px-2.5 gap-1"
+                          className="text-xs py-1 px-2.5 h-7 gap-1 cursor-pointer"
                         >
                           <Printer size={12} /> Payslip
                         </Button>

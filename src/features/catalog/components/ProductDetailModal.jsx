@@ -45,12 +45,12 @@ export function ProductDetailModal({ product, isOpen, onClose }) {
 
           <div className="flex items-center gap-2">
             {isAvailable ? (
-              <Badge variant="success" className="text-xs">
+              <Badge variant={inStockQty < 2 ? 'danger' : 'success'} className="text-xs">
                 In Stock ({inStockQty} units)
               </Badge>
             ) : (
-              <Badge variant="default" className="text-xs">
-                Available on Order
+              <Badge variant="danger" className="text-xs">
+                Out of Stock
               </Badge>
             )}
             <Badge variant="accent" className="text-xs">

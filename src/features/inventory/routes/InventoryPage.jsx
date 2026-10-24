@@ -200,7 +200,6 @@ export function InventoryPage() {
             ) : (
               filteredProducts.map((prod) => {
                 const qtyOnHand = prod.inventory?.[0]?.quantity_on_hand ?? 0;
-                const isLowStock = qtyOnHand <= prod.reorder_level;
 
                 return (
                   <TableRow key={prod.id}>
@@ -221,30 +220,40 @@ export function InventoryPage() {
                           </div>
                         )}
                       <div className="min-w-0">
-                        <div className="font-semibold text-text truncate">{prod.name}</div>
-                        <div className="text-xs text-muted font-mono">{prod.sku}</div>
+                        <div className="font-semibold text-text truncate max-w-48 leading-tight" title={prod.name}>
+                          {prod.name}
+                        </div>
+                        <div className="text-xs text-muted font-mono leading-tight">{prod.sku}</div>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="text-sm font-medium text-text">{prod.categories?.name || 'Unassigned'}</div>
+                    <div className="text-sm font-medium text-text truncate max-w-36 leading-tight">
+                      {prod.categories?.name || 'Unassigned'}
+                    </div>
                     {prod.brands?.name && prod.brands.name !== '-' && (
-                      <div className="text-xs text-muted font-normal mt-0.5">{prod.brands.name}</div>
+                      <div className="text-xs text-muted font-normal mt-0.5 truncate max-w-36 leading-tight">
+                        {prod.brands.name}
+                      </div>
                     )}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <div className="font-semibold">{formatCurrency(prod.selling_price)}</div>
                     <div className="text-xs text-muted">GST {prod.gst_rate}%</div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <span className="font-semibold">{qtyOnHand}</span>
-                      {isLowStock ? (
-                        <Badge variant="danger" className="text-xs">
-                          Low Stock
+                      {qtyOnHand <= 0 ? (
+                        <Badge variant="danger" className="h-5 text-xs">
+                          Out of Stock
+                        </Badge>
+                      ) : qtyOnHand < 2 ? (
+                        <Badge variant="danger" className="h-5 text-xs">
+                          In Stock
                         </Badge>
                       ) : (
-                        <Badge variant="success" className="text-xs">
+                        <Badge variant="success" className="h-5 text-xs">
                           In Stock
                         </Badge>
                       )}
@@ -252,15 +261,15 @@ export function InventoryPage() {
                   </TableCell>
                   <TableCell>
                     {prod.is_serialized ? (
-                      <Badge variant="accent">
+                      <Badge variant="accent" className="h-5">
                         Serialized ({store.code === 'mobiles' ? 'IMEI' : 'Serial'})
                       </Badge>
                     ) : (
-                      <Badge variant="default">Quantity Batch</Badge>
+                      <Badge variant="default" className="h-5">Quantity Batch</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="inline-flex items-center justify-end gap-1.5 flex-nowrap whitespace-nowrap">
+                    <div className="inline-flex items-center justify-end gap-1.5 flex-nowrap whitespace-nowrap h-8">
                       {prod.is_serialized ? (
                         <>
                           <Button
@@ -270,7 +279,7 @@ export function InventoryPage() {
                               setSelectedProduct(prod);
                               setIsUnitModalOpen(true);
                             }}
-                            className="text-xs py-1 px-2.5 gap-1 cursor-pointer hover:bg-bg"
+                            className="h-7 text-xs py-1 px-2.5 gap-1 cursor-pointer hover:bg-bg"
                             title="View Serial / IMEI Units"
                           >
                             <Eye size={12} /> Units
@@ -282,7 +291,7 @@ export function InventoryPage() {
                               setSelectedProduct(prod);
                               setIsAddUnitOpen(true);
                             }}
-                            className="text-xs py-1 px-2.5 gap-1 cursor-pointer"
+                            className="h-7 text-xs py-1 px-2.5 gap-1 cursor-pointer"
                             title="Add Single Serialized Unit"
                           >
                             <Plus size={12} /> Unit
@@ -291,7 +300,7 @@ export function InventoryPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => setProductToEditPrice(prod)}
-                            className="text-xs py-1 px-2.5 gap-1 cursor-pointer hover:bg-bg"
+                            className="h-7 text-xs py-1 px-2.5 gap-1 cursor-pointer hover:bg-bg"
                             title="Edit price & GST"
                           >
                             <Tag size={12} /> Price
@@ -303,7 +312,7 @@ export function InventoryPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => setProductToAdjust(prod)}
-                            className="text-xs py-1 px-2.5 gap-1 cursor-pointer hover:bg-bg"
+                            className="h-7 text-xs py-1 px-2.5 gap-1 cursor-pointer hover:bg-bg"
                             title="Adjust physical stock quantity"
                           >
                             <Sliders size={12} /> Stock
@@ -312,7 +321,7 @@ export function InventoryPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => setProductToEditPrice(prod)}
-                            className="text-xs py-1 px-2.5 gap-1 cursor-pointer hover:bg-bg"
+                            className="h-7 text-xs py-1 px-2.5 gap-1 cursor-pointer hover:bg-bg"
                             title="Edit price & GST"
                           >
                             <Tag size={12} /> Price

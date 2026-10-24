@@ -134,7 +134,7 @@ begin
 
     insert into public.products (store_id, category_id, brand_id, name, slug, sku, is_serialized, cost_price, selling_price, min_selling_price, gst_rate, hsn_code, reorder_level, specs, description, image_url)
     values
-      (v_fe_id, v_cat_furniture, null, '3-Seater Fabric Recliner Sofa', '3-seater-fabric-recliner-sofa', 'FUR-SOFA-3S-GRY', true, 24000, 34999, 30000, 12, '9401', 1, '{"dimensions": "210cm x 90cm x 95cm", "material": "Premium Suede Fabric", "color": "Slate Grey", "assembly_required": true}'::jsonb, 'Ergonomic manual reclining 3-seater sofa with high density foam.', '/images/products/recliner-sofa.jpg')
+      (v_fe_id, v_cat_furniture, null, '3-Seater Fabric Recliner Sofa', '3-seater-fabric-recliner-sofa', 'FUR-SOFA-3S-GRY', false, 24000, 34999, 30000, 12, '9401', 1, '{"dimensions": "210cm x 90cm x 95cm", "material": "Premium Suede Fabric", "color": "Slate Grey", "assembly_required": true}'::jsonb, 'Ergonomic manual reclining 3-seater sofa with high density foam.', '/images/products/recliner-sofa.jpg')
     on conflict (store_id, sku) do nothing
     returning id into v_prod_sofa;
 

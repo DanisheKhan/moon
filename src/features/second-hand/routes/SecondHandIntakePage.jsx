@@ -141,30 +141,33 @@ export function SecondHandIntakePage() {
             {intakes.map((intake) => (
               <TableRow key={intake.id}>
                 <TableCell>
-                  <div className="font-medium text-text">{intake.seller_name}</div>
-                  <div className="text-xs text-muted">
+                  <div className="font-medium text-text truncate max-w-44 leading-tight" title={intake.seller_name}>
+                    {intake.seller_name}
+                  </div>
+                  <div className="text-xs text-muted truncate max-w-44 leading-tight" title={`${intake.seller_phone} (${intake.seller_id_type.toUpperCase()})`}>
                     {intake.seller_phone} ({intake.seller_id_type.toUpperCase()})
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="font-medium">
+                  <div className="font-medium truncate max-w-44 leading-tight" title={`${intake.brand_name} ${intake.model_name}`}>
                     {intake.brand_name} {intake.model_name}
                   </div>
-                  <div className="text-xs text-muted">{formatDate(intake.created_at)}</div>
+                  <div className="text-xs text-muted whitespace-nowrap">{formatDate(intake.created_at)}</div>
                 </TableCell>
-                <TableCell className="font-mono text-xs font-medium">
+                <TableCell className="font-mono text-xs font-medium whitespace-nowrap">
                   {intake.imei}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={intake.calculated_grade === 'A+' ? 'success' : 'default'}>
+                  <Badge variant={intake.calculated_grade === 'A+' ? 'success' : 'default'} className="h-5">
                     Grade {intake.calculated_grade}
                   </Badge>
                 </TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium whitespace-nowrap">
                   {formatCurrency(intake.agreed_price)}
                 </TableCell>
                 <TableCell>
                   <Badge
+                    className="h-5"
                     variant={
                       intake.status === 'added_to_stock'
                         ? 'success'
@@ -183,13 +186,16 @@ export function SecondHandIntakePage() {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setSelectedIntake(intake)}
-                  >
-                    <FileText size={14} /> Receipt
-                  </Button>
+                  <div className="flex items-center justify-end h-8">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 py-1 px-2.5 inline-flex items-center gap-1.5 cursor-pointer"
+                      onClick={() => setSelectedIntake(intake)}
+                    >
+                      <FileText size={14} /> Receipt
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

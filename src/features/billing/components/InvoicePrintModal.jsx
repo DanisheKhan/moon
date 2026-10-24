@@ -176,11 +176,11 @@ export function InvoicePrintModal({ isOpen, onClose, invoiceDetail }) {
                 </td>
                 <td className="border border-black p-1.5 text-right">
                   <div>{formatCurrency(item.cgst_amount || 0, true)}</div>
-                  <div className="text-[9px] text-gray-600">{(Number(item.gst_rate || 18) / 2).toFixed(1)}%</div>
+                  <div className="text-[9px] text-gray-600">{(Number(item.gst_rate ?? 18) / 2).toFixed(1)}%</div>
                 </td>
                 <td className="border border-black p-1.5 text-right">
                   <div>{formatCurrency(item.sgst_amount || 0, true)}</div>
-                  <div className="text-[9px] text-gray-600">{(Number(item.gst_rate || 18) / 2).toFixed(1)}%</div>
+                  <div className="text-[9px] text-gray-600">{(Number(item.gst_rate ?? 18) / 2).toFixed(1)}%</div>
                 </td>
                 <td className="border border-black p-1.5 text-right font-bold">
                   {formatCurrency(item.total_amount, true)}

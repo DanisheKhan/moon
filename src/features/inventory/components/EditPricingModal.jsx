@@ -39,7 +39,7 @@ function EditPricingForm({ product, onClose }) {
         sellingPrice: sp,
         costPrice: cp,
         minSellingPrice: minSp,
-        gstRate: parseInt(gstRate, 10) || 18,
+        gstRate: !isNaN(parseInt(gstRate, 10)) ? parseInt(gstRate, 10) : 18,
       });
       onClose();
     } catch (err) {
@@ -122,8 +122,9 @@ function EditPricingForm({ product, onClose }) {
           options={[
             { value: '18', label: '18% GST (Mobiles & Electronics)' },
             { value: '12', label: '12% GST (Furniture & Apparel)' },
-            { value: '28', label: '28% GST (Luxury Goods / ACs)' },
             { value: '5', label: '5% GST (Standard Accessories)' },
+            { value: '28', label: '28% GST (Luxury Goods / ACs)' },
+            { value: '0', label: '0% GST (Nil Rated / Exempt)' },
           ]}
         />
       </div>
