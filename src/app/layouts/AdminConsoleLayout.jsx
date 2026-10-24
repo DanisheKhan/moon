@@ -8,12 +8,8 @@ import {
   CreditCard,
   Package,
   Users,
-  CalendarCheck,
-  ShieldCheck,
   BarChart3,
   Settings,
-  LogOut,
-  ChevronDown,
   Menu,
   X,
   Store,
@@ -24,7 +20,7 @@ export function AdminConsoleLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { storeCode: paramStoreCode } = useParams();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const { data: stores = [] } = useStores();
 
   // Mobile drawer open state
@@ -33,11 +29,6 @@ export function AdminConsoleLayout() {
   // Determine current active store
   const currentStoreCode = paramStoreCode || stores[0]?.code || 'mobiles';
   const { data: currentStore } = useStore(currentStoreCode);
-
-  // Staff dropdown accordion state
-  const isStaffRoute = location.pathname.includes('/staff');
-  const [userToggledStaff, setUserToggledStaff] = useState(null);
-  const isStaffMenuOpen = userToggledStaff !== null ? userToggledStaff : isStaffRoute || true;
 
   // Live real-time digital clock (e.g. 11:52)
   const [currentTime, setCurrentTime] = useState('');
@@ -64,9 +55,7 @@ export function AdminConsoleLayout() {
   const isDashboardActive = path === basePath || path === `${basePath}/` || path === `${basePath}/dashboard`;
   const isBillingActive = path.startsWith(`${basePath}/billing`) || path.includes('/invoices');
   const isInventoryActive = path.startsWith(`${basePath}/inventory`);
-  const isStaffDirectoryActive = path === `${basePath}/staff`;
-  const isAttendanceActive = path === `${basePath}/staff/attendance`;
-  const isRolesActive = path === `${basePath}/staff/roles`;
+  const isStaffActive = path.startsWith(`${basePath}/staff`);
   const isReportsActive = path.startsWith(`${basePath}/reports`);
   const isSettingsActive = path.startsWith(`${basePath}/settings`);
 
@@ -93,13 +82,13 @@ export function AdminConsoleLayout() {
       {/* SIDE DRAWER - Cohesive Light Theme matching Website Canvas */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 w-64 bg-sidebar-bg text-sidebar-text flex flex-col justify-between transition-transform duration-200 ease-in-out border-r border-sidebar-border select-none',
+          'fixed inset-y-0 left-0 z-50 w-64 bg-sidebar-bg text-sidebar-text flex flex-col justify-between transition-transform duration-200 ease-in-out border-r border-border select-none',
           isMobileDrawerOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >
         {/* Top Header & Brand */}
         <div className="flex flex-col">
-          <div className="p-5 flex items-center justify-between border-b border-sidebar-border">
+          <div className="h-16 px-5 flex items-center justify-between border-b border-border">
             <Link to={basePath} className="flex items-center gap-3 min-w-0">
               <div className="w-8 h-8 rounded-lg bg-text text-bg font-medium flex items-center justify-center text-xs shadow-2xs shrink-0">
                 SE
@@ -168,82 +157,25 @@ export function AdminConsoleLayout() {
               <span>Inventory</span>
             </Link>
 
-            {/* 4. Staff Tab (Accordion with Attendance & Roles Permissions) */}
-            <div className="space-y-1" onClick={(e) => e.stopPropagation()}>
-              <button
-                type="button"
-                onClick={() => setUserToggledStaff(!isStaffMenuOpen)}
-                className={cn(
-                  'w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs transition-colors cursor-pointer text-left',
-                  isStaffRoute && !isStaffMenuOpen
-                    ? 'bg-sidebar-surface text-sidebar-active-fg font-medium'
-                    : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <Users size={16} className="shrink-0" />
-                  <span>Staff</span>
-                </div>
-                <ChevronDown
-                  size={14}
-                  className={cn(
-                    'transition-transform duration-200 text-sidebar-text',
-                    isStaffMenuOpen && 'rotate-180 text-sidebar-active-fg'
-                  )}
-                />
-              </button>
-
-              {/* Sub-menu: Staff Directory, Attendance, Roles & Permissions */}
-              {isStaffMenuOpen && (
-                <div className="pl-4 pr-1 space-y-1 py-1">
-                  {/* Staff Directory */}
-                  <Link
-                    to={`${basePath}/staff`}
-                    className={cn(
-                      'flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors',
-                      isStaffDirectoryActive
-                        ? 'bg-sidebar-active text-sidebar-active-fg font-medium border border-sidebar-border shadow-2xs'
-                        : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
-                    )}
-                  >
-                    <Users size={14} className="shrink-0" />
-                    <span>Staff Directory</span>
-                  </Link>
-
-                  {/* Attendance Sub-tab */}
-                  <Link
-                    to={`${basePath}/staff/attendance`}
-                    className={cn(
-                      'flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors',
-                      isAttendanceActive
-                        ? 'bg-sidebar-active text-sidebar-active-fg font-medium border border-sidebar-border shadow-2xs'
-                        : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
-                    )}
-                  >
-                    <CalendarCheck size={14} className="shrink-0" />
-                    <span>Attendance</span>
-                  </Link>
-
-                  {/* Roles & Permissions Sub-tab */}
-                  <Link
-                    to={`${basePath}/staff/roles`}
-                    className={cn(
-                      'flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors',
-                      isRolesActive
-                        ? 'bg-sidebar-active text-sidebar-active-fg font-medium border border-sidebar-border shadow-2xs'
-                        : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
-                    )}
-                  >
-                    <ShieldCheck size={14} className="shrink-0" />
-                    <span>Roles & Permissions</span>
-                  </Link>
-                </div>
+            {/* 4. Staff Tab */}
+            <Link
+              to={`${basePath}/staff`}
+              onClick={handleNavClick}
+              className={cn(
+                'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs transition-colors',
+                isStaffActive
+                  ? 'bg-sidebar-active text-sidebar-active-fg font-medium border border-sidebar-border shadow-2xs'
+                  : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-normal'
               )}
-            </div>
+            >
+              <Users size={16} className="shrink-0" />
+              <span>Staff</span>
+            </Link>
 
             {/* 5. Reports Tab */}
             <Link
               to={`${basePath}/reports`}
+              onClick={handleNavClick}
               className={cn(
                 'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs transition-colors',
                 isReportsActive
@@ -258,6 +190,7 @@ export function AdminConsoleLayout() {
             {/* 6. Settings Tab */}
             <Link
               to={`${basePath}/settings`}
+              onClick={handleNavClick}
               className={cn(
                 'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs transition-colors',
                 isSettingsActive
@@ -269,31 +202,6 @@ export function AdminConsoleLayout() {
               <span>Settings</span>
             </Link>
           </nav>
-        </div>
-
-        {/* Bottom Profile Section */}
-        <div className="p-4 border-t border-sidebar-border space-y-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20 shrink-0" />
-            <div className="min-w-0">
-              <div className="text-[10px] font-medium uppercase tracking-wider text-muted">
-                OWNER / ADMIN
-              </div>
-              <div className="text-xs font-medium text-text truncate">{userName}</div>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={async () => {
-              await signOut();
-              navigate('/');
-            }}
-            className="flex items-center gap-2 text-xs font-normal text-muted hover:text-text transition-colors cursor-pointer w-full text-left"
-          >
-            <LogOut size={13} />
-            <span>Sign out</span>
-          </button>
         </div>
       </aside>
 

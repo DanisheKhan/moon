@@ -14,8 +14,7 @@ import {
   Package,
   ArrowRight,
   PlusCircle,
-  CalendarCheck,
-  ShieldCheck,
+  Users,
   BarChart3,
   Calendar,
   Building,
@@ -387,16 +386,16 @@ export function StoreDashboardPage() {
 
               <button
                 type="button"
-                onClick={() => navigate(`/admin/${effectiveStoreCode}/staff/attendance`)}
+                onClick={() => navigate(`/admin/${effectiveStoreCode}/inventory`)}
                 className="w-full p-3 rounded-lg border border-border bg-bg/40 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-7 h-7 rounded-lg bg-surface border border-border flex items-center justify-center text-text shrink-0">
-                    <CalendarCheck size={14} />
+                    <Package size={14} />
                   </div>
                   <div>
-                    <div className="text-xs font-medium text-text">Staff Attendance</div>
-                    <div className="text-[10px] text-muted">Punch logs, shifts & presence tracking</div>
+                    <div className="text-xs font-medium text-text">Store Inventory & Stock</div>
+                    <div className="text-[10px] text-muted">Stock tracking, price & intake register</div>
                   </div>
                 </div>
                 <ArrowRight size={13} className="text-muted group-hover:text-text group-hover:translate-x-0.5 transition-all" />
@@ -404,16 +403,16 @@ export function StoreDashboardPage() {
 
               <button
                 type="button"
-                onClick={() => navigate(`/admin/${effectiveStoreCode}/staff/roles`)}
+                onClick={() => navigate(`/admin/${effectiveStoreCode}/staff`)}
                 className="w-full p-3 rounded-lg border border-border bg-bg/40 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-7 h-7 rounded-lg bg-surface border border-border flex items-center justify-center text-text shrink-0">
-                    <ShieldCheck size={14} />
+                    <Users size={14} />
                   </div>
                   <div>
-                    <div className="text-xs font-medium text-text">Roles & Permissions</div>
-                    <div className="text-[10px] text-muted">Cashier, manager & staff access gates</div>
+                    <div className="text-xs font-medium text-text">Staff & Payroll Management</div>
+                    <div className="text-[10px] text-muted">Staff directory, roles & salary processing</div>
                   </div>
                 </div>
                 <ArrowRight size={13} className="text-muted group-hover:text-text group-hover:translate-x-0.5 transition-all" />

@@ -13,8 +13,6 @@ const ConsoleSettingsPage = lazy(() => import('@/features/launcher').then((m) =>
 const OwnerDashboardPage = lazy(() => import('@/features/reports').then((m) => ({ default: m.OwnerDashboardPage })));
 const ReportsConsolePage = lazy(() => import('@/features/reports').then((m) => ({ default: m.ReportsConsolePage })));
 const StaffManagementPage = lazy(() => import('@/features/staff').then((m) => ({ default: m.StaffManagementPage })));
-const StaffAttendancePage = lazy(() => import('@/features/staff').then((m) => ({ default: m.StaffAttendancePage })));
-const RolesPermissionsPage = lazy(() => import('@/features/staff').then((m) => ({ default: m.RolesPermissionsPage })));
 const POSPage = lazy(() => import('@/features/billing').then((m) => ({ default: m.POSPage })));
 const InvoicesListPage = lazy(() => import('@/features/billing').then((m) => ({ default: m.InvoicesListPage })));
 const InventoryCardsPage = lazy(() => import('@/features/inventory').then((m) => ({ default: m.InventoryCardsPage })));
@@ -89,20 +87,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'staff',
-        children: [
-          {
-            index: true,
-            element: <StaffManagementPage />,
-          },
-          {
-            path: 'attendance',
-            element: <StaffAttendancePage />,
-          },
-          {
-            path: 'roles',
-            element: <RolesPermissionsPage />,
-          },
-        ],
+        element: <StaffManagementPage />,
       },
       {
         path: 'reports',
