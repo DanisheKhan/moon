@@ -6,11 +6,9 @@ import { AdminConsoleLayout } from './layouts/AdminConsoleLayout';
 const PublicHomePage = lazy(() => import('@/features/catalog').then((m) => ({ default: m.PublicHomePage })));
 const LoginPage = lazy(() => import('@/features/auth').then((m) => ({ default: m.LoginPage })));
 const LauncherPage = lazy(() => import('@/features/launcher').then((m) => ({ default: m.LauncherPage })));
-const OwnerOverviewPage = lazy(() => import('@/features/launcher').then((m) => ({ default: m.OwnerOverviewPage })));
 const OperationsDashboardPage = lazy(() => import('@/features/launcher').then((m) => ({ default: m.OperationsDashboardPage })));
 const StoreDashboardPage = lazy(() => import('@/features/launcher').then((m) => ({ default: m.StoreDashboardPage })));
 const ConsoleSettingsPage = lazy(() => import('@/features/launcher').then((m) => ({ default: m.ConsoleSettingsPage })));
-const OwnerDashboardPage = lazy(() => import('@/features/reports').then((m) => ({ default: m.OwnerDashboardPage })));
 const ReportsConsolePage = lazy(() => import('@/features/reports').then((m) => ({ default: m.ReportsConsolePage })));
 const StaffManagementPage = lazy(() => import('@/features/staff').then((m) => ({ default: m.StaffManagementPage })));
 const POSPage = lazy(() => import('@/features/billing').then((m) => ({ default: m.POSPage })));
@@ -37,11 +35,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'admin/overview',
-        element: <OwnerOverviewPage />,
+        element: <Navigate to="/admin/staff" replace />,
       },
       {
         path: 'admin/all',
-        element: <OwnerDashboardPage />,
+        element: <Navigate to="/admin/staff" replace />,
       },
       {
         path: 'admin/staff',

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Container, Card, Button, Input, Badge } from '@/shared/ui';
+import { Card, Button, Input, Badge } from '@/shared/ui';
 import { Seo } from '@/shared/seo';
 import { useAuth } from '../hooks/useAuth';
 import { getErrorMessage } from '@/shared/lib/errors';
@@ -44,7 +44,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="py-12 sm:py-16 min-w-0">
+    <div className="min-h-[calc(100dvh-3.5rem)] flex flex-col justify-center py-8 sm:py-12 min-w-0">
       <Seo
         title="Store Owner Portal Login | Star Enterprises"
         description="Secure authentication portal for Star Enterprises store owner administration."
@@ -52,7 +52,7 @@ export function LoginPage() {
         noindex
       />
 
-      <Container size="sm" className="space-y-6">
+      <div className="w-full max-w-md mx-auto px-4 sm:px-6 space-y-6 min-w-0">
         {/* Back Link */}
         <Link
           to="/"
@@ -69,15 +69,15 @@ export function LoginPage() {
           <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
             Store Owner Portal
           </h1>
-          <p className="text-xs sm:text-sm text-muted max-w-sm mx-auto">
+          <p className="text-xs sm:text-sm text-muted leading-relaxed">
             Sign in with your store owner credentials to access full business operations, POS terminals, inventory, and management systems.
           </p>
         </div>
 
         {/* Main Login Card */}
-        <Card className="p-6 sm:p-8 space-y-5">
+        <Card className="p-6 sm:p-8 space-y-5 shadow-2xs">
           {error && (
-            <div className="rounded-2xl border border-danger/30 bg-danger/10 p-3 text-xs text-danger">
+            <div className="rounded-xl border border-danger/30 bg-danger/10 p-3 text-xs text-danger">
               {error}
             </div>
           )}
@@ -124,11 +124,11 @@ export function LoginPage() {
 
             <div className="space-y-2 text-xs">
               {/* Owner Quick Button */}
-              <div className="p-3 border border-border rounded-xl bg-bg flex items-center justify-between gap-2 min-w-0">
+              <div className="p-3 border border-border rounded-xl bg-bg flex items-center justify-between gap-3 min-w-0 transition-colors hover:border-text/30">
                 <div className="min-w-0">
                   <div className="font-semibold text-text flex items-center gap-1.5 truncate">
                     <Shield size={14} className="text-text shrink-0" />
-                    <span>Store Owner (Full Business Access)</span>
+                    <span className="truncate">Store Owner (Full Business Access)</span>
                   </div>
                   <div className="text-[11px] text-muted font-mono truncate">
                     owner@starenterprises.com
@@ -146,7 +146,13 @@ export function LoginPage() {
             </div>
           </div>
         </Card>
-      </Container>
+
+        {/* Security Notice */}
+        <div className="text-center text-[11px] text-muted flex items-center justify-center gap-1.5 pt-1">
+          <Shield size={12} className="shrink-0" />
+          <span>Encrypted Session • Star Enterprises Management Console</span>
+        </div>
+      </div>
     </div>
   );
 }

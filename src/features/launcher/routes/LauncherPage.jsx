@@ -4,7 +4,7 @@ import { useStores } from '@/features/stores';
 import { useOwnerDashboard } from '@/features/reports';
 import { formatCurrency } from '@/shared/lib/format';
 import { StorePickerCard } from '../components/StorePickerCard';
-import { Users, Layers, BarChart3, TrendingUp, Receipt, ShieldCheck } from 'lucide-react';
+import { Users, TrendingUp, Receipt, ShieldCheck } from 'lucide-react';
 
 function sortOwnerStores(stores) {
   const rank = (store) => {
@@ -109,20 +109,12 @@ export function LauncherPage() {
         </div>
       )}
 
-      {/* Bottom 3 Utility Buttons (Proportional & Sized Cleanly) */}
+      {/* Enterprise Management Utilities */}
       <div className="pt-2 flex flex-col items-center gap-2.5">
         <div className="text-[10px] font-medium text-muted uppercase tracking-wider">
           Enterprise Management Utilities
         </div>
-        <div className="flex flex-wrap items-center justify-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => navigate('/admin/overview')}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-surface hover:bg-bg text-xs font-medium text-text transition-colors cursor-pointer shadow-2xs"
-          >
-            <BarChart3 size={14} className="text-muted shrink-0" />
-            <span>Network overview</span>
-          </button>
+        <div className="flex items-center justify-center">
           <button
             type="button"
             onClick={() => navigate('/admin/staff')}
@@ -130,14 +122,6 @@ export function LauncherPage() {
           >
             <Users size={14} className="text-muted shrink-0" />
             <span>Staff management</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/admin/all')}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-surface hover:bg-bg text-xs font-medium text-text transition-colors cursor-pointer shadow-2xs"
-          >
-            <Layers size={14} className="text-muted shrink-0" />
-            <span>Master ledger</span>
           </button>
         </div>
       </div>
