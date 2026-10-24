@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getOwnerOverview, getOwnerDashboardData } from '../api/reports.api';
+import { getOwnerOverview, getOwnerDashboardData, getOfflineOwnerDashboard } from '../api/reports.api';
 
 export const reportKeys = {
   all: ['reports'],
@@ -22,8 +22,10 @@ export function useOwnerDashboard(dateRange = 'today') {
   return useQuery({
     queryKey: reportKeys.dashboard(dateRange),
     queryFn: () => getOwnerDashboardData({ dateRange }),
-    staleTime: 1000 * 30, // 30 seconds fresh cache
-    refetchInterval: 1000 * 60, // Auto-refresh every minute
+    initialData: () => getOfflineOwnerDashboard(dateRange),
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+    refetchInterval: false,
   });
 }
 

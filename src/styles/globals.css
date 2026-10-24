@@ -8,18 +8,28 @@
 html {
   -webkit-text-size-adjust: 100%;
   overflow-y: scroll;
+  overflow-x: hidden;
   background-color: var(--bg);
-}
-
-/* Modern sleek custom scrollbars - zero highlighting or gutter artifacts */
-* {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--text) 22%, transparent) transparent;
 }
 
+/* Custom scrollbar styling: vertical only, zero horizontal artifacts */
 ::-webkit-scrollbar {
   width: 6px;
-  height: 6px;
+  height: 0px !important;
+}
+
+::-webkit-scrollbar:horizontal,
+::-webkit-scrollbar-thumb:horizontal,
+::-webkit-scrollbar-track:horizontal,
+::-webkit-scrollbar-corner {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 ::-webkit-scrollbar-track {
@@ -38,10 +48,18 @@ html {
 body {
   margin: 0;
   min-height: 100dvh;
+  overflow-x: hidden;
+  max-width: 100vw;
   overflow-wrap: break-word;
   background-color: var(--bg);
   color: var(--text);
   font-family: var(--font);
+}
+
+#root {
+  min-height: 100dvh;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 img, video, svg, canvas {

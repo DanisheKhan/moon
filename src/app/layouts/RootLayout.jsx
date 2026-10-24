@@ -179,7 +179,7 @@ export function RootLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-bg text-text flex flex-col font-sans">
+    <div className="min-h-screen bg-bg text-text flex flex-col font-sans overflow-x-hidden">
       {/* Top Application Bar */}
       <header className="border-b border-border bg-surface sticky top-0 z-40">
         <Container size="xl" className="h-14 flex items-center justify-between gap-4">
@@ -310,23 +310,6 @@ export function RootLayout() {
 
       {/* Cart Drawer for Public Browsing */}
       {isPublicPage && <CartDrawer />}
-
-      {/* Global Minimal Footer */}
-      <footer className="border-t border-border py-6 bg-surface text-center text-xs text-muted no-print min-w-0">
-        <Container size="xl" className="space-y-2">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-muted">
-            <span>© 2026 Star Enterprises • Mobiles, Electronics & Modern Furniture</span>
-            <div className="flex items-center gap-4">
-              <Link to="/" className="hover:text-text transition-colors">
-                Public Store
-              </Link>
-              <Link to="/login" className="hover:text-text transition-colors font-medium">
-                Store Owner Portal
-              </Link>
-            </div>
-          </div>
-        </Container>
-      </footer>
     </div>
   );
 }

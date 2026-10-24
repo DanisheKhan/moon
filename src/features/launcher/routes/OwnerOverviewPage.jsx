@@ -97,7 +97,7 @@ export function OwnerOverviewPage() {
         </div>
       </div>
 
-      {isLoading ? (
+      {isLoading && !dashboardData ? (
         <div className="py-20 text-center space-y-3">
           <div className="w-8 h-8 rounded-full border-2 border-accent border-t-transparent animate-spin mx-auto" />
           <p className="text-xs text-muted">

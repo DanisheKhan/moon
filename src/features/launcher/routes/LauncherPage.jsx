@@ -1,10 +1,8 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Button } from '@/shared/ui';
-import { useStores, createOwnerStore } from '@/features/stores';
+import { useStores } from '@/features/stores';
 import { StorePickerCard } from '../components/StorePickerCard';
-import { CreateStoreModal } from '../components/CreateStoreModal';
-import { Plus, Users, Layers, BarChart3 } from 'lucide-react';
+import { Users, Layers, BarChart3 } from 'lucide-react';
 
 function sortOwnerStores(stores) {
   const rank = (store) => {
@@ -17,15 +15,9 @@ function sortOwnerStores(stores) {
 
 export function LauncherPage() {
   const navigate = useNavigate();
-  const { data: stores = [], isLoading, refetch } = useStores();
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const { data: stores = [], isLoading } = useStores();
 
   const ownerStores = sortOwnerStores(stores.filter((s) => s.is_active !== false));
-
-  function handleCreate(payload) {
-    createOwnerStore(payload);
-    refetch();
-  }
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 space-y-8 min-w-0">
@@ -50,7 +42,7 @@ export function LauncherPage() {
           <p className="text-xs text-muted">Loading your stores...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 min-w-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 min-w-0">
           {ownerStores.map((store) => (
             <StorePickerCard
               key={store.id}
@@ -58,22 +50,6 @@ export function LauncherPage() {
               onOpen={() => navigate(`/admin/${store.code}`)}
             />
           ))}
-
-          <button
-            type="button"
-            onClick={() => setIsCreateOpen(true)}
-            className="min-h-80 rounded-xl border border-dashed border-border bg-surface/60 p-6 flex flex-col items-center justify-center gap-3 text-center cursor-pointer transition-colors hover:border-text/40 hover:bg-surface min-w-0"
-          >
-            <div className="w-12 h-12 rounded-xl border border-border bg-bg flex items-center justify-center text-text">
-              <Plus size={22} />
-            </div>
-            <div className="space-y-1 min-w-0">
-              <h2 className="text-lg font-semibold tracking-tight text-text">Create new store</h2>
-              <p className="text-sm text-muted max-w-xs">
-                Register another branch with GSTIN, manager, city, and location.
-              </p>
-            </div>
-          </button>
         </div>
       )}
 
@@ -106,12 +82,6 @@ export function LauncherPage() {
           Master ledger
         </Button>
       </div>
-
-      <CreateStoreModal
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        onCreate={handleCreate}
-      />
     </div>
   );
 }
