@@ -4,7 +4,7 @@ import { getOwnerOverview, getOwnerDashboardData, getOfflineOwnerDashboard } fro
 export const reportKeys = {
   all: ['reports'],
   owner: () => [...reportKeys.all, 'owner-overview'],
-  dashboard: (dateRange) => [...reportKeys.all, 'owner-dashboard', dateRange],
+  dashboard: (dateRange, storeCode = 'all') => [...reportKeys.all, 'owner-dashboard', dateRange, storeCode],
 };
 
 export function useOwnerOverview() {
@@ -16,16 +16,19 @@ export function useOwnerOverview() {
 
 /**
  * Hook to retrieve full command center metrics for the Store Owner
- * @param {'today' | 'week' | 'month' | 'all'} [dateRange]
+ * Supports both object params ({ dateRange, storeCode }) and legacy string dateRange
+ * @param {string | { dateRange?: 'today' | 'week' | 'month' | 'all', storeCode?: 'all' | 'mobiles' | 'furniture-electronics' }} [options]
  */
-export function useOwnerDashboard(dateRange = 'today') {
+export function useOwnerDashboard(options = 'month') {
+  const params = typeof options === 'string' ? { dateRange: options, storeCode: 'all' } : { dateRange: 'month', storeCode: 'all', ...options };
+  const { dateRange, storeCode } = params;
+
   return useQuery({
-    queryKey: reportKeys.dashboard(dateRange),
-    queryFn: () => getOwnerDashboardData({ dateRange }),
-    initialData: () => getOfflineOwnerDashboard(dateRange),
+    queryKey: reportKeys.dashboard(dateRange, storeCode),
+    queryFn: () => getOwnerDashboardData({ dateRange, storeCode }),
+    initialData: () => getOfflineOwnerDashboard(dateRange, storeCode),
     staleTime: 1000 * 60 * 5,
-    retry: false,
+    retry: 1,
     refetchInterval: false,
   });
 }
-
