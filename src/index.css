@@ -11,6 +11,29 @@
   --color-accent-fg: var(--accent-fg);
   --color-danger: var(--danger);
 
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-surface: var(--sidebar-surface);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-text: var(--sidebar-text);
+  --color-sidebar-text-hover: var(--sidebar-text-hover);
+  --color-sidebar-active: var(--sidebar-active);
+  --color-sidebar-active-hover: var(--sidebar-active-hover);
+  --color-sidebar-active-fg: var(--sidebar-active-fg);
+
+  --color-pastel-amber: var(--pastel-amber);
+  --color-pastel-amber-border: var(--pastel-amber-border);
+  --color-pastel-amber-text: var(--pastel-amber-text);
+  --color-pastel-purple: var(--pastel-purple);
+  --color-pastel-purple-border: var(--pastel-purple-border);
+  --color-pastel-purple-text: var(--pastel-purple-text);
+  --color-pastel-mint: var(--pastel-mint);
+  --color-pastel-mint-border: var(--pastel-mint-border);
+  --color-pastel-mint-text: var(--pastel-mint-text);
+
+  --color-console-bg: var(--console-bg);
+  --color-console-surface: var(--console-surface);
+  --color-console-border: var(--console-border);
+
   --radius-DEFAULT: 20px;
   --radius-sm: 10px;
   --radius-md: 14px;

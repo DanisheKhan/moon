@@ -1,2 +1,2 @@
 export { useStores, useStore, storeKeys } from './hooks/useStores';
-export { listStores, getStoreByCode } from './api/stores.api';
+export { listStores, getStoreByCode, createOwnerStore } from './api/stores.api';

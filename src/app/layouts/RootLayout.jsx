@@ -33,6 +33,8 @@ function StoreSwitcher({ stores, currentStoreCode, isOwner, onSelect }) {
   let activeLabel = 'Switch Workspace...';
   if (location.pathname === '/admin/all') {
     activeLabel = '★ All Stores Combined';
+  } else if (location.pathname === '/admin/overview') {
+    activeLabel = 'Network Overview';
   } else if (location.pathname.startsWith('/admin/staff')) {
     activeLabel = 'Staff Management';
   } else if (currentStoreCode) {

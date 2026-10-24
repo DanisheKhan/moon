@@ -41,7 +41,7 @@ export function getProductImageUrl(product) {
 }
 
 // Fallback seed products matching the actual dual-store inventory
-const FALLBACK_PRODUCTS = [
+export const FALLBACK_PRODUCTS = [
   {
     id: 'prod-mob-1',
     name: 'iPhone 15 Pro 128GB',

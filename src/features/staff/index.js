@@ -1,4 +1,6 @@
 export { StaffManagementPage } from './routes/StaffManagementPage';
+export { StaffAttendancePage } from './routes/StaffAttendancePage';
+export { RolesPermissionsPage } from './routes/RolesPermissionsPage';
 export { StaffPortalPage } from './routes/StaffPortalPage';
 export { StaffModal } from './components/StaffModal';
 export { PayslipModal } from './components/PayslipModal';

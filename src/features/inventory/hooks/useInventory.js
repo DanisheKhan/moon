@@ -7,6 +7,9 @@ import {
   adjustInventoryStock,
   updateProductPricing,
   getCachedStoreProducts,
+  listAllProducts,
+  updateProduct,
+  deleteProduct,
 } from '../api/inventory.api';
 
 export const inventoryKeys = {
@@ -76,4 +79,33 @@ export function useCreateProduct() {
     },
   });
 }
+
+export function useAllProducts(filters = {}) {
+  return useQuery({
+    queryKey: [...inventoryKeys.all, 'all-products', filters],
+    queryFn: () => listAllProducts(filters),
+    staleTime: 1000 * 60 * 3,
+  });
+}
+
+export function useUpdateProduct() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ productId, updates }) => updateProduct(productId, updates),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
+    },
+  });
+}
+
+export function useDeleteProduct() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
+    },
+  });
+}
+
 
