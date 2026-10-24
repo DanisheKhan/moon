@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { listStores, getStoreByCode, DEFAULT_STORES, getCachedStores } from '../api/stores.api';
+import { listStores, getStoreByCode, DEFAULT_STORES, getCachedStores, getExtraStores, enrichStore } from '../api/stores.api';
 
 export const storeKeys = {
   all: ['stores'],
@@ -11,7 +11,12 @@ export function useStores() {
   return useQuery({
     queryKey: storeKeys.list(),
     queryFn: listStores,
-    initialData: () => getCachedStores() || DEFAULT_STORES,
+    initialData: () => {
+      const cached = (getCachedStores() || DEFAULT_STORES).map(enrichStore);
+      const extras = getExtraStores();
+      const extraCodes = new Set(extras.map((s) => s.code));
+      return [...cached.filter((s) => !extraCodes.has(s.code)), ...extras];
+    },
     staleTime: 1000 * 60 * 10,
   });
 }
@@ -32,6 +37,8 @@ export function useStore(code) {
         const found = cached.find((s) => s.code === code);
         if (found) return found;
       }
+      const extra = getExtraStores().find((s) => s.code === code);
+      if (extra) return extra;
       return DEFAULT_STORES.find((s) => s.code === code) || null;
     },
     enabled: Boolean(code),

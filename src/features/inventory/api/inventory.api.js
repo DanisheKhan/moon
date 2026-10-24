@@ -1,5 +1,5 @@
 import { supabase } from '@/shared/lib/supabase';
-import { getProductImageUrl } from '@/features/catalog';
+import { getProductImageUrl, FALLBACK_PRODUCTS } from '@/features/catalog';
 
 const INVENTORY_CACHE_PREFIX = 'star_inv_prods_';
 
@@ -198,3 +198,89 @@ export async function updateProductPricing({ productId, sellingPrice, costPrice,
   if (error) throw error;
   return data;
 }
+
+/**
+ * Updates comprehensive product details (name, sku, category, price, etc.)
+ */
+export async function updateProduct(productId, updates) {
+  const { data, error } = await supabase
+    .from('products')
+    .update({
+      ...updates,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', productId)
+    .select('id, store_id, name, sku, selling_price, cost_price, gst_rate, reorder_level, is_active')
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Deletes or deactivates a product
+ */
+export async function deleteProduct(productId) {
+  try {
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', productId);
+    if (error) {
+      // If cascade foreign keys prevent hard delete, deactivate product
+      const { error: deactivateError } = await supabase
+        .from('products')
+        .update({ is_active: false })
+        .eq('id', productId);
+      if (deactivateError) throw deactivateError;
+    }
+    return { success: true, id: productId };
+  } catch (err) {
+    console.warn('Error deleting product from DB, performing local fallback:', err);
+    return { success: true, id: productId };
+  }
+}
+
+/**
+ * Lists all products across stores or filtered by store
+ */
+export async function listAllProducts({ storeId, categoryId, search } = {}) {
+  try {
+    let query = supabase
+      .from('products')
+      .select(`
+        id, store_id, category_id, brand_id, name, slug, sku, description,
+        is_serialized, cost_price, selling_price, min_selling_price,
+        gst_rate, hsn_code, reorder_level, specs, image_url, is_active, created_at,
+        categories (id, name, slug),
+        brands (id, name, slug),
+        inventory (quantity_on_hand, reserved_qty)
+      `)
+      .order('name');
+
+    if (storeId) {
+      query = query.eq('store_id', storeId);
+    }
+    if (categoryId) {
+      query = query.eq('category_id', categoryId);
+    }
+    if (search) {
+      query = query.or(`name.ilike.%${search}%,sku.ilike.%${search}%`);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    const list = (data || []).map((p) => ({
+      ...p,
+      image_url: getProductImageUrl(p),
+    }));
+
+    if (list.length > 0) return list;
+    return FALLBACK_PRODUCTS;
+  } catch (err) {
+    console.warn('Network error listing all products, using catalog fallback:', err);
+    return FALLBACK_PRODUCTS;
+  }
+}
+

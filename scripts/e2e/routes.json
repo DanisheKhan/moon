@@ -2,6 +2,7 @@
   "/",
   "/login",
   "/admin",
+  "/admin/overview",
   "/admin/all",
   "/admin/staff",
   "/admin/my-portal",

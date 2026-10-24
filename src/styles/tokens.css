@@ -17,6 +17,30 @@
   --radius-3xl: 32px;
   --radius-full: 9999px;
   --font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Operations Console Theme Tokens */
+  --sidebar-bg: #071932;
+  --sidebar-surface: #0c213f;
+  --sidebar-border: #132a4e;
+  --sidebar-text: #94a3b8;
+  --sidebar-text-hover: #ffffff;
+  --sidebar-active: #ffffff;
+  --sidebar-active-hover: #f8fafc;
+  --sidebar-active-fg: #071932;
+
+  --pastel-amber: #fff7ed;
+  --pastel-amber-border: #ffedd5;
+  --pastel-amber-text: #9a3412;
+  --pastel-purple: #f5f3ff;
+  --pastel-purple-border: #ede9fe;
+  --pastel-purple-text: #5b21b6;
+  --pastel-mint: #ecfdf5;
+  --pastel-mint-border: #d1fae5;
+  --pastel-mint-text: #065f46;
+
+  --console-bg: #f4f6fa;
+  --console-surface: #ffffff;
+  --console-border: #e2e8f0;
 }
 
 :root[data-theme="dark"] {
