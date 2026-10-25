@@ -94,7 +94,7 @@ export function ReportsConsolePage() {
               <Icon size={14} className={isActive ? 'text-text' : 'text-muted'} />
               <span>{tab.label}</span>
               {tab.badge && (
-                <span className="px-1.5 py-0.2 rounded text-[10px] font-mono border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
+                <span className="px-1.5 py-0.2 rounded text-[10px] font-mono border border-brand-sage-border bg-brand-sage-subtle text-brand-sage-text font-medium">
                   {tab.badge}
                 </span>
               )}

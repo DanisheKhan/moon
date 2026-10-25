@@ -40,14 +40,14 @@ export function StorePickerCard({ store, analytics, onOpen }) {
               <p className="text-xs text-muted truncate">{store.trade_name || store.name}</p>
             </div>
           </div>
-          <Badge variant="default" className="text-[10px] font-medium shrink-0">
+          <Badge variant="sage" className="text-[10px] font-medium shrink-0">
             Active
           </Badge>
         </div>
 
         {/* Essential Store Details */}
         <div className="mt-4 grid grid-cols-3 gap-2 min-w-0">
-          <div className="rounded-lg border border-border bg-bg/50 p-2.5 min-w-0">
+          <div className="rounded-lg border border-border bg-surface-subtle p-2.5 min-w-0">
             <div className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-muted">
               <User size={11} className="shrink-0" />
               <span className="truncate">Manager</span>
@@ -57,7 +57,7 @@ export function StorePickerCard({ store, analytics, onOpen }) {
             </p>
           </div>
 
-          <div className="rounded-lg border border-border bg-bg/50 p-2.5 min-w-0">
+          <div className="rounded-lg border border-border bg-surface-subtle p-2.5 min-w-0">
             <div className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-muted">
               <Building2 size={11} className="shrink-0" />
               <span className="truncate">City</span>
@@ -67,7 +67,7 @@ export function StorePickerCard({ store, analytics, onOpen }) {
             </p>
           </div>
 
-          <div className="rounded-lg border border-border bg-bg/50 p-2.5 min-w-0">
+          <div className="rounded-lg border border-border bg-surface-subtle p-2.5 min-w-0">
             <div className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-muted">
               <Hash size={11} className="shrink-0" />
               <span className="truncate">GSTIN</span>
@@ -79,14 +79,14 @@ export function StorePickerCard({ store, analytics, onOpen }) {
         </div>
 
         {/* Concise Store Analytics Strip (Required Only) */}
-        <div className="mt-3 rounded-lg border border-border bg-bg/80 p-3 min-w-0">
+        <div className="mt-3 rounded-lg border border-border bg-surface-subtle p-3 min-w-0">
           <div className="text-[10px] font-medium uppercase tracking-wider text-muted mb-2">
             Store Performance (This Month)
           </div>
           <div className="grid grid-cols-3 gap-2 min-w-0">
             <div className="min-w-0">
               <div className="flex items-center gap-1 text-[10px] text-muted">
-                <TrendingUp size={11} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <TrendingUp size={11} className="text-brand-sage shrink-0" />
                 <span className="truncate">Sales</span>
               </div>
               <div className="mt-0.5 text-xs font-medium text-text truncate">
@@ -109,7 +109,7 @@ export function StorePickerCard({ store, analytics, onOpen }) {
                 {lowStockCount > 0 ? (
                   <AlertTriangle size={11} className="text-amber-600 dark:text-amber-400 shrink-0" />
                 ) : (
-                  <CheckCircle2 size={11} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <CheckCircle2 size={11} className="text-brand-sage shrink-0" />
                 )}
                 <span className="truncate">Stock Health</span>
               </div>
@@ -117,7 +117,7 @@ export function StorePickerCard({ store, analytics, onOpen }) {
                 {lowStockCount > 0 ? (
                   <span className="text-amber-600 dark:text-amber-400">{lowStockCount} low alert</span>
                 ) : (
-                  <span className="text-emerald-600 dark:text-emerald-400">Optimal</span>
+                  <span className="text-brand-sage font-medium">Optimal</span>
                 )}
               </div>
             </div>

@@ -256,8 +256,8 @@ export function InventoryCardsPage() {
                           <AlertCircle size={10} /> In Stock ({qtyOnHand})
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-surface text-emerald-600 border border-emerald-500/30 shadow-2xs">
-                          <CheckCircle2 size={10} /> In Stock ({qtyOnHand})
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-brand-sage-subtle text-brand-sage-text border border-brand-sage-border shadow-2xs">
+                          <CheckCircle2 size={10} className="text-brand-sage" /> In Stock ({qtyOnHand})
                         </span>
                       )}
                     </div>

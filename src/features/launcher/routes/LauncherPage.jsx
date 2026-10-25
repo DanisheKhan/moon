@@ -48,7 +48,7 @@ export function LauncherPage() {
       <div className="rounded-xl border border-border bg-surface p-4 shadow-2xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-border">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20 shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-brand-sage ring-2 ring-brand-sage/20 shrink-0" />
             <span className="text-xs font-medium text-text">Combined Network Analytics</span>
             <span className="text-[10px] text-muted">Across 2 Stores • This Month</span>
           </div>
@@ -60,7 +60,7 @@ export function LauncherPage() {
         <div className="grid grid-cols-3 gap-3 pt-3 min-w-0">
           <div className="min-w-0">
             <div className="text-[10px] uppercase font-medium tracking-wider text-muted flex items-center gap-1.5">
-              <TrendingUp size={12} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <TrendingUp size={12} className="text-brand-sage shrink-0" />
               <span className="truncate">Combined Sales</span>
             </div>
             <div className="text-sm sm:text-base font-medium text-text mt-0.5 truncate">

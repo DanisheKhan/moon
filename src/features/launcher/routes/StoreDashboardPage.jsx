@@ -137,7 +137,7 @@ export function StoreDashboardPage() {
               STORE WORKSPACE
             </span>
             <span className="text-xs text-muted">•</span>
-            <span className="text-xs font-medium text-emerald-600 flex items-center gap-1">
+            <span className="text-xs font-medium text-brand-sage flex items-center gap-1">
               <CheckCircle2 size={12} />
               Active Branch
             </span>
@@ -200,7 +200,7 @@ export function StoreDashboardPage() {
               {formatCurrency(financialSummary.totalSales)}
             </div>
             <p className="text-xs text-muted flex items-center gap-1">
-              <TrendingUp size={12} className="text-emerald-600" />
+              <TrendingUp size={12} className="text-brand-sage" />
               <span>Revenue across paid & counter sales</span>
             </p>
           </div>
@@ -237,11 +237,11 @@ export function StoreDashboardPage() {
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-medium tracking-tight text-emerald-600">
+            <div className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
               {formatCurrency(financialSummary.totalProfit)}
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-medium uppercase px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="text-[10px] font-medium uppercase px-2 py-0.5 rounded-md bg-brand-sage-subtle text-brand-sage-text border border-brand-sage-border">
                 {financialSummary.profitMargin}% Net Margin
               </span>
               <span className="text-xs text-muted">Sales minus expenses</span>
@@ -279,7 +279,7 @@ export function StoreDashboardPage() {
               </div>
             ) : stockAlerts.length === 0 ? (
               <div className="p-6 rounded-lg border border-dashed border-border text-center space-y-2">
-                <CheckCircle2 size={24} className="text-emerald-500 mx-auto" />
+                <CheckCircle2 size={24} className="text-brand-sage mx-auto" />
                 <p className="text-xs font-medium text-text">
                   All inventory healthy for {storeName}
                 </p>

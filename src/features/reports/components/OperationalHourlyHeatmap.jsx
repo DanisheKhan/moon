@@ -95,7 +95,7 @@ export function OperationalHourlyHeatmap({ hourlySales = [] }) {
 
           <div className="p-3 rounded-lg border border-border bg-bg/40 space-y-1">
             <div className="font-medium text-text flex items-center gap-1.5">
-              <ArrowUpRight size={14} className="text-emerald-600 shrink-0" />
+              <ArrowUpRight size={14} className="text-brand-sage shrink-0" />
               <span>Restocking & Break Windows</span>
             </div>
             <p className="text-muted text-[11px] leading-relaxed">

@@ -168,8 +168,8 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
       amount: paymentMethodMap.upi,
       pct: Math.round((paymentMethodMap.upi / paymentsSum) * 100) || 0,
       feeRate: '0% MDR',
-      badgeColor: 'border-emerald-500/30 text-emerald-600 bg-emerald-500/10',
-      barColor: 'bg-emerald-500',
+      badgeColor: 'border-brand-sage-border text-brand-sage-text bg-brand-sage-subtle',
+      barColor: 'bg-brand-sage',
     },
     {
       method: 'card',
@@ -480,8 +480,8 @@ export function getOfflineOwnerDashboard(dateRange = 'month', storeCode = 'all')
           amount: upiAmt,
           pct: 36,
           feeRate: '0% MDR',
-          badgeColor: 'border-emerald-500/30 text-emerald-600 bg-emerald-500/10',
-          barColor: 'bg-emerald-500',
+          badgeColor: 'border-brand-sage-border text-brand-sage-text bg-brand-sage-subtle',
+          barColor: 'bg-brand-sage',
         },
         {
           method: 'cash',

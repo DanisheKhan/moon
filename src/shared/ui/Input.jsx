@@ -26,7 +26,7 @@ export const Input = forwardRef(function Input(
         className={cn(
           'w-full min-h-10 rounded-lg border bg-surface px-3.5 py-2 text-xs sm:text-sm text-text transition-colors',
           'border-border placeholder:text-muted',
-          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent',
+          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-sage',
           error && 'border-danger focus-visible:outline-danger',
           className
         )}

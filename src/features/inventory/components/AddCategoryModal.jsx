@@ -73,8 +73,8 @@ export function AddCategoryModal({ storeId, storeName, isOpen, onClose, onSucces
         )}
 
         {success && (
-          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-600 font-medium flex items-center gap-2">
-            <Check size={14} /> Category created and saved to database!
+          <div className="rounded-xl border border-brand-sage-border bg-brand-sage-subtle p-3 text-xs text-brand-sage-text font-medium flex items-center gap-2">
+            <Check size={14} className="text-brand-sage" /> Category created and saved to database!
           </div>
         )}
 

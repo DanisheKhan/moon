@@ -1,8 +1,9 @@
 import { cn } from '@/shared/lib/cn';
 
 const variants = {
-  default: 'border-border bg-bg text-text',
-  success: 'border-border bg-surface text-text font-medium',
+  default: 'border-border bg-surface text-text',
+  success: 'border-brand-sage-border bg-brand-sage-subtle text-brand-sage-text font-medium',
+  sage: 'border-brand-sage-border bg-brand-sage-subtle text-brand-sage-text font-medium',
   danger: 'border-danger/30 bg-danger/10 text-danger font-medium',
   accent: 'border-accent bg-accent text-accent-fg font-medium',
 };
@@ -10,7 +11,7 @@ const variants = {
 /**
  * Modern pill-shaped status badge.
  * @param {Object} props
- * @param {'default'|'success'|'danger'|'accent'} [props.variant]
+ * @param {'default'|'success'|'sage'|'danger'|'accent'} [props.variant]
  * @param {string} [props.className]
  * @param {React.ReactNode} props.children
  */

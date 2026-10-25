@@ -4,12 +4,20 @@
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
   --color-text: var(--text);
   --color-muted: var(--text-muted);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-accent: var(--accent);
   --color-accent-fg: var(--accent-fg);
   --color-danger: var(--danger);
+
+  --color-brand-sage: var(--brand-sage);
+  --color-brand-sage-hover: var(--brand-sage-hover);
+  --color-brand-sage-subtle: var(--brand-sage-subtle);
+  --color-brand-sage-border: var(--brand-sage-border);
+  --color-brand-sage-text: var(--brand-sage-text);
 
   --color-sidebar-bg: var(--sidebar-bg);
   --color-sidebar-surface: var(--sidebar-surface);
@@ -19,6 +27,7 @@
   --color-sidebar-active: var(--sidebar-active);
   --color-sidebar-active-hover: var(--sidebar-active-hover);
   --color-sidebar-active-fg: var(--sidebar-active-fg);
+  --color-sidebar-active-border: var(--sidebar-active-border);
 
   --color-pastel-amber: var(--pastel-amber);
   --color-pastel-amber-border: var(--pastel-amber-border);

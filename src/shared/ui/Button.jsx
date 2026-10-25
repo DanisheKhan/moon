@@ -3,14 +3,15 @@ import { cn } from '@/shared/lib/cn';
 const base =
   'inline-flex items-center justify-center gap-1.5 font-medium ' +
   'transition-all duration-150 focus-visible:outline focus-visible:outline-2 ' +
-  'focus-visible:outline-offset-2 focus-visible:outline-accent ' +
+  'focus-visible:outline-offset-2 focus-visible:outline-brand-sage ' +
   'disabled:opacity-50 disabled:pointer-events-none cursor-pointer';
 
 const variants = {
-  solid: 'bg-accent text-accent-fg hover:opacity-90 active:opacity-80',
-  outline: 'border border-border text-text bg-surface hover:bg-bg active:opacity-70',
+  solid: 'bg-accent text-accent-fg hover:opacity-90 active:opacity-80 shadow-2xs',
+  outline: 'border border-border text-text bg-surface hover:bg-bg active:opacity-70 shadow-2xs',
   danger: 'bg-danger text-accent-fg hover:opacity-90 active:opacity-80',
-  subtle: 'bg-bg text-text border border-border hover:opacity-80',
+  subtle: 'bg-surface-subtle text-text border border-border hover:opacity-80',
+  sage: 'bg-brand-sage text-white hover:bg-brand-sage-hover active:opacity-85 shadow-2xs',
 };
 
 const sizes = {
@@ -22,7 +23,7 @@ const sizes = {
 
 /**
  * @param {Object} props
- * @param {'solid'|'outline'|'danger'|'subtle'} [props.variant]
+ * @param {'solid'|'outline'|'danger'|'subtle'|'sage'} [props.variant]
  * @param {'sm'|'md'|'lg'|'pill'} [props.size]
  * @param {boolean} [props.pending]
  * @param {import('react').ElementType} [props.as]

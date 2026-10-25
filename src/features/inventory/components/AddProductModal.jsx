@@ -162,7 +162,7 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
                 Create & Save New Category to Database:
               </span>
               {newCatSuccess && (
-                <div className="text-xs text-emerald-600 font-medium flex items-center gap-1.5">
+                <div className="text-xs text-brand-sage font-medium flex items-center gap-1.5">
                   <Check size={13} /> {newCatSuccess}
                 </div>
               )}

@@ -659,7 +659,7 @@ export function POSPage() {
                       <span className="text-[10px] text-muted font-mono">{item.sku}</span>
                       {item.serial_number && (
                         <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[10px] font-mono bg-bg border border-border text-text shrink-0">
-                          <CheckCircle size={10} className="text-emerald-600" />
+                          <CheckCircle size={10} className="text-brand-sage" />
                           SN: {item.serial_number}
                           {item.condition_grade && <span>({item.condition_grade})</span>}
                         </span>

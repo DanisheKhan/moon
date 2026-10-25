@@ -287,7 +287,7 @@ export function OperationsDashboardPage() {
                   <td className="py-4 px-4">
                     {item.status === 'active' ? (
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-medium bg-pastel-mint text-pastel-mint-text border border-pastel-mint-border">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-brand-sage" />
                         ACTIVE
                       </span>
                     ) : (

@@ -45,7 +45,7 @@ export function CategoryMarginTable({ categories = [] }) {
                 const margin = cat.marginPct || 0;
                 let badgeClass = 'bg-amber-500/10 text-amber-600 border-amber-500/30';
                 if (margin >= 30) {
-                  badgeClass = 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30';
+                  badgeClass = 'bg-brand-sage-subtle text-brand-sage-text border-brand-sage-border';
                 } else if (margin >= 18) {
                   badgeClass = 'bg-blue-500/10 text-blue-600 border-blue-500/30';
                 }
@@ -87,9 +87,9 @@ export function CategoryMarginTable({ categories = [] }) {
                 <td className="px-4 py-2.5 align-middle text-center font-mono">{totalUnits} units</td>
                 <td className="px-4 py-2.5 align-middle text-right">{formatCurrency(totalRevenue)}</td>
                 <td className="px-4 py-2.5 align-middle text-right font-mono text-muted">{formatCurrency(totalCogs)}</td>
-                <td className="px-4 py-2.5 align-middle text-right text-emerald-600">{formatCurrency(totalProfit)}</td>
+                <td className="px-4 py-2.5 align-middle text-right text-text font-bold">{formatCurrency(totalProfit)}</td>
                 <td className="px-4 py-2.5 align-middle text-center">
-                  <span className="inline-flex items-center justify-center h-5 px-2 py-0 rounded text-[10px] font-semibold bg-emerald-500/15 text-emerald-600 border border-emerald-500/40">
+                  <span className="inline-flex items-center justify-center h-5 px-2 py-0 rounded text-[10px] font-semibold bg-brand-sage-subtle text-brand-sage-text border border-brand-sage-border">
                     {overallMargin.toFixed(1)}% avg
                   </span>
                 </td>

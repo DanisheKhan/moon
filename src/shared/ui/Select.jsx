@@ -214,8 +214,8 @@ export function Select({
           'w-full min-h-10 rounded-lg border bg-surface px-3.5 py-2 text-xs sm:text-sm text-text',
           'flex items-center justify-between gap-2 cursor-pointer transition-all',
           'border-border hover:border-text/40',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent',
-          isOpen && 'border-accent ring-1 ring-accent shadow-sm',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage focus-visible:border-brand-sage',
+          isOpen && 'border-brand-sage ring-1 ring-brand-sage shadow-2xs',
           disabled && 'opacity-50 cursor-not-allowed bg-bg/50',
           error && 'border-danger focus-visible:ring-danger',
           className
@@ -289,7 +289,7 @@ export function Select({
                     'flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs sm:text-sm cursor-pointer',
                     'transition-colors select-none',
                     isSelected
-                      ? 'bg-bg font-medium text-text'
+                      ? 'bg-brand-sage-subtle font-medium text-text'
                       : 'text-text hover:bg-bg/80 hover:text-text'
                   )}
                 >
@@ -297,7 +297,7 @@ export function Select({
                     {opt.label}
                   </span>
                   {isSelected && (
-                    <Check size={15} className="text-text shrink-0 ml-1.5" />
+                    <Check size={15} className="text-brand-sage shrink-0 ml-1.5" />
                   )}
                 </div>
               );

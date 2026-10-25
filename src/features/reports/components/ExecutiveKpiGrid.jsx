@@ -50,13 +50,13 @@ export function ExecutiveKpiGrid({ summary = {} }) {
               {formatCurrency(estimatedGrossProfit)}
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted truncate">
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-600 border border-emerald-500/30">
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-brand-sage-subtle text-brand-sage-text border border-brand-sage-border">
                 {grossMarginPercent.toFixed(1)}% margin
               </span>
               <span>Net of unit COGS</span>
             </div>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-bg border border-border flex items-center justify-center text-emerald-600 shrink-0">
+          <div className="w-10 h-10 rounded-lg bg-bg border border-border flex items-center justify-center text-brand-sage shrink-0">
             <CircleDollarSign size={18} />
           </div>
         </div>

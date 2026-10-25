@@ -1,12 +1,15 @@
 /* styles/tokens.css */
 :root {
-  --bg: #FAFAF9;
+  /* Green Enchanted Forest Design Tokens */
+  --bg: #f1f7ed;
   --surface: #FFFFFF;
-  --text: #171717;
-  --text-muted: #5F5F5F;     /* keep >= 4.5:1 on bg */
-  --border: #E5E5E3;
-  --accent: #171717;         /* ONE accent: refined dark charcoal */
-  --accent-fg: #FAFAF9;      /* text on accent */
+  --surface-subtle: #e9f2e6;
+  --text: #243e36;
+  --text-muted: #446358;     /* >= 4.5:1 WCAG AA on #f1f7ed and #ffffff */
+  --border: #d7e4d3;
+  --border-strong: #b8ccb3;
+  --accent: #243e36;         /* Refined deep forest pine */
+  --accent-fg: #f1f7ed;      /* High contrast light mint text on accent */
   --danger: #B42318;
   --radius: 14px;
   --radius-sm: 6px;
@@ -18,15 +21,23 @@
   --radius-full: 9999px;
   --font: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Operations Console Theme Tokens - Cohesive Architectural Light Theme */
-  --sidebar-bg: #FFFFFF;
-  --sidebar-surface: #F8FAFC;
-  --sidebar-border: #E2E8F0;
-  --sidebar-text: #64748B;
-  --sidebar-text-hover: #0F172A;
-  --sidebar-active: #F1F5F9;
-  --sidebar-active-hover: #E2E8F0;
-  --sidebar-active-fg: #0F172A;
+  /* Brand Sage Accent Tokens */
+  --brand-sage: #7ca982;
+  --brand-sage-hover: #6d9972;
+  --brand-sage-subtle: #e3ede4;
+  --brand-sage-border: #bfd7c3;
+  --brand-sage-text: #1d352e;
+
+  /* Operations Console & Navigation Layout Tokens */
+  --sidebar-bg: #f8faf6;
+  --sidebar-surface: #f1f7ed;
+  --sidebar-border: #d7e4d3;
+  --sidebar-text: #446358;
+  --sidebar-text-hover: #243e36;
+  --sidebar-active: #e3ede4;
+  --sidebar-active-hover: #d7e6d9;
+  --sidebar-active-fg: #243e36;
+  --sidebar-active-border: #7ca982;
 
   --pastel-amber: #fff7ed;
   --pastel-amber-border: #ffedd5;
@@ -34,22 +45,41 @@
   --pastel-purple: #f5f3ff;
   --pastel-purple-border: #ede9fe;
   --pastel-purple-text: #5b21b6;
-  --pastel-mint: #ecfdf5;
-  --pastel-mint-border: #d1fae5;
-  --pastel-mint-text: #065f46;
+  --pastel-mint: #e3ede4;
+  --pastel-mint-border: #bfd7c3;
+  --pastel-mint-text: #1d352e;
 
-  --console-bg: #F8FAFC;
+  --console-bg: #f1f7ed;
   --console-surface: #FFFFFF;
-  --console-border: #E2E8F0;
+  --console-border: #d7e4d3;
 }
 
 :root[data-theme="dark"] {
-  --bg: #0E0E0E;
-  --surface: #151515;
-  --text: #F2F2F0;
-  --text-muted: #A1A1A1;
-  --border: #262626;
-  --accent: #F2F2F0;
-  --accent-fg: #0E0E0E;
+  --bg: #0f1c18;
+  --surface: #162621;
+  --surface-subtle: #1c322b;
+  --text: #f1f7ed;
+  --text-muted: #96b39d;
+  --border: #233a32;
+  --border-strong: #335449;
+  --accent: #f1f7ed;
+  --accent-fg: #0f1c18;
+  --brand-sage: #7ca982;
+  --brand-sage-hover: #8db893;
+  --brand-sage-subtle: #1a342a;
+  --brand-sage-border: #284e3f;
+  --brand-sage-text: #e3ede4;
   --danger: #D92D20;
+  --sidebar-bg: #0d1815;
+  --sidebar-surface: #162621;
+  --sidebar-border: #233a32;
+  --sidebar-text: #96b39d;
+  --sidebar-text-hover: #f1f7ed;
+  --sidebar-active: #1a342a;
+  --sidebar-active-hover: #234336;
+  --sidebar-active-fg: #f1f7ed;
+  --sidebar-active-border: #7ca982;
+  --console-bg: #0f1c18;
+  --console-surface: #162621;
+  --console-border: #233a32;
 }

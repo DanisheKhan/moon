@@ -90,7 +90,7 @@ export function BusinessActionEngine({ actions = {} }) {
         <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs space-y-4 min-w-0">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg border border-emerald-500/30 bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0">
+              <div className="w-8 h-8 rounded-lg border border-brand-sage-border bg-brand-sage-subtle flex items-center justify-center text-brand-sage shrink-0">
                 <Sparkles size={16} />
               </div>
               <div>
@@ -100,7 +100,7 @@ export function BusinessActionEngine({ actions = {} }) {
                 <span className="text-xs text-muted">Smartphones vs Accessories Attachment</span>
               </div>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
+            <span className="px-2 py-0.5 rounded text-[10px] font-medium border border-brand-sage-border bg-brand-sage-subtle text-brand-sage-text">
               Profit Driver
             </span>
           </div>
@@ -112,7 +112,7 @@ export function BusinessActionEngine({ actions = {} }) {
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-muted">Accessories (Cases, Chargers, Audio):</span>
-              <span className="font-semibold text-emerald-600">~45.1% Margin</span>
+              <span className="font-semibold text-brand-sage">~45.1% Margin</span>
             </div>
             <div className="flex justify-between text-xs pt-1 border-t border-border">
               <span className="text-muted">Current Attachment Ratio:</span>
@@ -122,13 +122,13 @@ export function BusinessActionEngine({ actions = {} }) {
             </div>
           </div>
 
-          <div className="p-3.5 rounded-lg border border-emerald-500/20 bg-emerald-500/5 space-y-1.5 text-xs">
+          <div className="p-3.5 rounded-lg border border-brand-sage-border bg-brand-sage-subtle/40 space-y-1.5 text-xs">
             <div className="font-medium text-text">
               Action: Bundle fast chargers & premium cases at billing counter
             </div>
             <p className="text-muted text-[11px] leading-relaxed">
               Attaching ₹1,500 in accessories to 25% of smartphone sales injects{' '}
-              <strong className="text-emerald-600 font-semibold">
+              <strong className="text-brand-sage font-semibold">
                 +{formatCurrency(attachOpportunity.targetAttachGain || 28500)}
               </strong>{' '}
               in incremental gross profit each month with zero additional customer acquisition cost.
@@ -223,7 +223,7 @@ export function BusinessActionEngine({ actions = {} }) {
             </div>
             <div className="p-3 rounded-lg border border-border bg-bg/40">
               <span className="text-[10px] text-muted uppercase block">Potential Monthly Savings</span>
-              <div className="text-base font-semibold text-emerald-600 mt-0.5">
+              <div className="text-base font-semibold text-brand-sage mt-0.5">
                 {formatCurrency(mdrSavings.potentialSavings || 0)}
               </div>
               <span className="text-[10px] text-muted">If 50% shifted to UPI QR</span>

@@ -60,7 +60,7 @@ export function PaymentAndBranchSplit({
 
           <div className="p-3 rounded-lg border border-border bg-bg/40 text-[11px] text-muted flex items-center justify-between">
             <span>Instant Bank Settlement (UPI):</span>
-            <span className="font-semibold text-emerald-600">Zero Processing Charges</span>
+            <span className="font-semibold text-brand-sage">Zero Processing Charges</span>
           </div>
         </div>
 
@@ -108,7 +108,7 @@ export function PaymentAndBranchSplit({
                     </div>
                     <div className="text-right">
                       <span className="text-muted block text-[10px]">Margin %</span>
-                      <span className="font-semibold text-emerald-600 font-mono">
+                      <span className="font-semibold text-brand-sage font-mono">
                         {(st.marginPct || 0).toFixed(1)}%
                       </span>
                     </div>
@@ -161,7 +161,7 @@ export function PaymentAndBranchSplit({
                       GST: {formatCurrency(inv.tax)}
                     </div>
                   </div>
-                  <span className="h-5 px-2 py-0 inline-flex items-center rounded text-[10px] font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 uppercase">
+                  <span className="h-5 px-2 py-0 inline-flex items-center rounded text-[10px] font-medium border border-brand-sage-border bg-brand-sage-subtle text-brand-sage-text uppercase">
                     {inv.status}
                   </span>
                 </div>
