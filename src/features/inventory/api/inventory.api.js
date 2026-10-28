@@ -38,8 +38,30 @@ export async function listCategoriesByStore(storeId) {
     if (error) throw error;
     return data || [];
   } catch (err) {
-    console.warn('Network error listing categories, returning empty list:', err);
-    return [];
+    console.warn('Network error listing categories, returning fallback list:', err);
+    const storeProducts = FALLBACK_PRODUCTS.filter((p) => {
+      return (
+        p.store_id === resolvedId ||
+        p.stores?.id === resolvedId ||
+        p.stores?.code === resolvedId ||
+        STORE_UUID_MAP[p.stores?.code] === resolvedId ||
+        STORE_UUID_MAP[p.stores?.id] === resolvedId
+      );
+    });
+    const uniqueCats = new Map();
+    storeProducts.forEach((p) => {
+      if (p.categories?.name) {
+        const catId = p.categories.id || p.categories.slug;
+        uniqueCats.set(catId, {
+          id: catId,
+          store_id: resolvedId,
+          name: p.categories.name,
+          slug: p.categories.slug,
+          is_active: true,
+        });
+      }
+    });
+    return Array.from(uniqueCats.values());
   }
 }
 
@@ -160,10 +182,22 @@ export async function listProductsByStore({ storeId, categoryId, search } = {}) 
 
     return enriched;
   } catch (err) {
-    console.warn('Network error querying inventory by store, using cached:', err);
+    console.warn('Network error querying inventory by store, using cached/fallback:', err);
     const cached = getCachedStoreProducts(storeId);
-    if (cached) return cached;
-    throw err;
+    if (cached && cached.length > 0) return cached;
+    const fallbackForStore = FALLBACK_PRODUCTS.filter((p) => {
+      return (
+        p.store_id === storeId ||
+        p.stores?.id === storeId ||
+        p.stores?.code === storeId ||
+        STORE_UUID_MAP[p.stores?.code] === storeId ||
+        STORE_UUID_MAP[p.stores?.id] === storeId
+      );
+    }).map((p) => ({
+      ...p,
+      image_url: getProductImageUrl(p),
+    }));
+    return fallbackForStore;
   }
 }
 
