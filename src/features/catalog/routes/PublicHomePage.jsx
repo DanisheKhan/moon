@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { Container, Card, Badge, Button, Input } from '@/shared/ui';
 import { Seo } from '@/shared/seo';
 import { usePublicProducts, useCart } from '../hooks/useCatalog';
@@ -16,7 +15,6 @@ import {
   ShieldCheck,
   Check,
   Layers,
-  ArrowRight,
 } from 'lucide-react';
 
 export function PublicHomePage() {
@@ -388,40 +386,36 @@ export function PublicHomePage() {
 
       {/* Trust & Store Contact Section */}
       <Container size="xl">
-        <div className="border border-border rounded-3xl p-6 sm:p-8 bg-surface grid grid-cols-1 md:grid-cols-3 gap-6 text-left min-w-0">
+        <div className="border border-border rounded-2xl p-6 sm:p-8 bg-surface grid grid-cols-1 md:grid-cols-3 gap-6 text-left min-w-0 shadow-2xs">
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-semibold text-text">
-              <MapPin size={18} /> Store Locations
+              <MapPin size={16} className="text-brand-sage" /> Verified Branches
             </div>
-            <p className="text-xs text-muted">
-              Shop 101 & 102, Main Road Market, Mumbai, Maharashtra 400001
-            </p>
-            <p className="text-xs text-muted">Open 7 days: 10:00 AM - 9:30 PM</p>
+            <div className="text-xs text-muted space-y-1">
+              <p><strong className="text-text font-medium">Star Mobiles:</strong> Shop 101, Main Road Market, Mumbai</p>
+              <p><strong className="text-text font-medium">Star Furniture:</strong> Shop 102, Main Road Market, Mumbai</p>
+            </div>
+            <p className="text-[11px] text-muted pt-1">Open 7 days • 10:00 AM - 9:30 PM</p>
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-semibold text-text">
-              <Phone size={18} /> Instant WhatsApp Enquiry
+              <Phone size={16} className="text-brand-sage" /> Direct Helpline & WhatsApp
             </div>
             <p className="text-xs text-muted">
-              Have questions about stock availability or certified trade-in values? Chat with us directly.
+              Have questions about stock availability or certified trade-in values? Chat with our store team.
             </p>
-            <div className="text-xs font-semibold text-text">+91 98200 12345 / +91 98200 12346</div>
+            <div className="text-xs font-semibold text-text font-mono">+91 98200 12345</div>
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-semibold text-text">
-              <ShieldCheck size={18} /> Official GST Invoicing
+              <ShieldCheck size={16} className="text-brand-sage" /> Official GST Invoicing
             </div>
             <p className="text-xs text-muted">
-              GSTIN: 27AAAAA0000A1Z5. Full B2B and B2C tax compliance with Input Tax Credit support.
+              GSTIN: <span className="font-mono font-medium text-text">27AAAAA0000A1Z5</span>. Full B2B and B2C tax compliance with Input Tax Credit.
             </p>
-            <Link
-              to="/login"
-              className="text-xs font-medium text-text hover:underline inline-flex items-center gap-1 pt-1"
-            >
-              Staff & Owner Portal Login <ArrowRight size={12} />
-            </Link>
+            <p className="text-[11px] text-muted pt-1">Certified authentic inventory with official warranty.</p>
           </div>
         </div>
       </Container>

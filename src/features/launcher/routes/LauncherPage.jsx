@@ -4,7 +4,7 @@ import { useStores } from '@/features/stores';
 import { useOwnerDashboard } from '@/features/reports';
 import { formatCurrency } from '@/shared/lib/format';
 import { StorePickerCard } from '../components/StorePickerCard';
-import { Users, TrendingUp, Receipt, ShieldCheck } from 'lucide-react';
+import { TrendingUp, Receipt, ShieldCheck, Sparkles } from 'lucide-react';
 
 function sortOwnerStores(stores) {
   const rank = (store) => {
@@ -25,15 +25,20 @@ export function LauncherPage() {
   const ownerStores = sortOwnerStores(stores.filter((s) => s.is_active !== false));
 
   return (
-    <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 space-y-6 min-w-0">
+    <div className="max-w-5xl mx-auto py-6 px-4 sm:px-6 space-y-6 min-w-0">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 min-w-0">
-        <div className="space-y-1.5 min-w-0">
-          <Badge variant="accent" className="text-xs font-medium">
-            Owner portal
-          </Badge>
-          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
-            Your stores
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 min-w-0 pb-2">
+        <div className="space-y-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <Badge variant="accent" className="text-[11px] font-semibold">
+              Owner portal
+            </Badge>
+            <span className="text-xs text-muted font-medium flex items-center gap-1">
+              <Sparkles size={12} className="text-brand-sage" /> Enterprise Multi-Store
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
+            Your Stores & Branches
           </h1>
           <p className="text-xs sm:text-sm text-muted max-w-xl">
             Choose a store workspace to manage local operations, or review the synchronized 2-store analytics below.
@@ -44,46 +49,46 @@ export function LauncherPage() {
         </div>
       </div>
 
-      {/* Consolidated 2-Store Pulse (Concise, Required-Only Analytics) */}
-      <div className="rounded-xl border border-border bg-surface p-4 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-border">
+      {/* Consolidated 2-Store Pulse */}
+      <div className="rounded-xl border border-border bg-surface p-4 sm:p-5 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3.5 border-b border-border">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-brand-sage ring-2 ring-brand-sage/20 shrink-0" />
-            <span className="text-xs font-medium text-text">Combined Network Analytics</span>
-            <span className="text-[10px] text-muted">Across 2 Stores • This Month</span>
+            <span className="text-xs font-semibold text-text">Combined Network Analytics</span>
+            <span className="text-[11px] text-muted">Across All Branches • Current Month</span>
           </div>
-          <div className="text-[10px] text-muted font-mono">
+          <div className="text-[10px] text-muted font-mono font-medium">
             Auto-synchronized
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 pt-3 min-w-0">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 min-w-0">
           <div className="min-w-0">
-            <div className="text-[10px] uppercase font-medium tracking-wider text-muted flex items-center gap-1.5">
-              <TrendingUp size={12} className="text-brand-sage shrink-0" />
+            <div className="text-[10px] uppercase font-semibold tracking-wider text-muted flex items-center gap-1.5">
+              <TrendingUp size={13} className="text-brand-sage shrink-0" />
               <span className="truncate">Combined Sales</span>
             </div>
-            <div className="text-sm sm:text-base font-medium text-text mt-0.5 truncate">
+            <div className="text-lg sm:text-xl font-semibold text-text mt-0.5 truncate">
               {formatCurrency(summary.totalSales || 0)}
             </div>
           </div>
 
           <div className="min-w-0">
-            <div className="text-[10px] uppercase font-medium tracking-wider text-muted flex items-center gap-1.5">
-              <Receipt size={12} className="shrink-0" />
+            <div className="text-[10px] uppercase font-semibold tracking-wider text-muted flex items-center gap-1.5">
+              <Receipt size={13} className="text-muted shrink-0" />
               <span className="truncate">Total Orders</span>
             </div>
-            <div className="text-sm sm:text-base font-medium text-text mt-0.5 truncate">
+            <div className="text-lg sm:text-xl font-semibold text-text mt-0.5 truncate">
               {summary.invoiceCount || 0} Bills
             </div>
           </div>
 
           <div className="min-w-0">
-            <div className="text-[10px] uppercase font-medium tracking-wider text-muted flex items-center gap-1.5">
-              <ShieldCheck size={12} className="shrink-0" />
+            <div className="text-[10px] uppercase font-semibold tracking-wider text-muted flex items-center gap-1.5">
+              <ShieldCheck size={13} className="text-muted shrink-0" />
               <span className="truncate">Inventory Valuation</span>
             </div>
-            <div className="text-sm sm:text-base font-medium text-text mt-0.5 truncate">
+            <div className="text-lg sm:text-xl font-semibold text-text mt-0.5 truncate">
               {formatCurrency(summary.totalInventoryValue || 0)}
             </div>
           </div>
@@ -108,23 +113,6 @@ export function LauncherPage() {
           ))}
         </div>
       )}
-
-      {/* Enterprise Management Utilities */}
-      <div className="pt-2 flex flex-col items-center gap-2.5">
-        <div className="text-[10px] font-medium text-muted uppercase tracking-wider">
-          Enterprise Management Utilities
-        </div>
-        <div className="flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() => navigate('/admin/staff')}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-surface hover:bg-bg text-xs font-medium text-text transition-colors cursor-pointer shadow-2xs"
-          >
-            <Users size={14} className="text-muted shrink-0" />
-            <span>Staff management</span>
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

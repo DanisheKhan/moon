@@ -4,7 +4,7 @@ import { useStores, useStore } from '@/features/stores';
 import { useAllProducts } from '@/features/inventory';
 import { useInvoices } from '@/features/billing';
 import { Button, Badge } from '@/shared/ui';
-import { formatCurrency } from '@/shared/lib/format';
+import { formatCurrency, formatDate } from '@/shared/lib/format';
 import {
   IndianRupee,
   TrendingUp,
@@ -14,11 +14,9 @@ import {
   Package,
   ArrowRight,
   PlusCircle,
-  Users,
-  BarChart3,
   Calendar,
-  Building,
   CheckCircle2,
+  Clock,
 } from 'lucide-react';
 
 const PERIODS = [
@@ -40,7 +38,7 @@ export function StoreDashboardPage() {
   const currentStore = outletCtx?.store || storeDetail || stores.find((s) => s.code === effectiveStoreCode);
 
   const { data: allProducts = [], isLoading: isProdsLoading } = useAllProducts();
-  const { data: invoices = [] } = useInvoices(currentStore?.id);
+  const { data: invoices = [], isLoading: isInvoicesLoading } = useInvoices(currentStore?.id);
 
   // Store-isolated products
   const storeProducts = useMemo(() => {
@@ -95,7 +93,6 @@ export function StoreDashboardPage() {
   const periodMultiplier = PERIODS.find((p) => p.id === selectedPeriod)?.multiplier || 1.0;
 
   const financialSummary = useMemo(() => {
-    // Baseline monthly figures tailored per store branch
     let baseMonthlySales = 485000;
     let baseMonthlyExpenses = 320000;
 
@@ -107,7 +104,6 @@ export function StoreDashboardPage() {
       baseMonthlyExpenses = 145000;
     }
 
-    // If real invoices exist for this store, incorporate them
     const realInvoiceTotal = invoices.reduce((acc, inv) => acc + (parseFloat(inv.grand_total) || 0), 0);
     const totalSales = Math.round((baseMonthlySales + realInvoiceTotal) * periodMultiplier);
     const totalExpenses = Math.round(baseMonthlyExpenses * periodMultiplier);
@@ -124,8 +120,6 @@ export function StoreDashboardPage() {
 
   const storeName = currentStore?.name || (effectiveStoreCode === 'mobiles' ? 'Star Mobiles' : 'Star Furniture & Living');
   const storeCity = currentStore?.city || 'Mumbai';
-  const storeGstin = currentStore?.gstin || '27AAAAA0000A1Z5';
-  const storeManager = currentStore?.manager_name || 'Rajesh Kulkarni';
 
   return (
     <div className="space-y-6 min-w-0">
@@ -133,26 +127,26 @@ export function StoreDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border min-w-0">
         <div className="space-y-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-medium uppercase tracking-wider text-muted">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted">
               STORE WORKSPACE
             </span>
             <span className="text-xs text-muted">•</span>
-            <span className="text-xs font-medium text-brand-sage flex items-center gap-1">
-              <CheckCircle2 size={12} />
+            <span className="text-xs font-semibold text-brand-sage flex items-center gap-1">
+              <CheckCircle2 size={13} />
               Active Branch
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
             {storeName} Dashboard
           </h1>
           <p className="text-xs sm:text-sm text-muted">
-            GSTIN: <span className="font-mono">{storeGstin}</span> • Manager: {storeManager} • {storeCity}
+            Branch Operations • {storeCity} • Real-time telemetry & counter sales
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0">
           {/* Period selector */}
-          <div className="flex items-center bg-surface border border-border rounded-lg p-1 text-xs">
+          <div className="flex items-center bg-surface border border-border rounded-lg p-1 text-xs shadow-2xs">
             <Calendar size={13} className="text-muted ml-2 mr-1.5 shrink-0" />
             <div className="flex items-center gap-1">
               {PERIODS.map((period) => (
@@ -162,8 +156,8 @@ export function StoreDashboardPage() {
                   onClick={() => setSelectedPeriod(period.id)}
                   className={`px-2.5 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors ${
                     selectedPeriod === period.id
-                      ? 'bg-text text-bg shadow-2xs'
-                      : 'text-muted hover:text-text hover:bg-bg'
+                      ? 'bg-accent text-accent-fg shadow-2xs'
+                      : 'text-muted hover:text-text hover:bg-surface-subtle'
                   }`}
                 >
                   {period.label}
@@ -175,7 +169,7 @@ export function StoreDashboardPage() {
           <Button
             size="sm"
             onClick={() => navigate(`/admin/${effectiveStoreCode}/billing`)}
-            className="rounded-lg gap-1.5 font-medium text-xs"
+            className="rounded-lg gap-1.5 font-medium text-xs shadow-2xs"
           >
             <PlusCircle size={14} />
             <span className="hidden sm:inline">New Bill</span>
@@ -183,24 +177,24 @@ export function StoreDashboardPage() {
         </div>
       </div>
 
-      {/* 3 CORE FINANCIAL CARDS: TOTAL SALES, TOTAL EXPENSES, TOTAL PROFIT */}
+      {/* 3 CORE FINANCIAL CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 min-w-0">
         {/* Card 1: Total Sales */}
         <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-4 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
               TOTAL SALES
             </span>
-            <div className="w-8 h-8 rounded-lg bg-bg border border-border text-muted flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-surface-subtle border border-border text-muted flex items-center justify-center shrink-0">
               <IndianRupee size={15} />
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
+            <div className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
               {formatCurrency(financialSummary.totalSales)}
             </div>
             <p className="text-xs text-muted flex items-center gap-1">
-              <TrendingUp size={12} className="text-brand-sage" />
+              <TrendingUp size={13} className="text-brand-sage" />
               <span>Revenue across paid & counter sales</span>
             </p>
           </div>
@@ -209,15 +203,15 @@ export function StoreDashboardPage() {
         {/* Card 2: Total Expenses */}
         <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-4 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
               TOTAL EXPENSES
             </span>
-            <div className="w-8 h-8 rounded-lg bg-bg border border-border text-muted flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-surface-subtle border border-border text-muted flex items-center justify-center shrink-0">
               <Receipt size={15} />
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
+            <div className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
               {formatCurrency(financialSummary.totalExpenses)}
             </div>
             <p className="text-xs text-muted">
@@ -229,19 +223,19 @@ export function StoreDashboardPage() {
         {/* Card 3: Total Profit */}
         <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-4 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
               TOTAL PROFIT
             </span>
-            <div className="w-8 h-8 rounded-lg bg-bg border border-border text-muted flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-surface-subtle border border-border text-muted flex items-center justify-center shrink-0">
               <PiggyBank size={15} />
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
+            <div className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
               {formatCurrency(financialSummary.totalProfit)}
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-medium uppercase px-2 py-0.5 rounded-md bg-brand-sage-subtle text-brand-sage-text border border-brand-sage-border">
+              <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md bg-brand-sage-subtle text-brand-sage-text border border-brand-sage-border">
                 {financialSummary.profitMargin}% Net Margin
               </span>
               <span className="text-xs text-muted">Sales minus expenses</span>
@@ -250,196 +244,197 @@ export function StoreDashboardPage() {
         </div>
       </div>
 
-      {/* TWO COLUMN SECTION: STOCK ALERTS & STORE OPERATIONS */}
+      {/* TWO COLUMN SECTION: STOCK ALERTS & LIVE POS FEED */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-w-0">
-        {/* Left Column (col-span-7): Stock Alert (3 at most) + Button below it */}
-        <div className="lg:col-span-7 space-y-4">
-          <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs">
-            <div className="flex items-center justify-between pb-3 border-b border-border">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-bg border border-border text-amber-600 flex items-center justify-center shrink-0">
-                  <AlertTriangle size={15} />
+        {/* Left Column (col-span-6): Stock Alerts */}
+        <div className="lg:col-span-6 space-y-4">
+          <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs flex flex-col justify-between h-full">
+            <div>
+              <div className="flex items-center justify-between pb-3 border-b border-border">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-surface-subtle border border-border text-amber-600 flex items-center justify-center shrink-0">
+                    <AlertTriangle size={15} />
+                  </div>
+                  <div>
+                    <h2 className="text-sm sm:text-base font-semibold text-text">Critical Stock Alerts</h2>
+                    <p className="text-xs text-muted">
+                      Items at or below reorder threshold
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-sm sm:text-base font-medium text-text">Stock Alerts</h2>
-                  <p className="text-xs text-muted">
-                    At most 3 critical items below reorder threshold
+                <Badge variant={stockAlerts.length > 0 ? 'amber' : 'success'} className="text-[10px] font-medium">
+                  {stockAlerts.length} {stockAlerts.length === 1 ? 'Alert' : 'Alerts'}
+                </Badge>
+              </div>
+
+              {/* List of at most 3 items */}
+              {isProdsLoading ? (
+                <div className="py-8 text-center text-xs text-muted">
+                  Checking inventory stock levels...
+                </div>
+              ) : stockAlerts.length === 0 ? (
+                <div className="py-8 text-center space-y-2">
+                  <CheckCircle2 size={24} className="text-brand-sage mx-auto" />
+                  <p className="text-xs font-semibold text-text">
+                    All inventory healthy for {storeName}
+                  </p>
+                  <p className="text-[11px] text-muted">
+                    No items currently below minimum reorder thresholds.
                   </p>
                 </div>
-              </div>
-              <Badge variant="default" className="text-[10px] font-medium">
-                {stockAlerts.length} {stockAlerts.length === 1 ? 'Alert' : 'Alerts'}
-              </Badge>
-            </div>
-
-            {/* List of at most 3 items */}
-            {isProdsLoading ? (
-              <div className="py-8 text-center text-xs text-muted">
-                Checking inventory stock levels...
-              </div>
-            ) : stockAlerts.length === 0 ? (
-              <div className="p-6 rounded-lg border border-dashed border-border text-center space-y-2">
-                <CheckCircle2 size={24} className="text-brand-sage mx-auto" />
-                <p className="text-xs font-medium text-text">
-                  All inventory healthy for {storeName}
-                </p>
-                <p className="text-[11px] text-muted">
-                  No items currently below minimum reorder thresholds.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-2.5">
-                {stockAlerts.map((item) => (
-                  <div
-                    key={item.id}
-                    className="p-3.5 rounded-lg border border-border bg-bg/40 flex items-center justify-between gap-3 transition-colors hover:bg-bg/80"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center shrink-0 overflow-hidden">
-                        {item.image_url ? (
-                          <img
-                            src={item.image_url}
-                            alt={item.name}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                        ) : (
-                          <Package size={18} className="text-muted" />
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-xs font-medium text-text truncate">
-                          {item.name}
-                        </div>
-                        <div className="text-[10px] text-muted flex items-center gap-1.5 font-mono">
-                          <span>SKU: {item.sku}</span>
-                          {item.categories?.name && (
-                            <>
-                              <span>•</span>
-                              <span>{item.categories.name}</span>
-                            </>
+              ) : (
+                <div className="space-y-2.5 pt-3">
+                  {stockAlerts.map((item) => (
+                    <div
+                      key={item.id}
+                      className="p-3 rounded-lg border border-border bg-surface-subtle flex items-center justify-between gap-3 transition-colors hover:bg-surface-hover"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-9 h-9 rounded-lg bg-surface border border-border flex items-center justify-center shrink-0 overflow-hidden">
+                          {item.image_url ? (
+                            <img
+                              src={item.image_url}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <Package size={16} className="text-muted" />
                           )}
                         </div>
+                        <div className="min-w-0">
+                          <div className="text-xs font-semibold text-text truncate">
+                            {item.name}
+                          </div>
+                          <div className="text-[10px] text-muted flex items-center gap-1.5 font-mono">
+                            <span>SKU: {item.sku}</span>
+                            {item.categories?.name && (
+                              <>
+                                <span>•</span>
+                                <span>{item.categories.name}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="text-right shrink-0">
-                      {item.currentStock <= 0 ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-danger/10 text-danger border border-danger/20">
-                          Out of Stock
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                          {item.currentStock} {item.currentStock === 1 ? 'unit left' : 'units left'}
-                        </span>
-                      )}
-                      <div className="text-[10px] text-muted mt-0.5">
-                        Min Reorder: {item.reorderLevel}
+                      <div className="text-right shrink-0">
+                        {item.currentStock <= 0 ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-danger/10 text-danger border border-danger/20">
+                            Out of Stock
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
+                            {item.currentStock} {item.currentStock === 1 ? 'unit left' : 'units left'}
+                          </span>
+                        )}
+                        <div className="text-[10px] text-muted mt-0.5">
+                          Min: {item.reorderLevel}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Prominent Button below Stock Alerts to Go to Inventory */}
-            <div className="pt-2">
+            <div className="pt-3 border-t border-border mt-3">
               <Button
                 variant="outline"
                 onClick={() => navigate(`/admin/${effectiveStoreCode}/inventory`)}
-                className="w-full justify-center gap-2 text-xs font-medium py-2 rounded-lg"
+                className="w-full justify-center gap-2 text-xs font-medium rounded-lg"
               >
-                <Package size={15} />
-                <span>Go to Inventory & View All Products</span>
-                <ArrowRight size={14} />
+                <Package size={14} />
+                <span>Manage Inventory & Restock</span>
+                <ArrowRight size={13} />
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Right Column (col-span-5): Store Quick Actions & Profile */}
-        <div className="lg:col-span-5 space-y-4">
-          <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs">
-            <div className="flex items-center gap-2.5 pb-3 border-b border-border">
-              <div className="w-8 h-8 rounded-lg bg-bg border border-border flex items-center justify-center text-text shrink-0">
-                <Building size={15} />
+        {/* Right Column (col-span-6): Live Branch Transactions Feed */}
+        <div className="lg:col-span-6 space-y-4">
+          <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs flex flex-col justify-between h-full">
+            <div>
+              <div className="flex items-center justify-between pb-3 border-b border-border">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-surface-subtle border border-border flex items-center justify-center text-text shrink-0">
+                    <Receipt size={15} />
+                  </div>
+                  <div>
+                    <h2 className="text-sm sm:text-base font-semibold text-text">Recent Store Transactions</h2>
+                    <p className="text-xs text-muted">Live checkout activity at this counter</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px] text-muted font-medium">
+                  <span className="w-2 h-2 rounded-full bg-brand-sage animate-pulse" />
+                  <span>Realtime</span>
+                </div>
               </div>
-              <div>
-                <h2 className="text-sm sm:text-base font-medium text-text">Store Administration</h2>
-                <p className="text-xs text-muted">Manage isolated branch operations</p>
-              </div>
+
+              {isInvoicesLoading ? (
+                <div className="py-8 text-center text-xs text-muted">
+                  Loading recent checkouts...
+                </div>
+              ) : invoices.length === 0 ? (
+                <div className="py-8 text-center space-y-2">
+                  <Receipt size={24} className="text-muted/60 mx-auto" />
+                  <p className="text-xs font-semibold text-text">No invoices generated yet</p>
+                  <p className="text-[11px] text-muted">Issue tax invoices using the POS terminal.</p>
+                </div>
+              ) : (
+                <div className="space-y-2 pt-3">
+                  {invoices.slice(0, 4).map((inv) => (
+                    <div
+                      key={inv.id}
+                      className="p-3 rounded-lg border border-border bg-surface-subtle flex items-center justify-between gap-3 transition-colors hover:bg-surface-hover text-xs"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-text font-mono text-[11px]">
+                            {inv.invoice_number}
+                          </span>
+                          <span className="text-muted">•</span>
+                          <span className="text-muted truncate">
+                            {inv.customer_name || 'Walk-in Customer'}
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-muted flex items-center gap-1.5 mt-0.5">
+                          <Clock size={11} />
+                          <span>{inv.created_at ? formatDate(inv.created_at) : 'Today'}</span>
+                          {inv.status && (
+                            <Badge variant="sage" className="text-[9px] px-1 py-0 uppercase">
+                              {inv.status}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="text-right shrink-0">
+                        <div className="font-semibold text-text text-xs">
+                          {formatCurrency(inv.grand_total || 0)}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => navigate(`/admin/${effectiveStoreCode}/billing`)}
-                className="w-full p-3 rounded-lg border border-border bg-bg/40 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
+            {/* Action Link to Invoices List */}
+            <div className="pt-3 border-t border-border mt-3">
+              <Button
+                variant="outline"
+                onClick={() => navigate(`/admin/${effectiveStoreCode}/invoices`)}
+                className="w-full justify-center gap-2 text-xs font-medium rounded-lg"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-surface border border-border flex items-center justify-center text-text shrink-0">
-                    <Receipt size={14} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium text-text">POS Billing Terminal</div>
-                    <div className="text-[10px] text-muted">Issue tax invoices with GST calculation</div>
-                  </div>
-                </div>
-                <ArrowRight size={13} className="text-muted group-hover:text-text group-hover:translate-x-0.5 transition-all" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => navigate(`/admin/${effectiveStoreCode}/inventory`)}
-                className="w-full p-3 rounded-lg border border-border bg-bg/40 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-surface border border-border flex items-center justify-center text-text shrink-0">
-                    <Package size={14} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium text-text">Store Inventory & Stock</div>
-                    <div className="text-[10px] text-muted">Stock tracking, price & intake register</div>
-                  </div>
-                </div>
-                <ArrowRight size={13} className="text-muted group-hover:text-text group-hover:translate-x-0.5 transition-all" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => navigate(`/admin/${effectiveStoreCode}/staff`)}
-                className="w-full p-3 rounded-lg border border-border bg-bg/40 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-surface border border-border flex items-center justify-center text-text shrink-0">
-                    <Users size={14} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium text-text">Staff & Payroll Management</div>
-                    <div className="text-[10px] text-muted">Staff directory, roles & salary processing</div>
-                  </div>
-                </div>
-                <ArrowRight size={13} className="text-muted group-hover:text-text group-hover:translate-x-0.5 transition-all" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => navigate(`/admin/${effectiveStoreCode}/reports`)}
-                className="w-full p-3 rounded-lg border border-border bg-bg/40 hover:bg-bg flex items-center justify-between text-left transition-colors cursor-pointer group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-surface border border-border flex items-center justify-center text-text shrink-0">
-                    <BarChart3 size={14} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium text-text">Sales & Tax Reports</div>
-                    <div className="text-[10px] text-muted">GSTR summary, payment split & analytics</div>
-                  </div>
-                </div>
-                <ArrowRight size={13} className="text-muted group-hover:text-text group-hover:translate-x-0.5 transition-all" />
-              </button>
+                <Receipt size={14} />
+                <span>View All Invoices & GST Reports</span>
+                <ArrowRight size={13} />
+              </Button>
             </div>
           </div>
         </div>

@@ -1,5 +1,4 @@
 export { StaffManagementPage } from './routes/StaffManagementPage';
-export { StaffPortalPage } from './routes/StaffPortalPage';
 export { StaffModal } from './components/StaffModal';
 export { PayslipModal } from './components/PayslipModal';
 export { LeaveActionModal } from './components/LeaveActionModal';

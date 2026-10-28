@@ -11,11 +11,11 @@ export function Table({ className, containerClassName, children, ...rest }) {
   return (
     <div
       className={cn(
-        'w-full overflow-x-auto rounded-xl border border-border bg-surface min-w-0 shadow-xs',
+        'w-full overflow-hidden rounded-xl border border-border bg-surface min-w-0 shadow-2xs',
         containerClassName
       )}
     >
-      <table className={cn('w-full text-left border-collapse text-sm', className)} {...rest}>
+      <table className={cn('w-full text-left border-collapse text-sm table-fixed', className)} {...rest}>
         {children}
       </table>
     </div>
@@ -26,7 +26,7 @@ export function TableHead({ className, children, ...rest }) {
   return (
     <thead
       className={cn(
-        'bg-bg/70 border-b border-border text-[11px] sm:text-xs uppercase font-medium text-muted tracking-wider select-none',
+        'bg-bg/70 border-b border-border text-[11px] sm:text-xs uppercase font-medium text-muted tracking-wider select-none whitespace-nowrap',
         className
       )}
       {...rest}
@@ -46,7 +46,7 @@ export function TableBody({ className, children, ...rest }) {
 
 export function TableRow({ className, children, ...rest }) {
   return (
-    <tr className={cn('h-14 min-h-14 hover:bg-bg/40 transition-colors', className)} {...rest}>
+    <tr className={cn('min-h-14 hover:bg-bg/40 transition-colors', className)} {...rest}>
       {children}
     </tr>
   );

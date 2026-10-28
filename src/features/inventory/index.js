@@ -1,4 +1,3 @@
-export { InventoryPage } from './routes/InventoryPage';
 export { InventoryCardsPage } from './routes/InventoryCardsPage';
 export { StockAdjustmentModal } from './components/StockAdjustmentModal';
 export { EditPricingModal } from './components/EditPricingModal';
@@ -34,4 +33,3 @@ export {
   listCategoriesByStore,
   createCategory,
 } from './api/inventory.api';
-

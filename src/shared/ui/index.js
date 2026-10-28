@@ -6,3 +6,5 @@ export { Badge } from './Badge';
 export { Container } from './Container';
 export { Modal } from './Modal';
 export { Table, TableHead, TableBody, TableRow, TableCell, TableHeaderCell } from './Table';
+export { RouteErrorBoundary } from './RouteErrorBoundary';
+
