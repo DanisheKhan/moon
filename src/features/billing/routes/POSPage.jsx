@@ -612,15 +612,15 @@ export function POSPage() {
       <Table containerClassName="rounded-xl border border-border bg-surface shadow-xs min-w-0">
         <TableHead>
           <TableRow>
-            <TableHeaderCell className="w-12 text-center">#</TableHeaderCell>
-            <TableHeaderCell className="min-w-64">Item Description</TableHeaderCell>
-            <TableHeaderCell className="w-24 text-center">HSN/SAC</TableHeaderCell>
-            <TableHeaderCell className="w-28 text-right">Rate (₹)</TableHeaderCell>
-            <TableHeaderCell className="w-32 text-center">Quantity</TableHeaderCell>
-            <TableHeaderCell className="w-24 text-center">GST %</TableHeaderCell>
-            <TableHeaderCell className="w-28 text-right">Taxable</TableHeaderCell>
-            <TableHeaderCell className="w-32 text-right">Total (₹)</TableHeaderCell>
-            <TableHeaderCell className="w-12 text-center" />
+            <TableHeaderCell className="w-10 text-center">#</TableHeaderCell>
+            <TableHeaderCell className="w-[30%] min-w-44">Item Description</TableHeaderCell>
+            <TableHeaderCell className="w-20 text-center hidden md:table-cell">HSN/SAC</TableHeaderCell>
+            <TableHeaderCell className="w-24 text-right">Rate (₹)</TableHeaderCell>
+            <TableHeaderCell className="w-28 text-center">Quantity</TableHeaderCell>
+            <TableHeaderCell className="w-16 text-center hidden lg:table-cell">GST %</TableHeaderCell>
+            <TableHeaderCell className="w-24 text-right hidden xl:table-cell">Taxable</TableHeaderCell>
+            <TableHeaderCell className="w-24 text-right">Total (₹)</TableHeaderCell>
+            <TableHeaderCell className="w-10 text-center" />
           </TableRow>
         </TableHead>
 
@@ -667,7 +667,7 @@ export function POSPage() {
                     </div>
                   </TableCell>
 
-                  <TableCell className="text-center font-mono text-xs text-muted">
+                  <TableCell className="text-center font-mono text-xs text-muted hidden md:table-cell">
                     {item.hsn_code}
                   </TableCell>
 
@@ -701,11 +701,11 @@ export function POSPage() {
                     )}
                   </TableCell>
 
-                  <TableCell className="text-center text-xs text-muted">
+                  <TableCell className="text-center text-xs text-muted hidden lg:table-cell">
                     {item.gst_rate}%
                   </TableCell>
 
-                  <TableCell className="text-right text-xs text-muted">
+                  <TableCell className="text-right text-xs text-muted hidden xl:table-cell">
                     {formatCurrency(lineTaxable)}
                   </TableCell>
 

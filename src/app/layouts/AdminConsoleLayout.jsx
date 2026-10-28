@@ -103,7 +103,7 @@ export function AdminConsoleLayout() {
     .toUpperCase() || 'SE';
 
   return (
-    <div className="h-screen bg-console-bg text-text flex font-sans overflow-hidden">
+    <div className="h-screen bg-console-bg text-text flex font-sans overflow-hidden w-full max-w-full">
       {/* Mobile Backdrop Overlay */}
       {isMobileDrawerOpen && (
         <div
@@ -280,7 +280,7 @@ export function AdminConsoleLayout() {
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-1 lg:pl-64 flex flex-col h-screen min-w-0 overflow-hidden">
+      <div className="flex-1 lg:pl-64 flex flex-col h-screen min-w-0 overflow-hidden w-full max-w-full">
         {/* TOP HEADER BAR - Clean Solid Bar without Banned Glassmorphism */}
         <header className="h-16 shrink-0 bg-surface border-b border-border z-30 flex items-center justify-between px-4 sm:px-6 shadow-2xs">
           {/* Left: Mobile Toggle & In-Header Store Switcher Dropdown */}
@@ -476,7 +476,7 @@ export function AdminConsoleLayout() {
         </header>
 
         {/* Content Body - Smooth independent vertical scrolling */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 min-w-0">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 min-w-0 w-full max-w-full">
           <div className="w-full max-w-7xl mx-auto space-y-6 min-w-0">
             <Outlet context={{ store: currentStore, storeCode: currentStoreCode }} />
           </div>

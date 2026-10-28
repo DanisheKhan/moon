@@ -343,12 +343,12 @@ export function StaffManagementPage() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableHeaderCell className="w-[24%]">Employee</TableHeaderCell>
-                  <TableHeaderCell className="w-[18%]">Role & Store</TableHeaderCell>
-                  <TableHeaderCell className="w-[18%]">Contact</TableHeaderCell>
-                  <TableHeaderCell className="w-[16%]">Compensation</TableHeaderCell>
-                  <TableHeaderCell className="w-[10%]">Status</TableHeaderCell>
-                  <TableHeaderCell className="text-right w-[14%]">Actions</TableHeaderCell>
+                  <TableHeaderCell className="w-[45%] sm:w-[22%]">Employee</TableHeaderCell>
+                  <TableHeaderCell className="hidden md:table-cell md:w-[15%]">Role & Store</TableHeaderCell>
+                  <TableHeaderCell className="hidden lg:table-cell lg:w-[15%]">Contact</TableHeaderCell>
+                  <TableHeaderCell className="hidden sm:table-cell sm:w-[16%]">Compensation</TableHeaderCell>
+                  <TableHeaderCell className="w-[25%] sm:w-[13%]">Status</TableHeaderCell>
+                  <TableHeaderCell className="text-right w-[30%] sm:w-[19%]">Actions</TableHeaderCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -364,37 +364,40 @@ export function StaffManagementPage() {
                             {emp.full_name}
                           </div>
                           <div className="text-[10px] text-muted leading-tight mt-0.5 truncate font-mono">
-                            {emp.employee_code} • {emp.department}
+                            {emp.employee_code} <span className="hidden 2xl:inline">• {emp.department}</span>
+                          </div>
+                          <div className="text-[10px] text-muted leading-tight mt-0.5 truncate md:hidden">
+                            {emp.designation} • {emp.stores?.name || 'All Stores'}
                           </div>
                         </div>
                       </div>
                     </TableCell>
 
-                    <TableCell className="py-3">
-                      <div className="font-medium text-text text-xs leading-tight truncate">
+                    <TableCell className="hidden md:table-cell py-3">
+                      <div className="font-medium text-text text-xs leading-tight truncate max-w-36">
                         {emp.designation}
                       </div>
-                      <div className="text-[11px] text-muted leading-tight mt-0.5 truncate flex items-center gap-1">
+                      <div className="text-[11px] text-muted leading-tight mt-0.5 truncate flex items-center gap-1 max-w-36">
                         <span className="w-1.5 h-1.5 rounded-full bg-brand-sage shrink-0" />
                         <span className="truncate">{emp.stores?.name || 'All Stores'}</span>
                       </div>
                     </TableCell>
 
-                    <TableCell className="py-3">
+                    <TableCell className="hidden lg:table-cell py-3">
                       <div className="text-xs font-medium text-text font-mono leading-tight truncate">
                         {emp.phone}
                       </div>
-                      <div className="text-[10px] text-muted font-mono leading-tight mt-0.5 truncate" title={emp.email}>
+                      <div className="text-[10px] text-muted font-mono leading-tight mt-0.5 truncate hidden 2xl:block" title={emp.email}>
                         {emp.email}
                       </div>
                     </TableCell>
 
-                    <TableCell className="py-3">
+                    <TableCell className="hidden sm:table-cell py-3">
                       <div className="font-semibold text-xs text-text leading-tight">
                         {formatCurrency(emp.base_salary)}
                       </div>
-                      <div className="text-[10px] text-muted leading-tight mt-0.5 truncate">
-                        {emp.annual_leave_quota}d quota • {formatCurrency(Math.round(Number(emp.base_salary || 0) / 30))}/d
+                      <div className="text-[10px] text-muted leading-tight mt-0.5 truncate font-mono">
+                        {emp.annual_leave_quota}d quota <span className="hidden 2xl:inline">• {formatCurrency(Math.round(Number(emp.base_salary || 0) / 30))}/d</span>
                       </div>
                     </TableCell>
 
@@ -427,7 +430,7 @@ export function StaffManagementPage() {
                           title="Grant Leave & Deduct Salary"
                         >
                           <Calendar size={12} className="shrink-0 text-brand-sage" />
-                          <span>Leave</span>
+                          <span className="hidden 2xl:inline">Leave</span>
                         </Button>
 
                         <Button
@@ -441,7 +444,7 @@ export function StaffManagementPage() {
                           title="Edit Staff Profile"
                         >
                           <Pencil size={12} className="shrink-0 text-muted" />
-                          <span>Edit</span>
+                          <span className="hidden 2xl:inline">Edit</span>
                         </Button>
 
                         <button
@@ -549,12 +552,12 @@ export function StaffManagementPage() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableHeaderCell className="w-[22%]">Staff Member</TableHeaderCell>
-                    <TableHeaderCell className="w-[14%]">Type</TableHeaderCell>
-                    <TableHeaderCell className="w-[20%]">Duration</TableHeaderCell>
-                    <TableHeaderCell className="w-[10%]">Days</TableHeaderCell>
-                    <TableHeaderCell className="w-[20%]">Reason</TableHeaderCell>
-                    <TableHeaderCell className="w-[14%]">Status</TableHeaderCell>
+                    <TableHeaderCell className="w-[45%] sm:w-[24%]">Staff Member</TableHeaderCell>
+                    <TableHeaderCell className="w-[20%] sm:w-[14%]">Type</TableHeaderCell>
+                    <TableHeaderCell className="hidden sm:table-cell sm:w-[20%]">Duration</TableHeaderCell>
+                    <TableHeaderCell className="w-[15%] sm:w-[10%]">Days</TableHeaderCell>
+                    <TableHeaderCell className="hidden md:table-cell md:w-[20%]">Reason</TableHeaderCell>
+                    <TableHeaderCell className="w-[20%] sm:w-[12%]">Status</TableHeaderCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -567,13 +570,16 @@ export function StaffManagementPage() {
                         <div className="text-[10px] text-muted leading-tight mt-0.5 truncate">
                           {l.staff_profiles?.designation}
                         </div>
+                        <div className="text-[10px] text-muted leading-tight mt-0.5 truncate sm:hidden">
+                          {l.start_date} to {l.end_date}
+                        </div>
                       </TableCell>
                       <TableCell className="capitalize text-xs py-3">{l.leave_type}</TableCell>
-                      <TableCell className="text-xs text-muted py-3 truncate">
+                      <TableCell className="text-xs text-muted py-3 truncate hidden sm:table-cell">
                         {l.start_date} to {l.end_date}
                       </TableCell>
                       <TableCell className="text-xs font-semibold py-3">{l.total_days} d</TableCell>
-                      <TableCell className="text-xs italic text-muted truncate py-3" title={l.reason}>
+                      <TableCell className="text-xs italic text-muted truncate py-3 hidden md:table-cell" title={l.reason}>
                         {l.reason || '—'}
                       </TableCell>
                       <TableCell className="py-3">
@@ -621,12 +627,12 @@ export function StaffManagementPage() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableHeaderCell className="w-[24%]">Employee</TableHeaderCell>
-                  <TableHeaderCell className="w-[18%]">Role</TableHeaderCell>
-                  <TableHeaderCell className="w-[18%]">Basic Salary / Day</TableHeaderCell>
-                  <TableHeaderCell className="w-[16%]">Net Payout</TableHeaderCell>
-                  <TableHeaderCell className="w-[12%]">Status</TableHeaderCell>
-                  <TableHeaderCell className="text-right w-[12%]">Actions</TableHeaderCell>
+                  <TableHeaderCell className="w-[40%] sm:w-[24%]">Employee</TableHeaderCell>
+                  <TableHeaderCell className="hidden sm:table-cell sm:w-[18%]">Role</TableHeaderCell>
+                  <TableHeaderCell className="hidden md:table-cell md:w-[18%]">Basic Salary / Day</TableHeaderCell>
+                  <TableHeaderCell className="w-[30%] sm:w-[16%]">Net Payout</TableHeaderCell>
+                  <TableHeaderCell className="hidden sm:table-cell sm:w-[12%]">Status</TableHeaderCell>
+                  <TableHeaderCell className="text-right w-[30%] sm:w-[12%]">Actions</TableHeaderCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -639,13 +645,16 @@ export function StaffManagementPage() {
                       <div className="text-[10px] text-muted font-mono leading-tight mt-0.5 truncate">
                         {sal.staff_profiles?.employee_code}
                       </div>
+                      <div className="text-[10px] text-muted leading-tight mt-0.5 truncate sm:hidden">
+                        {sal.staff_profiles?.designation} • {sal.payment_status === 'paid' ? 'Paid' : 'Unpaid'}
+                      </div>
                     </TableCell>
 
-                    <TableCell className="text-xs text-muted py-3 truncate">
+                    <TableCell className="text-xs text-muted py-3 truncate hidden sm:table-cell">
                       {sal.staff_profiles?.designation}
                     </TableCell>
 
-                    <TableCell className="py-3">
+                    <TableCell className="py-3 hidden md:table-cell">
                       <div className="text-xs font-medium text-text leading-tight">{formatCurrency(sal.base_salary)}</div>
                       <div className="text-[10px] text-muted font-mono mt-0.5 leading-tight">{formatCurrency(Math.round(Number(sal.base_salary || 0) / 30))}/day</div>
                     </TableCell>
@@ -657,7 +666,7 @@ export function StaffManagementPage() {
                       </div>
                     </TableCell>
 
-                    <TableCell className="py-3">
+                    <TableCell className="py-3 hidden sm:table-cell">
                       {sal.payment_status === 'paid' ? (
                         <Badge variant="success" className="text-xs gap-1 shrink-0 py-0.5 px-2 font-medium">
                           <CheckCircle size={11} className="shrink-0" /> Paid
@@ -682,7 +691,7 @@ export function StaffManagementPage() {
                             className="h-7.5 px-2 text-xs font-medium gap-1 shrink-0"
                           >
                             <CreditCard size={12} className="shrink-0" />
-                            <span>Pay</span>
+                            <span className="hidden xl:inline">Pay</span>
                           </Button>
                         )}
                         <Button
@@ -693,7 +702,7 @@ export function StaffManagementPage() {
                           title="Generate Official Payslip"
                         >
                           <Printer size={12} className="shrink-0 text-muted" />
-                          <span>Payslip</span>
+                          <span className="hidden xl:inline">Payslip</span>
                         </Button>
                       </div>
                     </TableCell>

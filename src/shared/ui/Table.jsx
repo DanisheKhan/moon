@@ -11,7 +11,7 @@ export function Table({ className, containerClassName, children, ...rest }) {
   return (
     <div
       className={cn(
-        'w-full overflow-hidden rounded-xl border border-border bg-surface min-w-0 shadow-2xs',
+        'w-full overflow-x-auto overflow-y-hidden rounded-xl border border-border bg-surface min-w-0 shadow-2xs no-scrollbar scrollbar-none',
         containerClassName
       )}
     >
@@ -26,7 +26,7 @@ export function TableHead({ className, children, ...rest }) {
   return (
     <thead
       className={cn(
-        'bg-bg/70 border-b border-border text-[11px] sm:text-xs uppercase font-medium text-muted tracking-wider select-none whitespace-nowrap',
+        'bg-surface-subtle border-b border-border text-[11px] sm:text-xs uppercase font-medium text-muted tracking-wider select-none whitespace-nowrap',
         className
       )}
       {...rest}
@@ -46,7 +46,7 @@ export function TableBody({ className, children, ...rest }) {
 
 export function TableRow({ className, children, ...rest }) {
   return (
-    <tr className={cn('min-h-14 hover:bg-bg/40 transition-colors', className)} {...rest}>
+    <tr className={cn('min-h-14 hover:bg-surface-subtle/50 transition-colors', className)} {...rest}>
       {children}
     </tr>
   );
@@ -54,7 +54,7 @@ export function TableRow({ className, children, ...rest }) {
 
 export function TableCell({ className, children, ...rest }) {
   return (
-    <td className={cn('px-3.5 sm:px-4 py-2.5 align-middle font-normal', className)} {...rest}>
+    <td className={cn('px-2.5 sm:px-3 py-2.5 align-middle font-normal', className)} {...rest}>
       {children}
     </td>
   );
@@ -62,7 +62,7 @@ export function TableCell({ className, children, ...rest }) {
 
 export function TableHeaderCell({ className, children, ...rest }) {
   return (
-    <th className={cn('h-11 px-3.5 sm:px-4 py-0 align-middle font-medium whitespace-nowrap', className)} {...rest}>
+    <th className={cn('h-10 px-2.5 sm:px-3 py-0 align-middle font-medium whitespace-nowrap', className)} {...rest}>
       {children}
     </th>
   );

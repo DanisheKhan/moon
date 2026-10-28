@@ -8,7 +8,7 @@ const routes = process.env.ROUTES
   ? process.env.ROUTES.split(',').map((r) => r.trim()).filter(Boolean)
   : JSON.parse(fs.readFileSync(new URL('./routes.json', import.meta.url), 'utf8'));
 
-const WIDTHS = [320, 360, 390, 768];
+const WIDTHS = [320, 360, 390, 768, 1024, 1280];
 
 /** Scroll through the page so lazy images and whileInView reveals render before measuring. */
 async function exercisePage(page) {

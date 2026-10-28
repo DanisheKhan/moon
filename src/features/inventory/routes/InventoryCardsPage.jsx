@@ -111,7 +111,7 @@ export function InventoryCardsPage() {
   return (
     <div className="space-y-6">
       {/* Header bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border min-w-0">
         <div>
           <span className="text-[10px] font-medium uppercase tracking-wider text-muted block mb-1">
             CATALOG MANAGEMENT
@@ -124,7 +124,7 @@ export function InventoryCardsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
           <button
             type="button"
             onClick={() => setIsAddCategoryModalOpen(true)}
