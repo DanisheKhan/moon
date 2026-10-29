@@ -6,6 +6,9 @@ import {
   getInvoiceDetail,
   updateInvoice,
   voidInvoice,
+  recordPayment,
+  processReturn,
+  listReturns,
 } from '../api/billing.api';
 import { inventoryKeys } from '@/features/inventory';
 
@@ -82,5 +85,39 @@ export function useVoidInvoice() {
       queryClient.invalidateQueries({ queryKey: ['reports'] });
       queryClient.invalidateQueries({ queryKey: ['stores'] });
     },
+  });
+}
+
+export function useRecordPayment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: recordPayment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: billingKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: ['stores'] });
+    },
+  });
+}
+
+export function useProcessReturn() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: processReturn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: billingKeys.all });
+      queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['inventory'] });
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: ['stores'] });
+    },
+  });
+}
+
+export function useInvoiceReturns(invoiceId) {
+  return useQuery({
+    queryKey: [...billingKeys.all, 'returns', invoiceId],
+    queryFn: () => listReturns({ invoiceId }),
+    enabled: Boolean(invoiceId),
   });
 }

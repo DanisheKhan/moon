@@ -247,3 +247,100 @@ export async function getInvoiceDetail(invoiceId) {
     payments: payRes.data || [],
   };
 }
+
+/**
+ * Records a new payment installment for an invoice (e.g. partial balance collection)
+ */
+export async function recordPayment({ invoiceId, paymentMethod, amount, referenceNumber = null }) {
+  const numAmount = parseFloat(amount);
+  if (isNaN(numAmount) || numAmount <= 0) {
+    throw new Error('Payment amount must be greater than zero');
+  }
+
+  // 1. Insert into payments table
+  const { data: payData, error: payErr } = await supabase
+    .from('payments')
+    .insert({
+      invoice_id: invoiceId,
+      payment_method: paymentMethod,
+      amount: numAmount,
+      reference_number: referenceNumber || null,
+    })
+    .select()
+    .single();
+
+  if (payErr) throw payErr;
+
+  // 2. Fetch all payments and invoice total to update invoice status
+  const [invRes, allPaysRes] = await Promise.all([
+    supabase.from('invoices').select('id, grand_total').eq('id', invoiceId).single(),
+    supabase.from('payments').select('amount').eq('invoice_id', invoiceId),
+  ]);
+
+  if (invRes.error) throw invRes.error;
+
+  const grandTotal = parseFloat(invRes.data?.grand_total || 0);
+  const totalPaid = (allPaysRes.data || []).reduce((acc, p) => acc + (parseFloat(p.amount) || 0), 0);
+
+  let newStatus = 'partial';
+  if (totalPaid >= grandTotal) {
+    newStatus = 'paid';
+  } else if (totalPaid <= 0) {
+    newStatus = 'pending';
+  }
+
+  const { error: updErr } = await supabase
+    .from('invoices')
+    .update({ status: newStatus })
+    .eq('id', invoiceId);
+
+  if (updErr) throw updErr;
+
+  return { payment: payData, status: newStatus, totalPaid, balanceDue: Math.max(grandTotal - totalPaid, 0) };
+}
+
+/**
+ * Processes a sales return / refund atomically via database RPC
+ */
+export async function processReturn({ invoiceId, items, refundAmount, refundMethod, reason, notes }) {
+  const { data, error } = await supabase.rpc('process_return', {
+    p_invoice_id: invoiceId,
+    p_items: items,
+    p_refund_amount: parseFloat(refundAmount) || 0,
+    p_refund_method: refundMethod || 'cash',
+    p_reason: reason || 'Customer Return',
+    p_notes: notes || null,
+  });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Lists return records for an invoice or store
+ */
+export async function listReturns({ invoiceId, storeId } = {}) {
+  let query = supabase
+    .from('sales_returns')
+    .select(`
+      id,
+      store_id,
+      invoice_id,
+      return_number,
+      customer_name,
+      refund_amount,
+      refund_method,
+      reason,
+      notes,
+      items,
+      created_at
+    `)
+    .order('created_at', { ascending: false });
+
+  if (invoiceId) query = query.eq('invoice_id', invoiceId);
+  if (storeId) query = query.eq('store_id', storeId);
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return data || [];
+}

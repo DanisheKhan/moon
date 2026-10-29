@@ -16,8 +16,11 @@ import {
 
 const STATUS_OPTIONS = [
   { value: 'paid', label: 'Paid (Settled)', badge: 'success' },
-  { value: 'pending', label: 'Pending (Unpaid)', badge: 'amber' },
-  { value: 'void', label: 'Void / Cancelled', badge: 'danger' },
+  { value: 'partial', label: 'Partial Payment', badge: 'amber' },
+  { value: 'pending', label: 'Pending (Unpaid)', badge: 'danger' },
+  { value: 'returned', label: 'Returned / Refunded', badge: 'purple' },
+  { value: 'partially_returned', label: 'Partially Returned', badge: 'purple' },
+  { value: 'void', label: 'Void / Cancelled', badge: 'default' },
 ];
 
 const PAYMENT_METHODS = [

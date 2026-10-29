@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, Badge } from '@/shared/ui';
 import { formatCurrency, formatDate, amountToWords } from '@/shared/lib/format';
+import { cn } from '@/shared/lib/cn';
 import { Printer, X } from 'lucide-react';
 
 /**
@@ -51,6 +52,8 @@ export function InvoicePrintModal({ isOpen, onClose, invoiceDetail }) {
   const cgstAmount = Number(invoiceDetail.cgst_amount || 0);
   const sgstAmount = Number(invoiceDetail.sgst_amount || 0);
   const discountAmount = Number(invoiceDetail.discount_amount || 0);
+  const totalPaid = payments.reduce((acc, p) => acc + (parseFloat(p.amount) || 0), 0);
+  const balanceDue = Math.max(grandTotal - totalPaid, 0);
 
   /**
    * Triggers clean A4 invoice printing via #print-portal
@@ -114,7 +117,16 @@ export function InvoicePrintModal({ isOpen, onClose, invoiceDetail }) {
           </div>
           <div className="flex justify-between">
             <span className="font-semibold">Payment Status:</span>
-            <span className="uppercase font-semibold">{invoiceDetail.status || 'PAID'}</span>
+            <span className={cn(
+              'uppercase font-bold',
+              invoiceDetail.status === 'paid' && 'text-green-700',
+              invoiceDetail.status === 'partial' && 'text-amber-700',
+              invoiceDetail.status === 'pending' && 'text-red-700',
+              invoiceDetail.status === 'returned' && 'text-purple-700',
+              invoiceDetail.status === 'partially_returned' && 'text-purple-700'
+            )}>
+              {invoiceDetail.status === 'partial' ? `PARTIAL (${formatCurrency(balanceDue)} DUE)` : (invoiceDetail.status || 'PAID')}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="font-semibold">Reverse Charge:</span>
@@ -231,7 +243,7 @@ export function InvoicePrintModal({ isOpen, onClose, invoiceDetail }) {
                 </div>
               ))
             ) : (
-              <div className="text-gray-800">Paid in full (Cash / POS Terminal)</div>
+              <div className="text-red-700 font-semibold">Payment Pending (100% Credit / Udhaar)</div>
             )}
           </div>
         </div>
@@ -259,6 +271,18 @@ export function InvoicePrintModal({ isOpen, onClose, invoiceDetail }) {
             <span>Grand Total:</span>
             <span>{formatCurrency(grandTotal, true)}</span>
           </div>
+          {totalPaid < grandTotal && (
+            <>
+              <div className="flex justify-between text-gray-700 pt-0.5">
+                <span>Amount Paid:</span>
+                <span className="font-semibold text-black">{formatCurrency(totalPaid, true)}</span>
+              </div>
+              <div className="flex justify-between text-red-600 font-bold">
+                <span>Balance Due:</span>
+                <span>{formatCurrency(balanceDue, true)}</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
 

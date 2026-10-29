@@ -198,7 +198,7 @@ export function AdminConsoleLayout() {
             </div>
 
             {/* Store-Specific Workspace Navigation */}
-            {isStoreRoute ? (
+            {isStoreRoute && (
               <div className="pt-3 mt-3 border-t border-sidebar-border space-y-1">
                 <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted truncate">
                   {activeStoreName}
@@ -260,7 +260,7 @@ export function AdminConsoleLayout() {
                   <span>Inventory & Stock</span>
                 </Link>
 
-                {/* 4. Reports */}
+                {/* 5. Reports */}
                 <Link
                   to={`${basePath}/reports`}
                   onClick={handleNavClick}
@@ -274,26 +274,6 @@ export function AdminConsoleLayout() {
                   <BarChart3 size={15} className="shrink-0" />
                   <span>Reports & Tax</span>
                 </Link>
-              </div>
-            ) : (
-              /* Global mode: List all active store workspaces for quick access */
-              <div className="pt-3 mt-3 border-t border-sidebar-border space-y-1">
-                <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted">
-                  Store Workspaces
-                </div>
-                {stores.map((s) => (
-                  <Link
-                    key={s.id || s.code}
-                    to={`/admin/${s.code}`}
-                    onClick={handleNavClick}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface transition-colors font-medium"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-2 h-2 rounded-full bg-brand-sage shrink-0" />
-                      <span className="truncate">{s.name}</span>
-                    </div>
-                  </Link>
-                ))}
               </div>
             )}
           </nav>
