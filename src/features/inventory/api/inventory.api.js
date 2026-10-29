@@ -242,9 +242,9 @@ export async function checkSerialAvailability(serialNumber) {
 }
 
 /**
- * Creates a new product
+ * Creates a new product with optional initial inventory
  */
-export async function createProduct(payload) {
+export async function createProduct({ initialQuantity = 0, ...payload }) {
   const storeId = resolveStoreUuid(payload.store_id) || payload.store_id;
   const { data, error } = await supabase
     .from('products')
@@ -253,6 +253,31 @@ export async function createProduct(payload) {
     .single();
 
   if (error) throw error;
+
+  if (data?.id && Number(initialQuantity) > 0) {
+    const qty = Number(initialQuantity);
+    await supabase
+      .from('inventory')
+      .upsert({
+        store_id: storeId,
+        product_id: data.id,
+        quantity_on_hand: qty,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'store_id,product_id' });
+
+    await supabase
+      .from('stock_adjustments')
+      .insert({
+        store_id: storeId,
+        product_id: data.id,
+        previous_quantity: 0,
+        new_quantity: qty,
+        change_quantity: qty,
+        reason: 'initial_stock',
+        notes: `Initial stock of ${qty} recorded on product creation`,
+      });
+  }
+
   return data;
 }
 
@@ -271,16 +296,155 @@ export async function createProductUnit(payload) {
 }
 
 /**
+ * Adds a new serialized unit, keeps inventory.quantity_on_hand in sync, and logs audit entry
+ */
+export async function addSerializedUnit({
+  storeId,
+  productId,
+  serialNumber,
+  conditionGrade = 'new',
+  purchaseCost = 0,
+  warrantyMonths = 12,
+  notes = '',
+}) {
+  const resolvedStoreId = resolveStoreUuid(storeId) || storeId;
+  const cleanSerial = (serialNumber || '').trim().toUpperCase();
+  if (!cleanSerial) throw new Error('Serial number or IMEI is required.');
+
+  // Check unique
+  const { data: existing } = await supabase
+    .from('product_units')
+    .select('id, serial_number, status')
+    .eq('serial_number', cleanSerial)
+    .maybeSingle();
+
+  if (existing) {
+    throw new Error(`Serial number / IMEI "${cleanSerial}" is already registered (Status: ${existing.status}).`);
+  }
+
+  // Insert unit
+  const { data: unit, error: insertError } = await supabase
+    .from('product_units')
+    .insert([{
+      store_id: resolvedStoreId,
+      product_id: productId,
+      serial_number: cleanSerial,
+      condition_grade: conditionGrade,
+      purchase_cost: parseFloat(purchaseCost) || 0,
+      status: 'in_stock',
+      warranty_months: parseInt(warrantyMonths, 10) || 12,
+      notes: notes.trim() || 'Unit restocked via inventory management',
+    }])
+    .select('id, serial_number, status, condition_grade, store_id, product_id, purchase_cost, warranty_months, notes, created_at')
+    .single();
+
+  if (insertError) throw insertError;
+
+  // Re-sync inventory count
+  const { count } = await supabase
+    .from('product_units')
+    .select('id', { count: 'exact', head: true })
+    .eq('product_id', productId)
+    .eq('store_id', resolvedStoreId)
+    .eq('status', 'in_stock');
+
+  const newCount = count || 1;
+
+  await supabase
+    .from('inventory')
+    .upsert({
+      store_id: resolvedStoreId,
+      product_id: productId,
+      quantity_on_hand: newCount,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'store_id,product_id' });
+
+  // Audit entry
+  await supabase
+    .from('stock_adjustments')
+    .insert({
+      store_id: resolvedStoreId,
+      product_id: productId,
+      previous_quantity: Math.max(0, newCount - 1),
+      new_quantity: newCount,
+      change_quantity: 1,
+      reason: 'restock',
+      notes: `Restocked serial unit ${cleanSerial}`,
+    });
+
+  return unit;
+}
+
+/**
+ * Removes or marks a serialized unit defective, updating inventory count
+ */
+export async function removeSerializedUnit({
+  unitId,
+  storeId,
+  productId,
+  newStatus = 'defective',
+  notes = '',
+}) {
+  const resolvedStoreId = resolveStoreUuid(storeId) || storeId;
+  const { data, error } = await supabase
+    .from('product_units')
+    .update({
+      status: newStatus,
+      notes: notes.trim() || `Marked ${newStatus} via inventory console`,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', unitId)
+    .select('id, serial_number, status')
+    .single();
+
+  if (error) throw error;
+
+  // Re-sync count
+  const { count } = await supabase
+    .from('product_units')
+    .select('id', { count: 'exact', head: true })
+    .eq('product_id', productId)
+    .eq('store_id', resolvedStoreId)
+    .eq('status', 'in_stock');
+
+  const newCount = count || 0;
+
+  await supabase
+    .from('inventory')
+    .upsert({
+      store_id: resolvedStoreId,
+      product_id: productId,
+      quantity_on_hand: newCount,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'store_id,product_id' });
+
+  await supabase
+    .from('stock_adjustments')
+    .insert({
+      store_id: resolvedStoreId,
+      product_id: productId,
+      previous_quantity: newCount + 1,
+      new_quantity: newCount,
+      change_quantity: -1,
+      reason: newStatus === 'defective' ? 'damage' : 'write_off',
+      notes: `Unit ${data.serial_number} marked ${newStatus}`,
+    });
+
+  return data;
+}
+
+/**
  * Adjusts inventory stock count and logs audit adjustment
  */
 export async function adjustInventoryStock({ storeId, productId, newQuantity, previousQuantity, reason, notes }) {
+  const resolvedStoreId = resolveStoreUuid(storeId) || storeId;
   const changeQty = newQuantity - previousQuantity;
 
   // 1. Log adjustment in stock_adjustments table
   const { error: adjError } = await supabase
     .from('stock_adjustments')
     .insert({
-      store_id: storeId,
+      store_id: resolvedStoreId,
       product_id: productId,
       previous_quantity: previousQuantity,
       new_quantity: newQuantity,
@@ -297,7 +461,7 @@ export async function adjustInventoryStock({ storeId, productId, newQuantity, pr
   const { data, error } = await supabase
     .from('inventory')
     .upsert({
-      store_id: storeId,
+      store_id: resolvedStoreId,
       product_id: productId,
       quantity_on_hand: newQuantity,
       updated_at: new Date().toISOString(),

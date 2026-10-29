@@ -18,6 +18,7 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
   const [isSerialized, setIsSerialized] = useState(storeCode === 'mobiles');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [initialStock, setInitialStock] = useState('1');
   const [error, setError] = useState('');
 
   // Custom Category Inline Creation
@@ -84,6 +85,7 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
         is_serialized: isSerialized,
         description: description.trim() || `${name.trim()} available at Star Enterprises.`,
         image_url: imageUrl.trim() || null,
+        initialQuantity: parseInt(initialStock, 10) || 0,
         is_active: true,
       });
       onClose();
@@ -94,6 +96,7 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
       setCostPrice('');
       setDescription('');
       setImageUrl('');
+      setInitialStock('1');
     } catch (err) {
       setError(getErrorMessage(err));
     }
@@ -280,13 +283,25 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <Input
-          id="prod-img"
-          label="Product Image URL (Optional)"
-          placeholder="e.g. /images/products/phone.jpg or https://..."
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
-        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <Input
+            id="prod-initial-stock"
+            type="number"
+            min="0"
+            label="Initial Stock on Hand (Units)"
+            placeholder="1"
+            value={initialStock}
+            onChange={(e) => setInitialStock(e.target.value)}
+            hint={isSerialized ? 'Initial quantity count (register unique serials after creating)' : 'Units placed on shelf today'}
+          />
+          <Input
+            id="prod-img"
+            label="Product Image URL (Optional)"
+            placeholder="e.g. /images/products/phone.jpg"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+          />
+        </div>
 
         <div className="pt-3 border-t border-border flex items-center justify-end gap-3">
           <Button type="button" variant="outline" onClick={onClose} className="px-5">

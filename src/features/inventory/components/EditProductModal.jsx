@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Modal, Button, Input, Select } from '@/shared/ui';
 import { useUpdateProduct } from '../hooks/useInventory';
 import { getErrorMessage } from '@/shared/lib/errors';
-import { Pencil, Check } from 'lucide-react';
+import { Pencil, Check, Boxes } from 'lucide-react';
 
-export function EditProductModal({ product, isOpen, onClose }) {
+export function EditProductModal({ product, isOpen, onClose, onOpenAdjustStock }) {
   const updateProductMutation = useUpdateProduct();
 
   const [name, setName] = useState(product?.name || '');
@@ -74,6 +74,38 @@ export function EditProductModal({ product, isOpen, onClose }) {
             <Check size={14} className="text-brand-sage" /> Product updated successfully!
           </div>
         )}
+
+        {/* Current Stock Ribbon with Quick Stock Adjustment Link */}
+        <div className="flex items-center justify-between p-3.5 rounded-xl border border-border bg-surface-subtle shadow-2xs">
+          <div>
+            <span className="text-[10px] uppercase font-semibold text-muted block tracking-wider">
+              Warehouse Stock Level
+            </span>
+            <div className="flex items-baseline gap-2 mt-0.5">
+              <span className="text-base font-bold font-mono text-text">
+                {product.inventory?.[0]?.quantity_on_hand ?? 0} units
+              </span>
+              <span className="text-[11px] text-muted">
+                {product.is_serialized ? '(Serialized Unit Tracking)' : '(Standard Batch)'}
+              </span>
+            </div>
+          </div>
+          {onOpenAdjustStock && (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                onClose();
+                onOpenAdjustStock(product);
+              }}
+              className="text-xs font-semibold gap-1.5 border-border hover:border-brand-sage text-text cursor-pointer"
+            >
+              <Boxes size={13} className="text-brand-sage" />
+              <span>Update Stock</span>
+            </Button>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input

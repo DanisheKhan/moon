@@ -5,6 +5,8 @@ import {
   createProductUnit,
   createProduct,
   adjustInventoryStock,
+  addSerializedUnit,
+  removeSerializedUnit,
   updateProductPricing,
   getCachedStoreProducts,
   listAllProducts,
@@ -60,6 +62,28 @@ export function useAdjustStock() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: adjustInventoryStock,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
+    },
+  });
+}
+
+export function useAddSerializedUnit() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: addSerializedUnit,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
+    },
+  });
+}
+
+export function useRemoveSerializedUnit() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: removeSerializedUnit,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
       queryClient.invalidateQueries({ queryKey: ['reports'] });

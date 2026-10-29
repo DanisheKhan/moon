@@ -11,6 +11,7 @@ import {
   AddCategoryModal,
 } from '@/features/inventory';
 import { formatCurrency } from '@/shared/lib/format';
+import { cn } from '@/shared/lib/cn';
 import {
   Plus,
   Pencil,
@@ -19,6 +20,7 @@ import {
   CheckCircle2,
   AlertCircle,
   FolderPlus,
+  Boxes,
 } from 'lucide-react';
 
 export function InventoryCardsPage() {
@@ -28,6 +30,7 @@ export function InventoryCardsPage() {
   const storeId = currentStore?.id || '';
 
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [stockFilter, setStockFilter] = useState('all');
   const [search, setSearch] = useState('');
 
   // Modals state
@@ -67,16 +70,14 @@ export function InventoryCardsPage() {
     });
   }, [allProds, storeCode, storeId]);
 
-  // Derive categories combining Supabase database categories and product categories
+  // Derive category options
   const categories = useMemo(() => {
     const map = new Map();
-    // 1. All categories saved in DB for this store
     dbCategories.forEach((c) => {
       if (c.id && c.name) {
         map.set(c.id, c.name);
       }
     });
-    // 2. Any active product categories
     rawProducts.forEach((p) => {
       if (p.categories?.id && p.categories?.name) {
         map.set(p.categories.id, p.categories.name);
@@ -87,13 +88,42 @@ export function InventoryCardsPage() {
       .sort((a, b) => a.label.localeCompare(b.label));
   }, [dbCategories, rawProducts]);
 
-  // Filter products
+  // Compute stock health breakdown for quick filtering
+  const stockCounts = useMemo(() => {
+    let inStock = 0;
+    let lowStock = 0;
+    let outOfStock = 0;
+    rawProducts.forEach((p) => {
+      const q = p.inventory?.[0]?.quantity_on_hand ?? 0;
+      if (q <= 0) {
+        outOfStock += 1;
+      } else if (q < 2) {
+        lowStock += 1;
+        inStock += 1;
+      } else {
+        inStock += 1;
+      }
+    });
+    return { all: rawProducts.length, inStock, lowStock, outOfStock };
+  }, [rawProducts]);
+
+  // Filter products by category, search, and stock level
   const filteredProducts = useMemo(() => {
     let list = rawProducts;
     if (selectedCategoryId) {
       list = list.filter(
         (p) => p.category_id === selectedCategoryId || p.categories?.id === selectedCategoryId
       );
+    }
+    if (stockFilter === 'in_stock') {
+      list = list.filter((p) => (p.inventory?.[0]?.quantity_on_hand ?? 0) > 0);
+    } else if (stockFilter === 'low_stock') {
+      list = list.filter((p) => {
+        const q = p.inventory?.[0]?.quantity_on_hand ?? 0;
+        return q > 0 && q < 2;
+      });
+    } else if (stockFilter === 'out_of_stock') {
+      list = list.filter((p) => (p.inventory?.[0]?.quantity_on_hand ?? 0) <= 0);
     }
     if (search.trim()) {
       const q = search.trim().toLowerCase();
@@ -106,7 +136,7 @@ export function InventoryCardsPage() {
       );
     }
     return list;
-  }, [rawProducts, selectedCategoryId, search]);
+  }, [rawProducts, selectedCategoryId, stockFilter, search]);
 
   return (
     <div className="space-y-6">
@@ -174,6 +204,58 @@ export function InventoryCardsPage() {
             }}
           />
         </div>
+      </div>
+
+      {/* Stock Health Quick Filter Ribbon */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <button
+          type="button"
+          onClick={() => setStockFilter('all')}
+          className={cn(
+            'px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors border shadow-2xs',
+            stockFilter === 'all'
+              ? 'bg-text text-bg border-text font-semibold'
+              : 'bg-surface text-muted hover:text-text border-border'
+          )}
+        >
+          All Items ({stockCounts.all})
+        </button>
+        <button
+          type="button"
+          onClick={() => setStockFilter('in_stock')}
+          className={cn(
+            'px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors border shadow-2xs',
+            stockFilter === 'in_stock'
+              ? 'bg-brand-sage text-white border-brand-sage font-semibold'
+              : 'bg-surface text-muted hover:text-text border-border'
+          )}
+        >
+          In Stock ({stockCounts.inStock})
+        </button>
+        <button
+          type="button"
+          onClick={() => setStockFilter('low_stock')}
+          className={cn(
+            'px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors border shadow-2xs',
+            stockFilter === 'low_stock'
+              ? 'bg-amber-600 text-white border-amber-600 font-semibold'
+              : 'bg-surface text-muted hover:text-text border-border'
+          )}
+        >
+          Low Stock ({stockCounts.lowStock})
+        </button>
+        <button
+          type="button"
+          onClick={() => setStockFilter('out_of_stock')}
+          className={cn(
+            'px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors border shadow-2xs',
+            stockFilter === 'out_of_stock'
+              ? 'bg-danger text-white border-danger font-semibold'
+              : 'bg-surface text-muted hover:text-text border-border'
+          )}
+        >
+          Out of Stock ({stockCounts.outOfStock})
+        </button>
       </div>
 
       {/* Product Summary stats */}
@@ -245,21 +327,31 @@ export function InventoryCardsPage() {
                       </div>
                     )}
 
-                    {/* Stock status badge overlay */}
+                    {/* Stock status badge overlay (Clickable to update stock) */}
                     <div className="absolute top-2.5 right-2.5">
-                      {isOutOfStock ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-surface text-danger border border-danger/30 shadow-2xs">
-                          <AlertCircle size={10} /> Out of Stock
-                        </span>
-                      ) : qtyOnHand < 2 ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-surface text-danger border border-danger/30 shadow-2xs">
-                          <AlertCircle size={10} /> In Stock ({qtyOnHand})
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-brand-sage-subtle text-brand-sage-text border border-brand-sage-border shadow-2xs">
-                          <CheckCircle2 size={10} className="text-brand-sage" /> In Stock ({qtyOnHand})
-                        </span>
-                      )}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setProductToAdjust(prod);
+                        }}
+                        className="cursor-pointer hover:opacity-85 transition-opacity"
+                        title="Click to update stock level"
+                      >
+                        {isOutOfStock ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-surface text-danger border border-danger/30 shadow-2xs">
+                            <AlertCircle size={10} /> Out of Stock
+                          </span>
+                        ) : qtyOnHand < 2 ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-surface text-danger border border-danger/30 shadow-2xs">
+                            <AlertCircle size={10} /> In Stock ({qtyOnHand})
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-brand-sage-subtle text-brand-sage-text border border-brand-sage-border shadow-2xs">
+                            <CheckCircle2 size={10} className="text-brand-sage" /> In Stock ({qtyOnHand})
+                          </span>
+                        )}
+                      </button>
                     </div>
 
                     {/* Serialized badge */}
@@ -314,27 +406,39 @@ export function InventoryCardsPage() {
                   )}
                 </div>
 
-                {/* Card Bottom: Edit & Delete Buttons */}
-                <div className="pt-3 border-t border-border grid grid-cols-2 gap-2">
+                {/* Card Stock & Action Controls */}
+                <div className="pt-2.5 border-t border-border space-y-2">
                   <button
                     type="button"
-                    onClick={() => setProductToEdit(prod)}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-border bg-bg hover:bg-surface text-text hover:border-text/40 transition-colors cursor-pointer"
-                    title="Edit Product Details & Pricing"
+                    onClick={() => setProductToAdjust(prod)}
+                    className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold bg-surface-subtle hover:bg-surface text-text border border-border hover:border-brand-sage transition-all cursor-pointer shadow-2xs"
+                    title="Update stock count, restock shipment, or add serial units"
                   >
-                    <Pencil size={13} />
-                    <span>Edit</span>
+                    <Boxes size={14} className="text-brand-sage" />
+                    <span>Update Stock ({qtyOnHand} on hand)</span>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setProductToDelete(prod)}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-danger/30 bg-danger/5 hover:bg-danger/10 text-danger transition-colors cursor-pointer"
-                    title="Delete Product"
-                  >
-                    <Trash2 size={13} />
-                    <span>Delete</span>
-                  </button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setProductToEdit(prod)}
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-border bg-bg hover:bg-surface text-text hover:border-text/40 transition-colors cursor-pointer"
+                      title="Edit Product Details & Pricing"
+                    >
+                      <Pencil size={13} />
+                      <span>Edit</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setProductToDelete(prod)}
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-danger/30 bg-danger/5 hover:bg-danger/10 text-danger transition-colors cursor-pointer"
+                      title="Delete Product"
+                    >
+                      <Trash2 size={13} />
+                      <span>Delete</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             );
@@ -367,6 +471,7 @@ export function InventoryCardsPage() {
           product={productToEdit}
           isOpen={Boolean(productToEdit)}
           onClose={() => setProductToEdit(null)}
+          onOpenAdjustStock={(p) => setProductToAdjust(p)}
         />
       )}
 
