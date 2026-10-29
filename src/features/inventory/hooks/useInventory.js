@@ -28,7 +28,8 @@ export function useProducts(storeId, filters = {}) {
     queryFn: () => listProductsByStore({ storeId, ...filters }),
     placeholderData: () => (!hasFilters ? getCachedStoreProducts(storeId) || undefined : undefined),
     enabled: Boolean(storeId),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 15,
+    refetchOnMount: true,
   });
 }
 
@@ -38,7 +39,8 @@ export function useProductUnits(storeId, productId = null, status = null, option
     queryKey: inventoryKeys.units(storeId, productId, status),
     queryFn: () => listProductUnits({ storeId, productId, status }),
     enabled: isEnabled,
-    staleTime: 1000 * 60 * 2,
+    staleTime: 1000 * 15,
+    refetchOnMount: true,
     ...options,
   });
 }
@@ -49,6 +51,7 @@ export function useCreateProductUnit() {
     mutationFn: createProductUnit,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }
@@ -59,6 +62,7 @@ export function useAdjustStock() {
     mutationFn: adjustInventoryStock,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }
@@ -69,6 +73,7 @@ export function useUpdatePricing() {
     mutationFn: updateProductPricing,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }
@@ -79,6 +84,7 @@ export function useCreateProduct() {
     mutationFn: createProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }
@@ -87,7 +93,8 @@ export function useAllProducts(filters = {}) {
   return useQuery({
     queryKey: [...inventoryKeys.all, 'all-products', filters],
     queryFn: () => listAllProducts(filters),
-    staleTime: 1000 * 60 * 3,
+    staleTime: 1000 * 15,
+    refetchOnMount: true,
   });
 }
 
@@ -97,6 +104,7 @@ export function useUpdateProduct() {
     mutationFn: ({ productId, updates }) => updateProduct(productId, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }
@@ -107,6 +115,7 @@ export function useDeleteProduct() {
     mutationFn: deleteProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }
@@ -125,8 +134,7 @@ export function useCreateCategory() {
     mutationFn: createCategory,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }
-
-

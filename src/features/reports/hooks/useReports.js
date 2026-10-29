@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getOwnerOverview, getOwnerDashboardData, getOfflineOwnerDashboard } from '../api/reports.api';
+import { getOwnerOverview, getOwnerDashboardData } from '../api/reports.api';
 
 export const reportKeys = {
   all: ['reports'],
@@ -11,6 +11,10 @@ export function useOwnerOverview() {
   return useQuery({
     queryKey: reportKeys.owner(),
     queryFn: getOwnerOverview,
+    staleTime: 1000 * 5,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    refetchInterval: 10000,
   });
 }
 
@@ -26,9 +30,10 @@ export function useOwnerDashboard(options = 'month') {
   return useQuery({
     queryKey: reportKeys.dashboard(dateRange, storeCode),
     queryFn: () => getOwnerDashboardData({ dateRange, storeCode }),
-    initialData: () => getOfflineOwnerDashboard(dateRange, storeCode),
-    staleTime: 1000 * 60 * 5,
-    retry: 1,
-    refetchInterval: false,
+    staleTime: 1000 * 5,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    refetchInterval: 10000,
+    retry: 2,
   });
 }

@@ -45,6 +45,10 @@ export const router = createBrowserRouter([
         element: <StaffManagementPage />,
       },
       {
+        path: 'invoices',
+        element: <InvoicesListPage />,
+      },
+      {
         path: ':storeCode',
         element: <StoreDashboardPage />,
       },

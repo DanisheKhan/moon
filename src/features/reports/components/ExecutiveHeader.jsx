@@ -1,4 +1,4 @@
-import { RefreshCw, Building2 } from 'lucide-react';
+import { Building2 } from 'lucide-react';
 
 const DATE_RANGES = [
   { id: 'today', label: 'Today' },
@@ -18,8 +18,6 @@ export function ExecutiveHeader({
   setDateRange,
   storeCode,
   setStoreCode,
-  onRefresh,
-  isFetching,
 }) {
   return (
     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-border">
@@ -72,17 +70,14 @@ export function ExecutiveHeader({
           ))}
         </div>
 
-        {/* Refresh Live Data Button */}
-        <button
-          type="button"
-          onClick={onRefresh}
-          disabled={isFetching}
-          title="Refresh live metrics from database"
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-border bg-surface text-text hover:bg-bg cursor-pointer transition-colors disabled:opacity-50"
+        {/* Live Automatic Synchronization Indicator */}
+        <div
+          title="Telemetry auto-synchronized with live billing in real time"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-border bg-surface text-muted select-none shadow-2xs"
         >
-          <RefreshCw size={13} className={isFetching ? 'animate-spin text-accent' : ''} />
-          <span className="hidden sm:inline">Refresh</span>
-        </button>
+          <span className="w-2 h-2 rounded-full bg-brand-sage animate-pulse shrink-0" />
+          <span className="text-[11px] font-medium text-text hidden sm:inline">Live Synced</span>
+        </div>
       </div>
     </div>
   );

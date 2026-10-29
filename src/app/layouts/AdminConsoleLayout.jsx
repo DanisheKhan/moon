@@ -6,6 +6,7 @@ import { cn } from '@/shared/lib/cn';
 import {
   LayoutGrid,
   CreditCard,
+  Receipt,
   Package,
   BarChart3,
   Menu,
@@ -86,7 +87,8 @@ export function AdminConsoleLayout() {
 
   const basePath = `/admin/${currentStoreCode}`;
   const isDashboardActive = isStoreRoute && (path === basePath || path === `${basePath}/` || path === `${basePath}/dashboard`);
-  const isBillingActive = isStoreRoute && (path.startsWith(`${basePath}/billing`) || path.includes('/invoices'));
+  const isBillingActive = isStoreRoute && path === `${basePath}/billing`;
+  const isInvoicesActive = (isStoreRoute && path.startsWith(`${basePath}/invoices`)) || path === '/admin/invoices';
   const isInventoryActive = isStoreRoute && path.startsWith(`${basePath}/inventory`);
   const isReportsActive = isStoreRoute && path.startsWith(`${basePath}/reports`);
 
@@ -180,6 +182,19 @@ export function AdminConsoleLayout() {
                 <Users size={15} className="shrink-0" />
                 <span>Staff Management (HRMS)</span>
               </Link>
+
+              <Link
+                to="/admin/invoices"
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
+                  path === '/admin/invoices'
+                    ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
+                    : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
+                )}
+              >
+                <Receipt size={15} className="shrink-0" />
+                <span>All Bills (Editable)</span>
+              </Link>
             </div>
 
             {/* Store-Specific Workspace Navigation */}
@@ -217,7 +232,21 @@ export function AdminConsoleLayout() {
                   <span>Billing (POS)</span>
                 </Link>
 
-                {/* 3. Inventory */}
+                {/* 3. Bills & Invoices (Editable) */}
+                <Link
+                  to={`${basePath}/invoices`}
+                  className={cn(
+                    'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
+                    isInvoicesActive && isStoreRoute
+                      ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
+                      : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
+                  )}
+                >
+                  <Receipt size={15} className="shrink-0" />
+                  <span>Bills & Invoices</span>
+                </Link>
+
+                {/* 4. Inventory */}
                 <Link
                   to={`${basePath}/inventory`}
                   className={cn(

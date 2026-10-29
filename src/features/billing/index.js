@@ -1,5 +1,21 @@
 export { POSPage } from './routes/POSPage';
 export { InvoicesListPage } from './routes/InvoicesListPage';
 export { InvoicePrintModal } from './components/InvoicePrintModal';
-export { useInvoices, useInvoiceDetail, usePlaceSale, billingKeys } from './hooks/useBilling';
-export { placeSale, listInvoices, getInvoiceDetail } from './api/billing.api';
+export { EditInvoiceModal } from './components/EditInvoiceModal';
+export {
+  useInvoices,
+  useAllInvoices,
+  useInvoiceDetail,
+  usePlaceSale,
+  useUpdateInvoice,
+  useVoidInvoice,
+  billingKeys,
+} from './hooks/useBilling';
+export {
+  placeSale,
+  listInvoices,
+  listAllInvoices,
+  getInvoiceDetail,
+  updateInvoice,
+  voidInvoice,
+} from './api/billing.api';

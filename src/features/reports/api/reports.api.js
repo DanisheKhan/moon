@@ -7,7 +7,7 @@ export async function getOwnerOverview() {
   const [invRes, prodRes] = await Promise.all([
     supabase
       .from('invoices')
-      .select('id, store_id, grand_total, subtotal, cgst_amount, sgst_amount, created_at, stores (name, code)'),
+      .select('id, store_id, grand_total, subtotal, cgst_amount, sgst_amount, igst_amount, created_at, stores (name, code)'),
     supabase
       .from('products')
       .select('id, store_id, cost_price, selling_price, inventory (quantity_on_hand), stores (name, code)'),
@@ -22,18 +22,12 @@ export async function getOwnerOverview() {
   };
 }
 
-let isSupabaseOnline = null;
-
 /**
  * Fetches comprehensive multi-store dashboard and operational insights for the Store Owner
  * Dynamically computed on-the-fly from live transactional database tables.
  * @param {{ dateRange?: 'today' | 'week' | 'month' | 'all', storeCode?: 'all' | 'mobiles' | 'furniture-electronics' }} [params]
  */
 export async function getOwnerDashboardData({ dateRange = 'month', storeCode = 'all' } = {}) {
-  if (isSupabaseOnline === false) {
-    return getOfflineOwnerDashboard(dateRange, storeCode);
-  }
-
   let dateFilter = null;
   const now = new Date();
 
@@ -50,7 +44,7 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
 
   let invQuery = supabase
     .from('invoices')
-    .select('id, store_id, invoice_number, customer_name, subtotal, discount_amount, cgst_amount, sgst_amount, grand_total, status, created_at, stores (id, name, code, invoice_prefix, gstin)')
+    .select('id, store_id, invoice_number, customer_name, subtotal, discount_amount, cgst_amount, sgst_amount, igst_amount, grand_total, status, created_at, stores (id, name, code, invoice_prefix, gstin)')
     .order('created_at', { ascending: false });
 
   if (dateFilter) {
@@ -96,10 +90,8 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
     payments = payRes.data || [];
     products = prodRes.data || [];
     storesList = storesRes.data || [];
-    isSupabaseOnline = true;
   } catch (err) {
     console.warn('Supabase query failed, using offline fallback', err);
-    isSupabaseOnline = false;
     return getOfflineOwnerDashboard(dateRange, storeCode);
   }
 
@@ -110,41 +102,38 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
 
   const filteredInvoiceIds = new Set(filteredInvoices.map((i) => i.id));
 
-  const filteredItems = storeCode === 'all'
-    ? orderItems
-    : orderItems.filter((item) => filteredInvoiceIds.has(item.invoice_id) || item.products?.stores?.code === storeCode);
+  // Only items matching the filtered invoices for 100% accurate COGS and margin calculation
+  const filteredItems = orderItems.filter((item) => filteredInvoiceIds.has(item.invoice_id));
 
   const filteredProducts = storeCode === 'all'
     ? products
     : products.filter((p) => p.stores?.code === storeCode);
 
-  const filteredPayments = storeCode === 'all'
-    ? payments
-    : payments.filter((p) => filteredInvoiceIds.has(p.invoice_id));
+  const filteredPayments = payments.filter((p) => filteredInvoiceIds.has(p.invoice_id));
 
   // 1. Core Financial Telemetry
   const validInvoices = filteredInvoices.filter((inv) => inv.status !== 'void');
   const totalSales = validInvoices.reduce((acc, inv) => acc + (parseFloat(inv.grand_total) || 0), 0);
   const totalSubtotal = validInvoices.reduce((acc, inv) => acc + (parseFloat(inv.subtotal) || 0), 0);
   const totalGst = validInvoices.reduce(
-    (acc, inv) => acc + (parseFloat(inv.cgst_amount) || 0) + (parseFloat(inv.sgst_amount) || 0),
+    (acc, inv) => acc + (parseFloat(inv.cgst_amount) || 0) + (parseFloat(inv.sgst_amount) || 0) + (parseFloat(inv.igst_amount) || 0),
     0
   );
   const totalInvoices = validInvoices.length;
   const averageTicket = totalInvoices > 0 ? Math.round(totalSales / totalInvoices) : 0;
 
-  // Real COGS calculation from items
+  // Real COGS calculation from items of the filtered invoices
   const totalCogs = filteredItems.reduce((acc, it) => {
     const cost = parseFloat(it.products?.cost_price) || 0;
     const qty = it.quantity || 1;
     return acc + (cost * qty);
   }, 0);
 
-  const estimatedGrossProfit = totalSales > 0 ? totalSales - totalCogs : 0;
-  const grossMarginPercent = totalSales > 0 ? (estimatedGrossProfit / totalSales) * 100 : 0;
+  const estimatedGrossProfit = totalSales > 0 ? Math.round(totalSales - totalCogs) : 0;
+  const grossMarginPercent = totalSales > 0 ? parseFloat(((estimatedGrossProfit / totalSales) * 100).toFixed(1)) : 0;
 
   const totalInventoryValue = filteredProducts.reduce((acc, prod) => {
-    const qty = prod.inventory?.[0]?.quantity_on_hand ?? 0;
+    const qty = prod.inventory?.reduce((s, inv) => s + (inv.quantity_on_hand || 0), 0) ?? 0;
     return acc + (parseFloat(prod.cost_price) || 0) * qty;
   }, 0);
 
@@ -204,7 +193,7 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
   const estimatedCardMdrCost = Math.round(paymentMethodMap.card * 0.018);
 
   // 3. Multi-Branch Network Performance
-  const branchCodes = ['mobiles', 'furniture-electronics'];
+  const branchCodes = storesList.length > 0 ? storesList.map((s) => s.code) : ['mobiles', 'furniture-electronics'];
   const branchData = branchCodes.map((code) => {
     const storeInfo = storesList.find((s) => s.code === code) || {
       name: code === 'mobiles' ? 'Star Mobiles' : 'Star Furniture & Electronics',
@@ -213,12 +202,13 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
     };
 
     const storeInvoices = invoices.filter((inv) => inv.stores?.code === code && inv.status !== 'void');
-    const storeItems = orderItems.filter((it) => it.products?.stores?.code === code);
+    const storeInvoiceIds = new Set(storeInvoices.map((inv) => inv.id));
+    const storeItems = orderItems.filter((it) => storeInvoiceIds.has(it.invoice_id));
     const storeProds = products.filter((p) => p.stores?.code === code);
 
     const sSales = storeInvoices.reduce((acc, inv) => acc + (parseFloat(inv.grand_total) || 0), 0);
     const sCogs = storeItems.reduce((acc, it) => acc + ((parseFloat(it.products?.cost_price) || 0) * (it.quantity || 1)), 0);
-    const sGst = storeInvoices.reduce((acc, inv) => acc + (parseFloat(inv.cgst_amount) || 0) + (parseFloat(inv.sgst_amount) || 0), 0);
+    const sGst = storeInvoices.reduce((acc, inv) => acc + (parseFloat(inv.cgst_amount) || 0) + (parseFloat(inv.sgst_amount) || 0) + (parseFloat(inv.igst_amount) || 0), 0);
     const sProfit = sSales > 0 ? sSales - sCogs : 0;
     const sMargin = sSales > 0 ? (sProfit / sSales) * 100 : 0;
     const sAov = storeInvoices.length > 0 ? Math.round(sSales / storeInvoices.length) : 0;
@@ -300,7 +290,7 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
   // Lever A: Critical Stockout Watchlist
   const stockoutAlerts = filteredProducts
     .map((p) => {
-      const qty = p.inventory?.[0]?.quantity_on_hand ?? 0;
+      const qty = p.inventory?.reduce((s, inv) => s + (inv.quantity_on_hand || 0), 0) ?? 0;
       const reorder = p.reorder_level ?? 2;
       const price = parseFloat(p.selling_price) || 0;
       const cost = parseFloat(p.cost_price) || 0;
@@ -333,11 +323,11 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
   const soldProductIds = new Set(filteredItems.map((it) => it.product_id));
   const deadStockItems = filteredProducts
     .filter((p) => {
-      const qty = p.inventory?.[0]?.quantity_on_hand ?? 0;
+      const qty = p.inventory?.reduce((s, inv) => s + (inv.quantity_on_hand || 0), 0) ?? 0;
       return qty > 0 && !soldProductIds.has(p.id);
     })
     .map((p) => {
-      const qty = p.inventory?.[0]?.quantity_on_hand ?? 0;
+      const qty = p.inventory?.reduce((s, inv) => s + (inv.quantity_on_hand || 0), 0) ?? 0;
       const cost = parseFloat(p.cost_price) || 0;
       return {
         id: p.id,
@@ -355,8 +345,8 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
   // Lever D: Card MDR Optimization
   const potentialMdrSavings = Math.round(paymentMethodMap.card * 0.5 * 0.018); // If 50% shifted to UPI
 
-  // 7. Recent Billed Invoices Stream
-  const recentInvoices = validInvoices.slice(0, 6).map((inv) => ({
+  // 7. Recent Billed Invoices Stream (Live and Real-Time)
+  const recentInvoices = validInvoices.slice(0, 10).map((inv) => ({
     id: inv.id,
     invoiceNumber: inv.invoice_number,
     storeName: inv.stores?.name,
@@ -364,7 +354,7 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
     customerName: inv.customer_name || 'Walk-in Customer',
     grandTotal: parseFloat(inv.grand_total) || 0,
     subtotal: parseFloat(inv.subtotal) || 0,
-    tax: (parseFloat(inv.cgst_amount) || 0) + (parseFloat(inv.sgst_amount) || 0),
+    tax: (parseFloat(inv.cgst_amount) || 0) + (parseFloat(inv.sgst_amount) || 0) + (parseFloat(inv.igst_amount) || 0),
     status: inv.status,
     createdAt: inv.created_at,
   }));
@@ -390,6 +380,16 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
       list: paymentList,
     },
     branches: branchData,
+    stores: Object.fromEntries(
+      branchData.map((b) => [
+        b.code,
+        {
+          sales: b.sales,
+          invoiceCount: b.invoices,
+          lowStockCount: stockoutAlerts.filter((s) => s.storeCode === b.code).length,
+        },
+      ])
+    ),
     categories: categoryMatrix,
     hourlySales: hourBuckets,
     businessActions: {
@@ -443,6 +443,35 @@ export function getOfflineOwnerDashboard(dateRange = 'month', storeCode = 'all')
   const upiAmt = totalSales * 0.358;
   const cashAmt = totalSales * 0.271;
 
+  const branchData = [
+    {
+      code: 'mobiles',
+      name: 'Star Mobiles',
+      gstin: 'GSTIN27AABCS1429B1Z1',
+      sales: mobilesSales,
+      cogs: mobilesSales * 0.81,
+      profit: mobilesSales * 0.19,
+      marginPct: 19.0,
+      invoices: Math.round(11 * multiplier),
+      aov: Math.round(mobilesSales / Math.max(1, Math.round(11 * multiplier))),
+      gst: mobilesSales * 0.18,
+      activeSkus: 24,
+    },
+    {
+      code: 'furniture-electronics',
+      name: 'Star Furniture & Electronics',
+      gstin: 'GSTIN27AABCS1429B2Z2',
+      sales: feSales,
+      cogs: feSales * 0.74,
+      profit: feSales * 0.26,
+      marginPct: 26.0,
+      invoices: Math.round(7 * multiplier),
+      aov: Math.round(feSales / Math.max(1, Math.round(7 * multiplier))),
+      gst: feSales * 0.18,
+      activeSkus: 38,
+    },
+  ];
+
   return {
     summary: {
       totalSales,
@@ -494,34 +523,17 @@ export function getOfflineOwnerDashboard(dateRange = 'month', storeCode = 'all')
         },
       ],
     },
-    branches: [
-      {
-        code: 'mobiles',
-        name: 'Star Mobiles',
-        gstin: 'GSTIN27AABCS1429B1Z1',
-        sales: mobilesSales,
-        cogs: mobilesSales * 0.81,
-        profit: mobilesSales * 0.19,
-        marginPct: 19.0,
-        invoices: Math.round(11 * multiplier),
-        aov: Math.round(mobilesSales / Math.max(1, Math.round(11 * multiplier))),
-        gst: mobilesSales * 0.18,
-        activeSkus: 24,
-      },
-      {
-        code: 'furniture-electronics',
-        name: 'Star Furniture & Electronics',
-        gstin: 'GSTIN27AABCS1429B2Z2',
-        sales: feSales,
-        cogs: feSales * 0.74,
-        profit: feSales * 0.26,
-        marginPct: 26.0,
-        invoices: Math.round(7 * multiplier),
-        aov: Math.round(feSales / Math.max(1, Math.round(7 * multiplier))),
-        gst: feSales * 0.18,
-        activeSkus: 38,
-      },
-    ],
+    branches: branchData,
+    stores: Object.fromEntries(
+      branchData.map((b) => [
+        b.code,
+        {
+          sales: b.sales,
+          invoiceCount: b.invoices,
+          lowStockCount: 0,
+        },
+      ])
+    ),
     categories: [
       { name: 'Smartphones', slug: 'smartphones', revenue: totalSales * 0.34, cogs: totalSales * 0.29, profit: totalSales * 0.05, marginPct: 13.7, units: 3, revenueShare: 34.5 },
       { name: 'Televisions', slug: 'televisions', revenue: totalSales * 0.18, cogs: totalSales * 0.14, profit: totalSales * 0.04, marginPct: 20.3, units: 2, revenueShare: 17.6 },

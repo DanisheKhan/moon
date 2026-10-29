@@ -3,6 +3,7 @@ import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
 import { useStores, useStore } from '@/features/stores';
 import { useAllProducts } from '@/features/inventory';
 import { useInvoices } from '@/features/billing';
+import { useOwnerDashboard } from '@/features/reports';
 import { Button, Badge } from '@/shared/ui';
 import { formatCurrency, formatDate } from '@/shared/lib/format';
 import {
@@ -20,10 +21,10 @@ import {
 } from 'lucide-react';
 
 const PERIODS = [
-  { id: 'today', label: 'Today', multiplier: 0.08 },
-  { id: 'week', label: 'This Week', multiplier: 0.32 },
-  { id: 'month', label: 'This Month', multiplier: 1.0 },
-  { id: 'all', label: 'All Time', multiplier: 2.85 },
+  { id: 'today', label: 'Today' },
+  { id: 'week', label: 'This Week' },
+  { id: 'month', label: 'This Month' },
+  { id: 'all', label: 'All Time' },
 ];
 
 export function StoreDashboardPage() {
@@ -89,34 +90,29 @@ export function StoreDashboardPage() {
       .slice(0, 3);
   }, [storeProducts]);
 
-  // Compute store-specific financials
-  const periodMultiplier = PERIODS.find((p) => p.id === selectedPeriod)?.multiplier || 1.0;
+  // Live store-specific financials from real transactional data
+  const { data: dashboardData } = useOwnerDashboard({
+    dateRange: selectedPeriod,
+    storeCode: effectiveStoreCode,
+  });
 
   const financialSummary = useMemo(() => {
-    let baseMonthlySales = 485000;
-    let baseMonthlyExpenses = 320000;
-
-    if (effectiveStoreCode === 'furniture-electronics') {
-      baseMonthlySales = 695000;
-      baseMonthlyExpenses = 460000;
-    } else if (effectiveStoreCode !== 'mobiles') {
-      baseMonthlySales = 220000;
-      baseMonthlyExpenses = 145000;
+    if (!dashboardData?.summary) {
+      return {
+        totalSales: 0,
+        totalExpenses: 0,
+        totalProfit: 0,
+        profitMargin: '0.0',
+      };
     }
-
-    const realInvoiceTotal = invoices.reduce((acc, inv) => acc + (parseFloat(inv.grand_total) || 0), 0);
-    const totalSales = Math.round((baseMonthlySales + realInvoiceTotal) * periodMultiplier);
-    const totalExpenses = Math.round(baseMonthlyExpenses * periodMultiplier);
-    const totalProfit = totalSales - totalExpenses;
-    const profitMargin = totalSales > 0 ? ((totalProfit / totalSales) * 100).toFixed(1) : '0.0';
-
+    const { totalSales = 0, totalCogs = 0, estimatedGrossProfit = 0, grossMarginPercent = 0 } = dashboardData.summary;
     return {
-      totalSales,
-      totalExpenses,
-      totalProfit,
-      profitMargin,
+      totalSales: Math.round(totalSales),
+      totalExpenses: Math.round(totalCogs),
+      totalProfit: Math.round(estimatedGrossProfit),
+      profitMargin: Number(grossMarginPercent || 0).toFixed(1),
     };
-  }, [effectiveStoreCode, invoices, periodMultiplier]);
+  }, [dashboardData]);
 
   const storeName = currentStore?.name || (effectiveStoreCode === 'mobiles' ? 'Star Mobiles' : 'Star Furniture & Living');
   const storeCity = currentStore?.city || 'Mumbai';

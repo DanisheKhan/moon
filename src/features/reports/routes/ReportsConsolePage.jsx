@@ -29,8 +29,6 @@ export function ReportsConsolePage() {
   const {
     data: dashboardData,
     isLoading,
-    isFetching,
-    refetch,
   } = useOwnerDashboard({ dateRange, storeCode });
 
   const summary = dashboardData?.summary || {};
@@ -49,8 +47,6 @@ export function ReportsConsolePage() {
         setDateRange={setDateRange}
         storeCode={storeCode}
         setStoreCode={setStoreCode}
-        onRefresh={() => refetch()}
-        isFetching={isFetching}
       />
 
       {/* Zero Transaction Notice if current filter is empty */}

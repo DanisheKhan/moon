@@ -20,6 +20,8 @@ export function useCreateBuybackIntake() {
     mutationFn: createBuybackIntake,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: secondHandKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['inventory'] });
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }
