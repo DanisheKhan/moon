@@ -110,18 +110,18 @@ function CollectPaymentForm({ invoice, onClose }) {
             </span>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/60 text-center">
+          <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-border/60 text-center">
             <div>
-              <span className="text-[10px] text-muted block">Bill Total</span>
-              <span className="font-mono font-semibold text-text">{formatCurrency(grandTotal)}</span>
+              <span className="text-[10px] uppercase font-semibold tracking-wider text-muted block mb-0.5">Bill Total</span>
+              <span className="font-mono text-sm sm:text-base font-bold text-text">{formatCurrency(grandTotal)}</span>
             </div>
             <div>
-              <span className="text-[10px] text-muted block">Paid So Far</span>
-              <span className="font-mono font-semibold text-brand-sage">{formatCurrency(totalPaid)}</span>
+              <span className="text-[10px] uppercase font-semibold tracking-wider text-muted block mb-0.5">Paid So Far</span>
+              <span className="font-mono text-sm sm:text-base font-bold text-brand-sage">{formatCurrency(totalPaid)}</span>
             </div>
             <div>
-              <span className="text-[10px] text-muted block">Outstanding Balance</span>
-              <span className="font-mono font-bold text-danger">{formatCurrency(balanceDue)}</span>
+              <span className="text-[10px] uppercase font-semibold tracking-wider text-muted block mb-0.5">Outstanding Balance</span>
+              <span className="font-mono text-base sm:text-lg font-extrabold text-danger">{formatCurrency(balanceDue)}</span>
             </div>
           </div>
         </div>
@@ -154,17 +154,23 @@ function CollectPaymentForm({ invoice, onClose }) {
               Collect Full ({formatCurrency(balanceDue)})
             </button>
           </div>
-          <Input
-            id="collect-amount"
-            type="number"
-            step="0.01"
-            min="1"
-            max={balanceDue}
-            value={collectAmount}
-            onChange={(e) => setCollectAmount(e.target.value)}
-            className="font-mono text-base font-bold"
-            required
-          />
+          <div className="relative">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xl font-bold font-mono text-muted select-none pointer-events-none">
+              ₹
+            </span>
+            <Input
+              id="collect-amount"
+              type="number"
+              step="1"
+              min="1"
+              max={balanceDue}
+              value={collectAmount}
+              onChange={(e) => setCollectAmount(e.target.value)}
+              className="font-mono text-2xl sm:text-3xl font-extrabold pl-9 py-2.5 min-h-14 tracking-tight text-text"
+              required
+              autoFocus
+            />
+          </div>
           {parsedCollect > 0 && parsedCollect < balanceDue && (
             <p className="text-[11px] text-amber-600 font-medium">
               Remaining balance after this collection: <strong>{formatCurrency(newBalance)}</strong>

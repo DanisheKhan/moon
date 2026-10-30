@@ -6,7 +6,6 @@ import {
   AddProductModal,
   EditProductModal,
   DeleteProductModal,
-  StockAdjustmentModal,
   useCategories,
   AddCategoryModal,
 } from '@/features/inventory';
@@ -20,7 +19,6 @@ import {
   CheckCircle2,
   AlertCircle,
   FolderPlus,
-  Boxes,
 } from 'lucide-react';
 
 export function InventoryCardsPage() {
@@ -37,8 +35,8 @@ export function InventoryCardsPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null);
+  const [editInitialTab, setEditInitialTab] = useState('details');
   const [productToDelete, setProductToDelete] = useState(null);
-  const [productToAdjust, setProductToAdjust] = useState(null);
 
   // Strictly isolate products to selected store
   const { data: allProds = [], isLoading } = useAllProducts();
@@ -95,9 +93,10 @@ export function InventoryCardsPage() {
     let outOfStock = 0;
     rawProducts.forEach((p) => {
       const q = p.inventory?.[0]?.quantity_on_hand ?? 0;
+      const reorder = p.reorder_level || 2;
       if (q <= 0) {
         outOfStock += 1;
-      } else if (q < 2) {
+      } else if (q <= reorder) {
         lowStock += 1;
         inStock += 1;
       } else {
@@ -120,7 +119,8 @@ export function InventoryCardsPage() {
     } else if (stockFilter === 'low_stock') {
       list = list.filter((p) => {
         const q = p.inventory?.[0]?.quantity_on_hand ?? 0;
-        return q > 0 && q < 2;
+        const reorder = p.reorder_level || 2;
+        return q > 0 && q <= reorder;
       });
     } else if (stockFilter === 'out_of_stock') {
       list = list.filter((p) => (p.inventory?.[0]?.quantity_on_hand ?? 0) <= 0);
@@ -300,16 +300,18 @@ export function InventoryCardsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredProducts.map((prod) => {
             const qtyOnHand = prod.inventory?.[0]?.quantity_on_hand ?? 0;
+            const reorderLevel = prod.reorder_level || 2;
             const isOutOfStock = qtyOnHand <= 0;
+            const isLowStock = !isOutOfStock && qtyOnHand <= reorderLevel;
 
             return (
               <div
                 key={prod.id}
-                className="group rounded-xl border border-border bg-surface p-4 flex flex-col justify-between hover:border-text/40 transition-all select-none space-y-4 shadow-2xs h-full"
+                className="group rounded-xl border border-border bg-surface p-3 flex flex-col justify-between hover:border-text/40 transition-all select-none space-y-2.5 shadow-2xs h-full"
               >
                 {/* Card Top: Image & Status Badges */}
-                <div className="space-y-3">
-                  <div className="relative w-full h-40 rounded-lg overflow-hidden border border-border bg-bg/40 flex items-center justify-center">
+                <div className="space-y-2.5">
+                  <div className="relative w-full h-32 rounded-lg overflow-hidden border border-border bg-bg/40 flex items-center justify-center">
                     {prod.image_url ? (
                       <img
                         src={prod.image_url}
@@ -322,33 +324,37 @@ export function InventoryCardsPage() {
                       />
                     ) : (
                       <div className="flex flex-col items-center gap-1.5 text-muted">
-                        <Package size={32} />
+                        <Package size={28} />
                         <span className="text-[10px] font-mono">{prod.sku}</span>
                       </div>
                     )}
 
-                    {/* Stock status badge overlay (Clickable to update stock) */}
-                    <div className="absolute top-2.5 right-2.5">
+                    {/* Prominent, Highlighted Stock status badge (Clickable to view & adjust stock) */}
+                    <div className="absolute top-2 right-2 z-10">
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setProductToAdjust(prod);
+                          setProductToEdit(prod);
+                          setEditInitialTab('stock');
                         }}
-                        className="cursor-pointer hover:opacity-85 transition-opacity"
-                        title="Click to update stock level"
+                        className="cursor-pointer hover:opacity-90 transition-opacity"
+                        title="Click to view and adjust stock level"
                       >
                         {isOutOfStock ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-surface text-danger border border-danger/30 shadow-2xs">
-                            <AlertCircle size={10} /> Out of Stock
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-danger text-white shadow-2xs">
+                            <AlertCircle size={12} className="shrink-0" />
+                            <span>Out of Stock</span>
                           </span>
-                        ) : qtyOnHand < 2 ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-surface text-danger border border-danger/30 shadow-2xs">
-                            <AlertCircle size={10} /> In Stock ({qtyOnHand})
+                        ) : isLowStock ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500 text-white shadow-2xs">
+                            <AlertCircle size={12} className="shrink-0" />
+                            <span>Low Stock ({qtyOnHand})</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-brand-sage-subtle text-brand-sage-text border border-brand-sage-border shadow-2xs">
-                            <CheckCircle2 size={10} className="text-brand-sage" /> In Stock ({qtyOnHand})
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-sage text-white shadow-2xs">
+                            <CheckCircle2 size={12} className="shrink-0" />
+                            <span>In Stock ({qtyOnHand})</span>
                           </span>
                         )}
                       </button>
@@ -356,8 +362,8 @@ export function InventoryCardsPage() {
 
                     {/* Serialized badge */}
                     {prod.is_serialized && (
-                      <div className="absolute bottom-2.5 left-2.5">
-                        <span className="px-2 py-0.5 rounded-md text-[9px] font-medium uppercase tracking-wider bg-bg text-text border border-border">
+                      <div className="absolute bottom-2 left-2">
+                        <span className="px-2 py-0.5 rounded-md text-[9px] font-semibold uppercase tracking-wider bg-surface/95 text-text border border-border shadow-2xs">
                           Serialized
                         </span>
                       </div>
@@ -378,7 +384,7 @@ export function InventoryCardsPage() {
 
                   {/* Title & SKU */}
                   <div>
-                    <h3 className="font-medium text-sm text-text line-clamp-1" title={prod.name}>
+                    <h3 className="font-semibold text-sm text-text line-clamp-1" title={prod.name}>
                       {prod.name}
                     </h3>
                     <div className="text-[11px] font-mono text-muted flex items-center gap-2 mt-0.5">
@@ -391,7 +397,7 @@ export function InventoryCardsPage() {
                 {/* Card Middle: Price & GST info */}
                 <div className="pt-2 border-t border-border flex items-baseline justify-between">
                   <div>
-                    <div className="text-base font-medium text-text">
+                    <div className="text-base font-semibold text-text">
                       {formatCurrency(prod.selling_price)}
                     </div>
                     <div className="text-[10px] text-muted">
@@ -406,39 +412,30 @@ export function InventoryCardsPage() {
                   )}
                 </div>
 
-                {/* Card Stock & Action Controls */}
-                <div className="pt-2.5 border-t border-border space-y-2">
+                {/* Card Combined Action Controls: Single row with Edit & Stock + Delete */}
+                <div className="pt-2 border-t border-border flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => setProductToAdjust(prod)}
-                    className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold bg-surface-subtle hover:bg-surface text-text border border-border hover:border-brand-sage transition-all cursor-pointer shadow-2xs"
-                    title="Update stock count, restock shipment, or add serial units"
+                    onClick={() => {
+                      setProductToEdit(prod);
+                      setEditInitialTab('details');
+                    }}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold bg-surface-subtle hover:bg-surface text-text border border-border hover:border-brand-sage transition-all cursor-pointer shadow-2xs"
+                    title="Edit details, pricing, and stock"
                   >
-                    <Boxes size={14} className="text-brand-sage" />
-                    <span>Update Stock ({qtyOnHand} on hand)</span>
+                    <Pencil size={12} className="text-brand-sage" />
+                    <span>Edit & Stock</span>
                   </button>
 
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setProductToEdit(prod)}
-                      className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-border bg-bg hover:bg-surface text-text hover:border-text/40 transition-colors cursor-pointer"
-                      title="Edit Product Details & Pricing"
-                    >
-                      <Pencil size={13} />
-                      <span>Edit</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setProductToDelete(prod)}
-                      className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-danger/30 bg-danger/5 hover:bg-danger/10 text-danger transition-colors cursor-pointer"
-                      title="Delete Product"
-                    >
-                      <Trash2 size={13} />
-                      <span>Delete</span>
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setProductToDelete(prod)}
+                    className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-danger/30 bg-danger/5 hover:bg-danger/10 text-danger transition-colors cursor-pointer"
+                    title="Delete Product"
+                  >
+                    <Trash2 size={12} />
+                    <span>Delete</span>
+                  </button>
                 </div>
               </div>
             );
@@ -468,10 +465,12 @@ export function InventoryCardsPage() {
 
       {productToEdit && (
         <EditProductModal
+          key={`${productToEdit.id}-${editInitialTab}`}
           product={productToEdit}
+          storeId={storeId}
           isOpen={Boolean(productToEdit)}
+          initialTab={editInitialTab}
           onClose={() => setProductToEdit(null)}
-          onOpenAdjustStock={(p) => setProductToAdjust(p)}
         />
       )}
 
@@ -480,15 +479,6 @@ export function InventoryCardsPage() {
           product={productToDelete}
           isOpen={Boolean(productToDelete)}
           onClose={() => setProductToDelete(null)}
-        />
-      )}
-
-      {productToAdjust && (
-        <StockAdjustmentModal
-          product={productToAdjust}
-          storeId={productToAdjust.store_id || storeId}
-          isOpen={Boolean(productToAdjust)}
-          onClose={() => setProductToAdjust(null)}
         />
       )}
     </div>

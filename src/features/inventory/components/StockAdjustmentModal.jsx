@@ -41,7 +41,7 @@ export function StockAdjustmentModal({ product, storeId, isOpen, onClose }) {
   );
 }
 
-function StockAdjustmentForm({ product, storeId, onClose }) {
+export function StockAdjustmentForm({ product, storeId, onClose }) {
   const isSerialized = Boolean(product.is_serialized);
   const currentQty = product?.inventory?.[0]?.quantity_on_hand ?? 0;
 
@@ -50,6 +50,7 @@ function StockAdjustmentForm({ product, storeId, onClose }) {
 
   // Quantity adjustment state
   const [newQty, setNewQty] = useState(String(currentQty));
+  const [addedQty, setAddedQty] = useState('0');
   const [reason, setReason] = useState('restock');
   const [notes, setNotes] = useState('');
   const [error, setError] = useState('');
@@ -77,11 +78,53 @@ function StockAdjustmentForm({ product, storeId, onClose }) {
   const parsedQty = parseInt(newQty, 10);
   const qtyDelta = isNaN(parsedQty) ? 0 : parsedQty - currentQty;
 
-  // Quick increment helper
+  // Handle typing directly in "Items to Add (Pieces / Units)"
+  function handleAddedQtyChange(val) {
+    setAddedQty(val);
+    if (val === '' || val === '-') {
+      setNewQty(String(currentQty));
+      setError('');
+      return;
+    }
+    const parsedAdd = parseInt(val, 10);
+    if (!isNaN(parsedAdd)) {
+      const target = Math.max(0, currentQty + parsedAdd);
+      setNewQty(String(target));
+      setError('');
+    }
+  }
+
+  // Handle typing directly in "Resulting Total Stock on Hand"
+  function handleNewQtyChange(val) {
+    setNewQty(val);
+    if (val === '') {
+      setAddedQty('');
+      setError('');
+      return;
+    }
+    const parsedTotal = parseInt(val, 10);
+    if (!isNaN(parsedTotal)) {
+      const delta = parsedTotal - currentQty;
+      setAddedQty(String(delta));
+      setError('');
+    }
+  }
+
+  // Quick increment helper (+1, +2, +5, +10, -1, etc.)
   function handleDeltaAdd(delta) {
-    const base = isNaN(parsedQty) ? currentQty : parsedQty;
-    const target = Math.max(0, base + delta);
-    setNewQty(String(target));
+    const currentAdded = parseInt(addedQty, 10) || 0;
+    const nextAdded = currentAdded + delta;
+    const targetTotal = Math.max(0, currentQty + nextAdded);
+    const actualDelta = targetTotal - currentQty;
+    setAddedQty(String(actualDelta));
+    setNewQty(String(targetTotal));
+    setError('');
+  }
+
+  // Reset to initial stock
+  function handleReset() {
+    setAddedQty('0');
+    setNewQty(String(currentQty));
     setError('');
   }
 
@@ -439,7 +482,7 @@ function StockAdjustmentForm({ product, storeId, onClose }) {
                 ))}
                 <button
                   type="button"
-                  onClick={() => setNewQty(String(currentQty))}
+                  onClick={handleReset}
                   className="px-2.5 py-1.5 rounded-lg text-xs text-muted hover:text-text cursor-pointer ml-auto flex items-center gap-1 transition-colors"
                 >
                   <RotateCcw size={12} />
@@ -449,44 +492,70 @@ function StockAdjustmentForm({ product, storeId, onClose }) {
             </div>
 
             {/* Input & Live Delta Calculation */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end pt-2 border-t border-border">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start pt-2 border-t border-border">
+              {/* Field 1: Quantity to Add / Pieces */}
+              <div>
+                <Input
+                  id="items-to-add-qty"
+                  type="number"
+                  label="Quantity to Add / Restock (Pieces)"
+                  placeholder="e.g. 5"
+                  value={addedQty}
+                  onChange={(e) => handleAddedQtyChange(e.target.value)}
+                  className="text-lg font-mono font-bold text-brand-sage"
+                />
+                <span className="text-[11px] text-muted mt-1 block">
+                  Items to add (e.g. 1, 2, 5, or 10 pieces)
+                </span>
+              </div>
+
+              {/* Field 2: Resulting Total Stock on Hand */}
               <div>
                 <Input
                   id="new-stock-qty"
                   type="number"
                   min="0"
-                  label="New Verified Quantity on Hand"
+                  label="Resulting Total Stock on Hand"
                   value={newQty}
-                  onChange={(e) => setNewQty(e.target.value)}
+                  onChange={(e) => handleNewQtyChange(e.target.value)}
                   required
                   className="text-lg font-mono font-bold"
                 />
+                <span className="text-[11px] text-muted mt-1 block">
+                  Calculated total ({currentQty} on hand + added)
+                </span>
               </div>
 
-              {/* Live Delta Summary Box */}
-              <div className="p-3 rounded-lg border border-border bg-surface-subtle space-y-1">
-                <span className="text-[10px] uppercase font-semibold text-muted block">
-                  Net Stock Change
+              {/* Field 3: Live Delta Calculation Box */}
+              <div className="sm:col-span-2 lg:col-span-1 p-3 rounded-lg border border-border bg-surface-subtle space-y-1.5 self-stretch flex flex-col justify-center">
+                <span className="text-[10px] uppercase font-semibold text-muted block tracking-wider">
+                  Net Stock Calculation
                 </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted font-mono">{currentQty} units</span>
-                  <span className="text-xs text-muted">→</span>
-                  <span className="text-sm font-bold font-mono text-text">
-                    {isNaN(parsedQty) ? '0' : parsedQty} units
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs text-muted font-mono">{currentQty} on hand</span>
+                  <span className="text-xs text-muted">+</span>
+                  <span className="text-xs font-semibold text-brand-sage font-mono">
+                    {qtyDelta > 0 ? `${qtyDelta} added` : qtyDelta < 0 ? `${Math.abs(qtyDelta)} deducted` : '0 added'}
                   </span>
+                  <span className="text-xs text-muted">=</span>
+                  <span className="text-sm font-bold font-mono text-text">
+                    {isNaN(parsedQty) ? '0' : parsedQty} total
+                  </span>
+                </div>
+                <div>
                   {qtyDelta > 0 && (
-                    <Badge variant="success" className="text-[10px] font-mono ml-auto">
-                      +{qtyDelta} new units
+                    <Badge variant="success" className="text-[10px] font-mono">
+                      +{qtyDelta} new pieces added
                     </Badge>
                   )}
                   {qtyDelta < 0 && (
-                    <Badge variant="danger" className="text-[10px] font-mono ml-auto">
-                      {qtyDelta} deducted
+                    <Badge variant="danger" className="text-[10px] font-mono">
+                      {qtyDelta} pieces deducted
                     </Badge>
                   )}
                   {qtyDelta === 0 && (
-                    <Badge variant="outline" className="text-[10px] text-muted ml-auto">
-                      No change
+                    <Badge variant="outline" className="text-[10px] text-muted">
+                      No change ({currentQty} on hand)
                     </Badge>
                   )}
                 </div>
@@ -536,7 +605,13 @@ function StockAdjustmentForm({ product, storeId, onClose }) {
               className="gap-2 px-6 text-xs font-semibold cursor-pointer"
             >
               <Boxes size={15} />
-              <span>Confirm Stock Update (Set to {isNaN(parsedQty) ? currentQty : parsedQty} units)</span>
+              <span>
+                {qtyDelta > 0
+                  ? `Confirm Stock Update (Add +${qtyDelta} pieces → ${isNaN(parsedQty) ? currentQty : parsedQty} total)`
+                  : qtyDelta < 0
+                  ? `Confirm Stock Update (Deduct ${Math.abs(qtyDelta)} pieces → ${isNaN(parsedQty) ? currentQty : parsedQty} total)`
+                  : `Confirm Stock Update (${isNaN(parsedQty) ? currentQty : parsedQty} units on hand)`}
+              </span>
             </Button>
           </div>
         </form>
