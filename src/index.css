@@ -56,4 +56,5 @@
   --radius-full: 9999px;
 
   --font-sans: var(--font);
+  --font-mono: var(--font-mono);
 }

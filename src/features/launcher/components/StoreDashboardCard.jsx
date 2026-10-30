@@ -54,7 +54,7 @@ export function StoreDashboardCard({
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-xl font-semibold text-text tracking-tight truncate">
+                <h2 className="text-lg sm:text-xl font-bold text-text tracking-tight truncate">
                   {store.name}
                 </h2>
               </div>

@@ -13,7 +13,7 @@ export function OperationalHourlyHeatmap({ hourlySales = [] }) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-border">
         <div>
-          <h2 className="text-base font-semibold text-text flex items-center gap-2">
+          <h2 className="text-base sm:text-lg font-bold text-text flex items-center gap-2">
             <Clock size={17} className="text-muted" />
             Operational Sales & Footfall Velocity (10:00 AM – 10:00 PM)
           </h2>

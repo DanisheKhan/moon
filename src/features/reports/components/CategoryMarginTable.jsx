@@ -13,7 +13,7 @@ export function CategoryMarginTable({ categories = [] }) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-border">
         <div>
-          <h2 className="text-base font-semibold text-text flex items-center gap-2">
+          <h2 className="text-base sm:text-lg font-bold text-text flex items-center gap-2">
             <Layers size={17} className="text-muted" />
             Category Profitability & Margin Matrix
           </h2>

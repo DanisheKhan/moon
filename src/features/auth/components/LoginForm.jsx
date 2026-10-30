@@ -33,7 +33,7 @@ export function LoginForm({ onSuccess }) {
   return (
     <Card className="w-full max-w-sm p-6 sm:p-8">
       <div className="mb-6 text-center">
-        <h2 className="text-xl font-semibold text-text">Store Owner Sign In</h2>
+        <h2 className="text-xl font-bold text-text">Store Owner Sign In</h2>
         <p className="text-sm text-muted mt-1">Star Enterprises Owner Portal</p>
       </div>
 

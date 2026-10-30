@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Button, Input, Modal, Badge } from '@/shared/ui';
+import { Button, Input, Modal, Badge, Select } from '@/shared/ui';
 import { useProcessReturn } from '../hooks/useBilling';
 import { formatCurrency } from '@/shared/lib/format';
 import { getErrorMessage } from '@/shared/lib/errors';
@@ -21,6 +21,8 @@ const RETURN_REASONS = [
   'Order Cancellation / Handover Failure',
   'Packaging Damaged',
 ];
+
+const RETURN_REASON_OPTIONS = RETURN_REASONS.map((r) => ({ value: r, label: r }));
 
 const REFUND_METHODS = [
   { id: 'cash', label: 'Cash Refund', icon: Banknote },
@@ -169,16 +171,27 @@ function ReturnProductForm({ invoice, onClose }) {
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Invoice & Customer Header Ribbon */}
-        <div className="p-3 rounded-xl border border-border bg-surface-subtle text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <div className="font-semibold text-text">{invoice.customer_name || 'Walk-in Customer'}</div>
-            <div className="text-[11px] text-muted font-mono">
-              Invoice #{invoice.invoice_number} • Total: {formatCurrency(invoice.grand_total || 0)}
+        <div className="p-3.5 rounded-xl border border-border bg-surface-subtle text-xs space-y-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+            <div>
+              <span className="font-bold text-text text-sm sm:text-base">
+                {invoice.customer_name || 'Walk-in Customer'}
+              </span>
+              {invoice.customer_phone && (
+                <span className="text-muted ml-1.5 font-mono text-xs">({invoice.customer_phone})</span>
+              )}
             </div>
+            <span className="text-[11px] font-mono font-semibold text-muted uppercase tracking-wider self-start sm:self-auto">
+              {invoice.stores?.name || 'Store'}
+            </span>
           </div>
-          <Badge variant="outline" className="text-xs uppercase self-start sm:self-auto font-mono">
-            {invoice.stores?.name || 'Store'}
-          </Badge>
+          <div className="flex items-center gap-2 pt-2 border-t border-border/60 text-xs text-muted font-mono">
+            <span>Invoice #{invoice.invoice_number}</span>
+            <span>•</span>
+            <span>
+              Grand Total: <strong className="text-text">{formatCurrency(invoice.grand_total || 0)}</strong>
+            </span>
+          </div>
         </div>
 
         {errorMessage && (
@@ -199,10 +212,10 @@ function ReturnProductForm({ invoice, onClose }) {
         )}
 
         {/* Line Items Selection List */}
-        <div className="space-y-2">
-          <label className="text-xs font-semibold text-text flex items-center justify-between">
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold uppercase tracking-wider text-text flex items-center justify-between">
             <span>Select Items Being Returned</span>
-            <span className="text-[11px] text-muted font-normal">
+            <span className="text-[11px] text-muted font-medium lowercase tracking-normal">
               {selectedCount} of {orderItems.length} {orderItems.length === 1 ? 'item' : 'items'} selected
             </span>
           </label>
@@ -219,22 +232,22 @@ function ReturnProductForm({ invoice, onClose }) {
                 <div
                   key={it.id}
                   className={cn(
-                    'p-3 transition-colors text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3',
+                    'p-3.5 transition-colors text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3',
                     isSelected ? 'bg-surface-subtle' : 'hover:bg-surface-subtle/50'
                   )}
                 >
-                  <div className="flex items-start gap-2.5 min-w-0">
+                  <div className="flex items-start gap-3 min-w-0">
                     <input
                       type="checkbox"
                       id={`item-${it.id}`}
                       checked={Boolean(isSelected)}
                       onChange={() => handleToggleItem(it.id)}
-                      className="mt-0.5 rounded border-border text-brand-sage focus:ring-brand-sage cursor-pointer"
+                      className="mt-0.5 h-4 w-4 rounded border-border text-brand-sage focus:ring-brand-sage cursor-pointer"
                     />
                     <label htmlFor={`item-${it.id}`} className="cursor-pointer min-w-0">
-                      <div className="font-semibold text-text">{it.item_name}</div>
-                      <div className="text-[10px] text-muted font-mono flex items-center gap-1.5 mt-0.5">
-                        <span>Purchased: {it.quantity} unit</span>
+                      <div className="font-semibold text-text text-xs sm:text-sm">{it.item_name}</div>
+                      <div className="text-[11px] text-muted font-mono flex flex-wrap items-center gap-1.5 mt-0.5">
+                        <span>Purchased: {it.quantity} {it.quantity === 1 ? 'unit' : 'units'}</span>
                         {it.serial_number && (
                           <>
                             <span>•</span>
@@ -242,7 +255,7 @@ function ReturnProductForm({ invoice, onClose }) {
                           </>
                         )}
                         <span>•</span>
-                        <span>{formatCurrency(lineTotal)}</span>
+                        <span className="font-bold text-text">{formatCurrency(lineTotal)}</span>
                       </div>
                     </label>
                   </div>
@@ -250,26 +263,26 @@ function ReturnProductForm({ invoice, onClose }) {
                   {isSelected && (
                     <div className="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/40">
                       {!it.unit_id && it.quantity > 1 && (
-                        <div className="flex items-center gap-1">
-                          <span className="text-[10px] text-muted">Return Qty:</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[11px] text-muted font-medium">Return Qty:</span>
                           <input
                             type="number"
                             min="1"
                             max={it.quantity}
                             value={state.returnQty || 1}
                             onChange={(e) => handleUpdateQty(it.id, e.target.value, it.quantity)}
-                            className="w-12 rounded border border-border bg-surface px-1.5 py-0.5 text-xs font-mono text-center"
+                            className="w-14 rounded-lg border border-border bg-surface px-2 py-1 text-xs font-mono font-semibold text-center"
                           />
                         </div>
                       )}
 
-                      <div className="inline-flex rounded-lg border border-border bg-surface p-0.5 text-[10px]">
+                      <div className="inline-flex rounded-lg border border-border bg-surface p-0.5 text-xs">
                         <button
                           type="button"
                           onClick={() => handleUpdateRestock(it.id, true)}
                           className={cn(
-                            'px-2 py-0.5 rounded cursor-pointer font-medium transition-colors',
-                            state.restock ? 'bg-text text-bg font-bold' : 'text-muted'
+                            'px-2.5 py-1 rounded-md cursor-pointer font-semibold transition-colors',
+                            state.restock ? 'bg-text text-bg' : 'text-muted hover:text-text'
                           )}
                         >
                           Restock
@@ -278,8 +291,8 @@ function ReturnProductForm({ invoice, onClose }) {
                           type="button"
                           onClick={() => handleUpdateRestock(it.id, false)}
                           className={cn(
-                            'px-2 py-0.5 rounded cursor-pointer font-medium transition-colors',
-                            !state.restock ? 'bg-danger text-white font-bold' : 'text-muted'
+                            'px-2.5 py-1 rounded-md cursor-pointer font-semibold transition-colors',
+                            !state.restock ? 'bg-danger text-white' : 'text-muted hover:text-text'
                           )}
                         >
                           Defective
@@ -293,88 +306,88 @@ function ReturnProductForm({ invoice, onClose }) {
           </div>
         </div>
 
-        {/* Return Reason & Disposition */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-text block">Return Reason</label>
-            <select
-              value={returnReason}
-              onChange={(e) => setReturnReason(e.target.value)}
-              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-xs text-text focus:outline-brand-sage"
-            >
-              {RETURN_REASONS.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-text block">Refund Disbursement Method</label>
-            <div className="grid grid-cols-2 gap-1.5">
-              {REFUND_METHODS.map((m) => {
-                const Icon = m.icon;
-                const isSelected = refundMethod === m.id;
-                return (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => setRefundMethod(m.id)}
-                    className={cn(
-                      'p-1.5 rounded-lg border text-[11px] font-medium flex items-center gap-1.5 transition-all cursor-pointer truncate',
-                      isSelected
-                        ? 'bg-text text-bg border-text font-semibold shadow-2xs'
-                        : 'border-border bg-surface text-muted hover:text-text'
-                    )}
-                  >
-                    <Icon size={12} className="shrink-0" />
-                    <span className="truncate">{m.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Remarks / Memo */}
-        <div className="space-y-1">
+        {/* Return Details: Reason & Notes balanced side-by-side */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Select
+            id="return-reason"
+            label="Return Reason"
+            value={returnReason}
+            onChange={(e) => setReturnReason(e.target.value)}
+            options={RETURN_REASON_OPTIONS}
+          />
           <Input
             id="return-notes"
-            label="Inspector Remarks / Serial Inspection Note"
+            label="Inspector Remarks / Serial Note"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="e.g. Unit tested, screen intact, charger missing"
           />
         </div>
 
+        {/* Refund Method Selector (Full Width 4-Card Ribbon) */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold uppercase tracking-wider text-text block">
+            Refund Disbursement Method
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            {REFUND_METHODS.map((m) => {
+              const Icon = m.icon;
+              const isSelected = refundMethod === m.id;
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => setRefundMethod(m.id)}
+                  className={cn(
+                    'p-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer select-none',
+                    isSelected
+                      ? 'bg-text text-bg border-text shadow-2xs'
+                      : 'border-border bg-surface text-muted hover:text-text hover:bg-surface-subtle'
+                  )}
+                >
+                  <Icon size={14} className="shrink-0" />
+                  <span className="truncate">{m.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Total Refund Banner */}
-        <div className="p-4 rounded-xl border border-border bg-surface-subtle flex items-center justify-between">
+        <div className="p-4 rounded-xl border border-border bg-surface-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span className="text-[10px] uppercase font-semibold text-muted tracking-wider block">
+            <span className="text-[11px] uppercase font-bold text-muted tracking-wider block">
               TOTAL REFUND PAYABLE
             </span>
-            <div className="text-2xl font-bold font-mono text-text">
+            <div
+              className={cn(
+                'text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-0.5',
+                totalRefundAmount > 0 ? 'text-danger' : 'text-text'
+              )}
+            >
               {formatCurrency(totalRefundAmount)}
             </div>
-            <span className="text-[10px] text-muted block">
+            <span className="text-xs text-muted block mt-0.5">
               Calculated from original invoice tax rates
             </span>
           </div>
 
-          <Badge variant={totalRefundAmount > 0 ? 'success' : 'outline'} className="text-xs font-mono">
+          <Badge
+            variant={totalRefundAmount > 0 ? 'danger' : 'default'}
+            className="text-xs font-semibold py-1 px-3 self-start sm:self-auto"
+          >
             {selectedCount} {selectedCount === 1 ? 'item' : 'items'} returning
           </Badge>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
+        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-border">
           <Button
             type="button"
             variant="outline"
             onClick={onClose}
             disabled={processReturnMutation.isPending}
-            className="text-xs rounded-lg cursor-pointer"
+            className="text-xs font-semibold rounded-lg px-4 cursor-pointer"
           >
             Cancel
           </Button>
@@ -382,7 +395,7 @@ function ReturnProductForm({ invoice, onClose }) {
             type="submit"
             disabled={processReturnMutation.isPending || totalRefundAmount <= 0}
             pending={processReturnMutation.isPending}
-            className="text-xs font-semibold rounded-lg gap-1.5 shadow-2xs cursor-pointer bg-danger hover:bg-danger/90 text-white"
+            className="text-xs font-semibold rounded-lg gap-1.5 shadow-2xs px-4 cursor-pointer bg-danger hover:bg-danger/90 text-white disabled:opacity-50"
           >
             <RotateCcw size={14} />
             <span>Process Return & Refund ({formatCurrency(totalRefundAmount)})</span>

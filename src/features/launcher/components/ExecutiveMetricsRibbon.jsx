@@ -29,7 +29,7 @@ export function ExecutiveMetricsRibbon({ summary, dateRangeLabel }) {
           </div>
         </div>
         <div className="min-w-0">
-          <div className="text-2xl font-semibold text-text tracking-tight truncate">
+          <div className="text-2xl font-bold font-mono text-text tracking-tight truncate">
             {formatCurrency(totalSales)}
           </div>
           <div className="text-xs text-muted mt-1 truncate">
@@ -47,7 +47,7 @@ export function ExecutiveMetricsRibbon({ summary, dateRangeLabel }) {
           </div>
         </div>
         <div className="min-w-0">
-          <div className="text-2xl font-semibold text-text tracking-tight truncate">
+          <div className="text-2xl font-bold font-mono text-text tracking-tight truncate">
             {formatCurrency(estimatedMargin)}
           </div>
           <div className="text-xs text-muted mt-1 truncate">
@@ -65,7 +65,7 @@ export function ExecutiveMetricsRibbon({ summary, dateRangeLabel }) {
           </div>
         </div>
         <div className="min-w-0">
-          <div className="text-2xl font-semibold text-text tracking-tight truncate">
+          <div className="text-2xl font-bold font-mono text-text tracking-tight truncate">
             {formatCurrency(totalTax)}
           </div>
           <div className="text-xs text-muted mt-1 truncate">
@@ -83,7 +83,7 @@ export function ExecutiveMetricsRibbon({ summary, dateRangeLabel }) {
           </div>
         </div>
         <div className="min-w-0">
-          <div className="text-2xl font-semibold text-text tracking-tight truncate">
+          <div className="text-2xl font-bold font-mono text-text tracking-tight truncate">
             {formatCurrency(totalInventoryValue)}
           </div>
           <div className="text-xs text-muted mt-1 truncate">

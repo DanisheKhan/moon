@@ -138,10 +138,13 @@ export function StaffManagementPage() {
       {/* Top Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <h1 className="text-xl sm:text-2xl font-semibold text-text tracking-tight">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-muted block mb-1">
+            HUMAN RESOURCES & PAYROLL
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
             Staff Management System (HRMS)
           </h1>
-          <p className="text-xs sm:text-sm text-muted mt-0.5">
+          <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
             Manage employee directory, review leave requests, and disburse store payroll across branches.
           </p>
         </div>

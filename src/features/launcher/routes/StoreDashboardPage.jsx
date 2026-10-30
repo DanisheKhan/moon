@@ -122,8 +122,8 @@ export function StoreDashboardPage() {
       {/* Store Header & Period Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border min-w-0">
         <div className="space-y-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted">
               STORE WORKSPACE
             </span>
             <span className="text-xs text-muted">•</span>
@@ -132,10 +132,10 @@ export function StoreDashboardPage() {
               Active Branch
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
             {storeName} Dashboard
           </h1>
-          <p className="text-xs sm:text-sm text-muted">
+          <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
             Branch Operations • {storeCity} • Real-time telemetry & counter sales
           </p>
         </div>
@@ -186,7 +186,7 @@ export function StoreDashboardPage() {
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
+            <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-text">
               {formatCurrency(financialSummary.totalSales)}
             </div>
             <p className="text-xs text-muted flex items-center gap-1">
@@ -207,7 +207,7 @@ export function StoreDashboardPage() {
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
+            <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-text">
               {formatCurrency(financialSummary.totalExpenses)}
             </div>
             <p className="text-xs text-muted">
@@ -227,7 +227,7 @@ export function StoreDashboardPage() {
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
+            <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-text">
               {formatCurrency(financialSummary.totalProfit)}
             </div>
             <div className="flex items-center gap-2">
@@ -252,7 +252,7 @@ export function StoreDashboardPage() {
                     <AlertTriangle size={15} />
                   </div>
                   <div>
-                    <h2 className="text-sm sm:text-base font-semibold text-text">Critical Stock Alerts</h2>
+                    <h2 className="text-base sm:text-lg font-bold text-text">Critical Stock Alerts</h2>
                     <p className="text-xs text-muted">
                       Items at or below reorder threshold
                     </p>
@@ -361,7 +361,7 @@ export function StoreDashboardPage() {
                     <Receipt size={15} />
                   </div>
                   <div>
-                    <h2 className="text-sm sm:text-base font-semibold text-text">Recent Store Transactions</h2>
+                    <h2 className="text-base sm:text-lg font-bold text-text">Recent Store Transactions</h2>
                     <p className="text-xs text-muted">Live checkout activity at this counter</p>
                   </div>
                 </div>

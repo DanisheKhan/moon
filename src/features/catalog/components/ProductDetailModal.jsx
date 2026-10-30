@@ -77,13 +77,13 @@ export function ProductDetailModal({ product, isOpen, onClose }) {
         <div className="p-4 rounded-xl border border-border bg-bg flex items-baseline justify-between flex-wrap gap-2">
           <div>
             <div className="text-xs text-muted">Special Store Price:</div>
-            <div className="text-2xl font-medium tracking-tight text-text">
+            <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-text">
               {formatCurrency(product.selling_price)}
             </div>
           </div>
           <div className="text-right">
             {product.mrp && product.mrp > product.selling_price && (
-              <div className="text-xs text-muted line-through">
+              <div className="text-sm font-mono text-muted line-through">
                 MRP {formatCurrency(product.mrp)}
               </div>
             )}

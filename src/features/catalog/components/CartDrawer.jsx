@@ -56,7 +56,7 @@ export function CartDrawer() {
         <div className="p-4 sm:p-5 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShoppingBag size={18} className="text-text" />
-            <h2 className="font-semibold text-text text-base">Your Cart</h2>
+            <h2 className="font-bold text-text text-base sm:text-lg">Your Cart</h2>
             <Badge variant="accent">{totalCount} items</Badge>
           </div>
           <button

@@ -40,6 +40,7 @@
   --radius-3xl: 24px;
   --radius-full: 9999px;
   --font: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Operations Console & Navigation Layout Tokens */
   --sidebar-bg: #FFFFFF;

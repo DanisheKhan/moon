@@ -194,7 +194,7 @@ export function Select({
       {label && (
         <label
           htmlFor={id}
-          className="text-xs font-medium text-text uppercase tracking-wider flex items-center"
+          className="text-xs font-bold text-text uppercase tracking-wider flex items-center"
         >
           <span>{label}</span>
           {required && (

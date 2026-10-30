@@ -63,7 +63,7 @@ export function StorePickerCard({ store, analytics, onOpen }) {
               <StoreIcon code={store.code} />
             </div>
             <div className="min-w-0">
-              <h2 className="text-base font-medium tracking-tight text-text truncate">{displayName}</h2>
+              <h2 className="text-base sm:text-lg font-bold tracking-tight text-text truncate">{displayName}</h2>
               <p className="text-xs text-muted truncate">{store.trade_name || store.name}</p>
             </div>
           </div>

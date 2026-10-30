@@ -16,7 +16,7 @@ export const Input = forwardRef(function Input(
   return (
     <div className="flex flex-col gap-1.5 w-full text-left">
       {label && (
-        <label htmlFor={id} className="text-xs font-medium text-text uppercase tracking-wider flex items-center">
+        <label htmlFor={id} className="text-xs font-bold text-text uppercase tracking-wider flex items-center">
           <span>{label}</span>
           {required && (
             <span className="text-danger ml-0.5 font-bold" aria-hidden="true" title="Required field">*</span>

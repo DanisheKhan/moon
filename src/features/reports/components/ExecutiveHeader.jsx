@@ -22,13 +22,13 @@ export function ExecutiveHeader({
   return (
     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-border">
       <div>
-        <span className="text-[10px] font-medium uppercase tracking-widest text-muted block mb-1">
+        <span className="text-[11px] font-bold uppercase tracking-wider text-muted block mb-1">
           EXECUTIVE INTELLIGENCE
         </span>
-        <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
           Analytics & Reports
         </h1>
-        <p className="text-xs sm:text-sm text-muted mt-1">
+        <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
           Real-time financial telemetry, GST sales registers, payment methods, and business profit levers.
         </p>
       </div>

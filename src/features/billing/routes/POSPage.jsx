@@ -447,19 +447,19 @@ export function POSPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted">
               POINT OF SALE
             </span>
             <span className="text-xs text-muted">•</span>
-            <span className="text-xs text-brand-sage font-medium flex items-center gap-1">
+            <span className="text-xs text-brand-sage font-semibold flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-brand-sage animate-pulse" />
               Counter Billing Active
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
             {store?.name} Billing
           </h1>
-          <p className="text-xs sm:text-sm text-muted">
+          <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
             Guided 3-step checkout with catalog search, customer invoicing, and counter discount settlement.
           </p>
         </div>
@@ -723,7 +723,7 @@ export function POSPage() {
             <div className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-2">
                 <ShoppingBag size={16} className="text-brand-sage" />
-                <h2 className="text-sm sm:text-base font-semibold text-text">
+                <h2 className="text-base sm:text-lg font-bold text-text">
                   Bill Items
                 </h2>
                 <Badge variant="default" className="text-xs font-mono">
@@ -875,7 +875,7 @@ export function POSPage() {
           <Card className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-5 shadow-2xs">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border">
               <div>
-                <h2 className="text-sm sm:text-base font-semibold text-text flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-bold text-text flex items-center gap-2">
                   <User size={16} className="text-brand-sage" />
                   <span>Customer & GST Invoice Details</span>
                 </h2>
@@ -1055,7 +1055,7 @@ export function POSPage() {
           <div className="lg:col-span-7 space-y-5">
             <Card className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-5 shadow-2xs">
               <div className="pb-3 border-b border-border">
-                <h2 className="text-sm sm:text-base font-semibold text-text flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-bold text-text flex items-center gap-2">
                   <Coins size={16} className="text-brand-sage" />
                   <span>Payment Tender & Collection</span>
                 </h2>

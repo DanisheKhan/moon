@@ -30,7 +30,7 @@ export function TableHead({ className, children, ...rest }) {
   return (
     <thead
       className={cn(
-        'bg-surface-subtle border-b border-border text-[11px] sm:text-xs uppercase font-medium text-muted tracking-wider select-none whitespace-nowrap',
+        'bg-surface-subtle border-b border-border text-xs uppercase font-bold text-muted tracking-wider select-none whitespace-nowrap',
         className
       )}
       {...rest}

@@ -63,7 +63,7 @@ export async function listAllInvoices({
       subtotal, discount_amount, cgst_amount, sgst_amount, igst_amount, grand_total, status, created_at,
       stores (id, name, code, invoice_prefix, gstin, city),
       payments (id, payment_method, amount, reference_number),
-      order_items (id, item_name, serial_number, quantity, unit_price, discount, total_amount, gst_rate)
+      order_items (id, product_id, unit_id, item_name, serial_number, quantity, unit_price, discount, total_amount, gst_rate)
     `)
     .order('created_at', { ascending: false });
 
@@ -320,9 +320,33 @@ export async function recordPayment({ invoiceId, paymentMethod, amount, referenc
  * Processes a sales return / refund atomically via database RPC
  */
 export async function processReturn({ invoiceId, items, refundAmount, refundMethod, reason, notes }) {
+  let resolvedItems = items;
+  const missingProductItems = (items || []).filter((it) => !it.product_id && it.order_item_id);
+  if (missingProductItems.length > 0) {
+    const { data: dbItems } = await supabase
+      .from('order_items')
+      .select('id, product_id, unit_id')
+      .in('id', missingProductItems.map((it) => it.order_item_id));
+
+    if (dbItems && dbItems.length > 0) {
+      const itemMap = new Map(dbItems.map((dbIt) => [dbIt.id, dbIt]));
+      resolvedItems = items.map((it) => {
+        if (!it.product_id && it.order_item_id && itemMap.has(it.order_item_id)) {
+          const dbIt = itemMap.get(it.order_item_id);
+          return {
+            ...it,
+            product_id: dbIt.product_id,
+            unit_id: it.unit_id || dbIt.unit_id || null,
+          };
+        }
+        return it;
+      });
+    }
+  }
+
   const { data, error } = await supabase.rpc('process_return', {
     p_invoice_id: invoiceId,
-    p_items: items,
+    p_items: resolvedItems,
     p_refund_amount: parseFloat(refundAmount) || 0,
     p_refund_method: refundMethod || 'cash',
     p_reason: reason || 'Customer Return',

@@ -23,10 +23,10 @@ export function ExecutiveKpiGrid({ summary = {} }) {
         {/* Gross Sales */}
         <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs flex items-start justify-between min-w-0">
           <div className="space-y-1 min-w-0">
-            <span className="text-[10px] font-medium text-muted uppercase tracking-wider block">
+            <span className="text-[11px] font-bold text-muted uppercase tracking-wider block">
               GROSS SALES
             </span>
-            <div className="text-2xl font-semibold tracking-tight text-text truncate">
+            <div className="text-2xl font-bold font-mono tracking-tight text-text truncate">
               {formatCurrency(totalSales)}
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted truncate">
@@ -43,10 +43,10 @@ export function ExecutiveKpiGrid({ summary = {} }) {
         {/* True Gross Profit & Margin */}
         <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs flex items-start justify-between min-w-0">
           <div className="space-y-1 min-w-0">
-            <span className="text-[10px] font-medium text-muted uppercase tracking-wider block">
+            <span className="text-[11px] font-bold text-muted uppercase tracking-wider block">
               TRUE GROSS PROFIT
             </span>
-            <div className="text-2xl font-semibold tracking-tight text-text truncate">
+            <div className="text-2xl font-bold font-mono tracking-tight text-text truncate">
               {formatCurrency(estimatedGrossProfit)}
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted truncate">
@@ -64,10 +64,10 @@ export function ExecutiveKpiGrid({ summary = {} }) {
         {/* Collected GST */}
         <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs flex items-start justify-between min-w-0">
           <div className="space-y-1 min-w-0">
-            <span className="text-[10px] font-medium text-muted uppercase tracking-wider block">
+            <span className="text-[11px] font-bold text-muted uppercase tracking-wider block">
               COLLECTED GST
             </span>
-            <div className="text-2xl font-semibold tracking-tight text-text truncate">
+            <div className="text-2xl font-bold font-mono tracking-tight text-text truncate">
               {formatCurrency(totalGst)}
             </div>
             <span className="text-xs text-muted block truncate">CGST + SGST (GSTR-1 Ready)</span>
@@ -80,10 +80,10 @@ export function ExecutiveKpiGrid({ summary = {} }) {
         {/* Average Ticket Value */}
         <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs flex items-start justify-between min-w-0">
           <div className="space-y-1 min-w-0">
-            <span className="text-[10px] font-medium text-muted uppercase tracking-wider block">
+            <span className="text-[11px] font-bold text-muted uppercase tracking-wider block">
               AVG TICKET VALUE
             </span>
-            <div className="text-2xl font-semibold tracking-tight text-text truncate">
+            <div className="text-2xl font-bold font-mono tracking-tight text-text truncate">
               {formatCurrency(averageTicket)}
             </div>
             <span className="text-xs text-muted block truncate">Basket spend per customer bill</span>
@@ -99,7 +99,7 @@ export function ExecutiveKpiGrid({ summary = {} }) {
         <div className="flex items-center gap-2">
           <Package size={15} className="text-muted shrink-0" />
           <span className="text-muted">Total On-Hand Inventory Valuation:</span>
-          <span className="font-semibold text-text">{formatCurrency(totalInventoryValue)}</span>
+          <span className="font-bold font-mono text-text">{formatCurrency(totalInventoryValue)}</span>
         </div>
         <div className="flex items-center gap-2 text-muted">
           <span>Catalog Health:</span>

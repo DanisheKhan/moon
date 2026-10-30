@@ -1,10 +1,17 @@
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Badge } from '@/shared/ui';
+import { Card } from '@/shared/ui';
 import { useStores } from '@/features/stores';
 import { useOwnerDashboard } from '@/features/reports';
 import { formatCurrency } from '@/shared/lib/format';
 import { StorePickerCard } from '../components/StorePickerCard';
-import { TrendingUp, Receipt, ShieldCheck, Sparkles } from 'lucide-react';
+import {
+  Store,
+  TrendingUp,
+  Receipt,
+  Package,
+  Building2,
+} from 'lucide-react';
 
 function sortOwnerStores(stores) {
   const rank = (store) => {
@@ -22,85 +29,126 @@ export function LauncherPage() {
 
   const storesMetrics = dashboardData?.stores || {};
   const summary = dashboardData?.summary || {};
-  const ownerStores = sortOwnerStores(stores.filter((s) => s.is_active !== false));
+  const ownerStores = useMemo(
+    () => sortOwnerStores(stores.filter((s) => s.is_active !== false)),
+    [stores]
+  );
 
   return (
-    <div className="max-w-5xl mx-auto py-6 px-4 sm:px-6 space-y-6 min-w-0">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 min-w-0 pb-2">
-        <div className="space-y-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <Badge variant="accent" className="text-[11px] font-semibold">
-              Owner portal
-            </Badge>
-            <span className="text-xs text-muted font-medium flex items-center gap-1">
-              <Sparkles size={12} className="text-brand-sage" /> Enterprise Multi-Store
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
+    <div className="w-full space-y-6 min-w-0 pb-12">
+      {/* 1. Standard Top Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border min-w-0">
+        <div>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-muted block mb-1">
+            ENTERPRISE SCOPE & MULTI-STORE MANAGEMENT
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
             Your Stores & Branches
           </h1>
-          <p className="text-xs sm:text-sm text-muted max-w-xl">
-            Choose a store workspace to manage local operations, or review the synchronized 2-store analytics below.
+          <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
+            Choose a store workspace to manage local operations, or review combined multi-store network analytics.
           </p>
         </div>
-        <div className="text-xs text-muted font-medium shrink-0 bg-surface border border-border px-3 py-1.5 rounded-lg shadow-2xs">
-          {ownerStores.length} active {ownerStores.length === 1 ? 'store' : 'stores'}
-        </div>
-      </div>
 
-      {/* Consolidated 2-Store Pulse */}
-      <div className="rounded-xl border border-border bg-surface p-4 sm:p-5 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3.5 border-b border-border">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-brand-sage ring-2 ring-brand-sage/20 shrink-0" />
-            <span className="text-xs font-semibold text-text">Combined Network Analytics</span>
-            <span className="text-[11px] text-muted">Across All Branches • Current Month</span>
-          </div>
-          <div className="text-[10px] text-muted font-mono font-medium">
-            Auto-synchronized
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 min-w-0">
-          <div className="min-w-0">
-            <div className="text-[10px] uppercase font-semibold tracking-wider text-muted flex items-center gap-1.5">
-              <TrendingUp size={13} className="text-brand-sage shrink-0" />
-              <span className="truncate">Combined Sales</span>
-            </div>
-            <div className="text-lg sm:text-xl font-semibold text-text mt-0.5 truncate">
-              {formatCurrency(summary.totalSales || 0)}
-            </div>
-          </div>
-
-          <div className="min-w-0">
-            <div className="text-[10px] uppercase font-semibold tracking-wider text-muted flex items-center gap-1.5">
-              <Receipt size={13} className="text-muted shrink-0" />
-              <span className="truncate">Total Orders</span>
-            </div>
-            <div className="text-lg sm:text-xl font-semibold text-text mt-0.5 truncate">
-              {summary.invoiceCount || 0} Bills
-            </div>
-          </div>
-
-          <div className="min-w-0">
-            <div className="text-[10px] uppercase font-semibold tracking-wider text-muted flex items-center gap-1.5">
-              <ShieldCheck size={13} className="text-muted shrink-0" />
-              <span className="truncate">Inventory Valuation</span>
-            </div>
-            <div className="text-lg sm:text-xl font-semibold text-text mt-0.5 truncate">
-              {formatCurrency(summary.totalInventoryValue || 0)}
-            </div>
+        <div className="flex items-center gap-2.5 shrink-0">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface text-xs font-semibold text-text shadow-2xs">
+            <Store size={14} className="text-brand-sage" />
+            <span>
+              {ownerStores.length} Active {ownerStores.length === 1 ? 'Store' : 'Stores'}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Stores Cards Grid */}
+      {/* 2. Standard 4-Card Executive KPI Metrics Ribbon */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 min-w-0">
+        {/* KPI 1: Combined Sales */}
+        <div className="p-4 rounded-xl border border-border bg-surface shadow-2xs space-y-1 min-w-0">
+          <div className="flex items-center justify-between text-muted">
+            <span className="text-[11px] uppercase font-bold tracking-wider text-muted block truncate">
+              COMBINED SALES
+            </span>
+            <div className="w-8 h-8 rounded-lg border border-border bg-surface-subtle flex items-center justify-center text-brand-sage shrink-0">
+              <TrendingUp size={15} />
+            </div>
+          </div>
+          <div className="text-xl sm:text-2xl font-bold font-mono text-text truncate">
+            {formatCurrency(summary.totalSales || 0)}
+          </div>
+          <span className="text-xs text-muted block truncate">
+            Across all branches • This Month
+          </span>
+        </div>
+
+        {/* KPI 2: Total Orders */}
+        <div className="p-4 rounded-xl border border-border bg-surface shadow-2xs space-y-1 min-w-0">
+          <div className="flex items-center justify-between text-muted">
+            <span className="text-[11px] uppercase font-bold tracking-wider text-muted block truncate">
+              TOTAL ORDERS
+            </span>
+            <div className="w-8 h-8 rounded-lg border border-border bg-surface-subtle flex items-center justify-center text-text shrink-0">
+              <Receipt size={15} />
+            </div>
+          </div>
+          <div className="text-xl sm:text-2xl font-bold font-mono text-text truncate">
+            {summary.invoiceCount || 0} Bills
+          </div>
+          <span className="text-xs text-muted block truncate">
+            Counter & tax sales settled
+          </span>
+        </div>
+
+        {/* KPI 3: Store Workspaces */}
+        <div className="p-4 rounded-xl border border-border bg-surface shadow-2xs space-y-1 min-w-0">
+          <div className="flex items-center justify-between text-muted">
+            <span className="text-[11px] uppercase font-bold tracking-wider text-muted block truncate">
+              ACTIVE BRANCHES
+            </span>
+            <div className="w-8 h-8 rounded-lg border border-border bg-surface-subtle flex items-center justify-center text-brand-sage shrink-0">
+              <Store size={15} />
+            </div>
+          </div>
+          <div className="text-xl sm:text-2xl font-bold font-mono text-brand-sage truncate">
+            {ownerStores.length} Stores
+          </div>
+          <span className="text-xs text-muted block truncate">
+            100% operational & online
+          </span>
+        </div>
+
+        {/* KPI 4: Inventory Valuation */}
+        <div className="p-4 rounded-xl border border-border bg-surface shadow-2xs space-y-1 min-w-0">
+          <div className="flex items-center justify-between text-muted">
+            <span className="text-[11px] uppercase font-bold tracking-wider text-muted block truncate">
+              STOCK VALUATION
+            </span>
+            <div className="w-8 h-8 rounded-lg border border-border bg-surface-subtle flex items-center justify-center text-text shrink-0">
+              <Package size={15} />
+            </div>
+          </div>
+          <div className="text-xl sm:text-2xl font-bold font-mono text-text truncate">
+            {formatCurrency(summary.totalInventoryValue || 0)}
+          </div>
+          <span className="text-xs text-muted block truncate">
+            Total on-hand asset value
+          </span>
+        </div>
+      </div>
+
+      {/* 3. Store Cards Grid */}
       {isLoading ? (
         <div className="py-20 text-center space-y-3">
           <div className="w-8 h-8 rounded-full border-2 border-accent border-t-transparent animate-spin mx-auto" />
-          <p className="text-xs text-muted font-medium">Loading your stores...</p>
+          <p className="text-xs text-muted font-medium">Loading store workspaces...</p>
         </div>
+      ) : ownerStores.length === 0 ? (
+        <Card className="p-12 text-center space-y-3 border-dashed">
+          <Building2 size={32} className="mx-auto text-muted" />
+          <h3 className="text-base font-bold text-text">No store branches found</h3>
+          <p className="text-xs text-muted max-w-sm mx-auto">
+            No active stores are currently available in the system.
+          </p>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 min-w-0">
           {ownerStores.map((store) => (

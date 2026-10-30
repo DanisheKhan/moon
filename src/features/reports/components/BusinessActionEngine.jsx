@@ -18,7 +18,7 @@ export function BusinessActionEngine({ actions = {} }) {
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-border">
         <div>
-          <h2 className="text-base font-semibold text-text">
+          <h2 className="text-base sm:text-lg font-bold text-text">
             Executive Business Improvement Engine
           </h2>
           <p className="text-xs text-muted">

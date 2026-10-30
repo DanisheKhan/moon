@@ -328,7 +328,7 @@ export function InvoicePrintModal({ isOpen, onClose, invoiceDetail }) {
           <div className="px-5 py-3.5 border-b border-border flex items-center justify-between bg-surface">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base sm:text-lg font-medium tracking-tight">
+                <h3 className="text-base sm:text-lg font-bold tracking-tight">
                   GST Tax Invoice
                 </h3>
                 <Badge variant="outline" className="font-mono text-xs">

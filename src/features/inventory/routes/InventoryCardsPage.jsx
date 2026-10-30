@@ -143,13 +143,13 @@ export function InventoryCardsPage() {
       {/* Header bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border min-w-0">
         <div>
-          <span className="text-[10px] font-medium uppercase tracking-wider text-muted block mb-1">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-muted block mb-1">
             CATALOG MANAGEMENT
           </span>
-          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
             Inventory & Products
           </h1>
-          <p className="text-xs sm:text-sm text-muted mt-1">
+          <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
             Browse all items in visual card format with live stock badges, edit details, and delete controls.
           </p>
         </div>
@@ -283,7 +283,7 @@ export function InventoryCardsPage() {
       ) : filteredProducts.length === 0 ? (
         <div className="py-20 text-center border border-dashed border-border rounded-xl bg-surface space-y-3">
           <Package size={36} className="mx-auto text-muted" />
-          <h3 className="text-base font-medium text-text">No products found</h3>
+          <h3 className="text-base font-bold text-text">No products found</h3>
           <p className="text-xs text-muted max-w-sm mx-auto">
             Try adjusting your search query, selecting another category, or add a new product.
           </p>

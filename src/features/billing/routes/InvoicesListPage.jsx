@@ -126,20 +126,20 @@ export function InvoicesListPage() {
       {/* 1. Page Header & Live Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border min-w-0">
         <div className="space-y-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted">
               SALES & GST REGISTERS
             </span>
             <span className="text-xs text-muted">•</span>
-            <span className="inline-flex items-center gap-1.5 text-xs text-brand-sage font-medium">
+            <span className="inline-flex items-center gap-1.5 text-xs text-brand-sage font-semibold">
               <span className="w-2 h-2 rounded-full bg-brand-sage animate-pulse shrink-0" />
               Live Database Synced
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
             All Bills & Invoices
           </h1>
-          <p className="text-xs sm:text-sm text-muted">
+          <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
             Inspect, search, view GST receipts, and directly edit customer information, line items, and payment status.
           </p>
         </div>
@@ -157,49 +157,49 @@ export function InvoicesListPage() {
       {/* 2. Executive KPI Ribbon */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 min-w-0">
         <div className="p-4 rounded-xl border border-border bg-surface shadow-2xs space-y-1 min-w-0">
-          <span className="text-[10px] uppercase font-semibold tracking-wider text-muted block truncate">
+          <span className="text-[11px] uppercase font-bold tracking-wider text-muted block truncate">
             TOTAL BILLED VALUE
           </span>
           <div className="text-xl sm:text-2xl font-bold font-mono text-text truncate">
             {formatCurrency(metrics.totalSales)}
           </div>
-          <span className="text-[11px] text-muted block truncate">
+          <span className="text-xs text-muted block truncate">
             Across {metrics.validCount} valid bills
           </span>
         </div>
 
         <div className="p-4 rounded-xl border border-border bg-surface shadow-2xs space-y-1 min-w-0">
-          <span className="text-[10px] uppercase font-semibold tracking-wider text-muted block truncate">
+          <span className="text-[11px] uppercase font-bold tracking-wider text-muted block truncate">
             PAID INVOICES
           </span>
           <div className="text-xl sm:text-2xl font-bold font-mono text-brand-sage truncate">
             {metrics.paidCount}
           </div>
-          <span className="text-[11px] text-muted block truncate">
+          <span className="text-xs text-muted block truncate">
             Fully settled receipts
           </span>
         </div>
 
         <div className="p-4 rounded-xl border border-border bg-surface shadow-2xs space-y-1 min-w-0">
-          <span className="text-[10px] uppercase font-semibold tracking-wider text-muted block truncate">
+          <span className="text-[11px] uppercase font-bold tracking-wider text-muted block truncate">
             OUTSTANDING DUES (UDHAAR)
           </span>
           <div className="text-xl sm:text-2xl font-bold font-mono text-amber-600 dark:text-amber-400 truncate">
             {formatCurrency(metrics.totalBalanceDue)}
           </div>
-          <span className="text-[11px] text-muted block truncate">
+          <span className="text-xs text-muted block truncate">
             {metrics.partialCount} partial • {metrics.pendingCount} pending bills
           </span>
         </div>
 
         <div className="p-4 rounded-xl border border-border bg-surface shadow-2xs space-y-1 min-w-0">
-          <span className="text-[10px] uppercase font-semibold tracking-wider text-muted block truncate">
+          <span className="text-[11px] uppercase font-bold tracking-wider text-muted block truncate">
             RETURNS & REFUNDS
           </span>
           <div className="text-xl sm:text-2xl font-bold font-mono text-purple-600 truncate">
             {metrics.returnedCount}
           </div>
-          <span className="text-[11px] text-muted block truncate">
+          <span className="text-xs text-muted block truncate">
             {metrics.voidCount} voided / cancelled
           </span>
         </div>

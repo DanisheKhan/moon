@@ -61,7 +61,7 @@ export function Modal({ isOpen, onClose, title, size = 'lg', className, children
         {(title || onClose) && (
           <div className="flex items-center justify-between px-6 py-4.5 sm:px-8 sm:py-5 border-b border-border bg-surface rounded-t-xl shrink-0">
             {title ? (
-              <h3 className="text-base sm:text-lg font-medium tracking-tight text-text truncate pr-4">
+              <h3 className="text-base sm:text-lg font-bold tracking-tight text-text truncate pr-4">
                 {title}
               </h3>
             ) : (

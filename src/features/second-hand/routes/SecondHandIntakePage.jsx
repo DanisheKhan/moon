@@ -126,12 +126,15 @@ export function SecondHandIntakePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <h1 className="text-xl sm:text-2xl font-medium text-text">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-muted block mb-1">
+            DIAGNOSTIC BUYBACK & TRADE-IN
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
             Second-Hand Mobile Buyback & Intake
           </h1>
-          <p className="text-sm text-muted">
+          <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
             Strict seller KYC, automated IMEI uniqueness checks, condition checklist grading.
           </p>
         </div>

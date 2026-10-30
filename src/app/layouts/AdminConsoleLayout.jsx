@@ -203,7 +203,7 @@ export function AdminConsoleLayout() {
             {/* Store-Specific Workspace Navigation */}
             {isStoreRoute && (
               <div className="pt-3 mt-3 border-t border-sidebar-border space-y-1">
-                <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted truncate">
+                <div className="px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-muted truncate">
                   {activeStoreName}
                 </div>
 
@@ -330,7 +330,7 @@ export function AdminConsoleLayout() {
                   {currentStoreCode === 'mobiles' ? <Smartphone size={14} /> : <Armchair size={14} />}
                 </div>
                 <div className="min-w-0 text-left">
-                  <div className="text-[9px] font-semibold uppercase tracking-wider text-muted leading-tight">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-muted leading-tight">
                     {isStoreRoute ? 'STORE WORKSPACE' : 'ENTERPRISE SCOPE'}
                   </div>
                   <div className="text-xs font-semibold text-text truncate max-w-44 sm:max-w-64 leading-tight">

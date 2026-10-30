@@ -66,10 +66,10 @@ export function LoginPage() {
           <Badge variant="accent" className="mb-1 text-xs">
             Star Enterprises Owner Access
           </Badge>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
             Store Owner Portal
           </h1>
-          <p className="text-xs sm:text-sm text-muted leading-relaxed">
+          <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
             Sign in with your store owner credentials to access full business operations, POS terminals, inventory, and management systems.
           </p>
         </div>

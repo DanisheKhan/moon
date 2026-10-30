@@ -74,56 +74,6 @@ export function getExtraStores() {
   }
 }
 
-function slugifyStoreCode(name) {
-  const slug = name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-    .slice(0, 32);
-  return slug || `store-${Date.now()}`;
-}
-
-export function createOwnerStore(payload) {
-  const existing = [...(getCachedStores() || DEFAULT_STORES), ...getExtraStores()];
-  let code = slugifyStoreCode(payload.name);
-  if (existing.some((s) => s.code === code)) {
-    code = `${code}-${Date.now().toString().slice(-4)}`;
-  }
-
-  const prefixBase = payload.name.replace(/[^A-Za-z]/g, '').slice(0, 3).toUpperCase() || 'STR';
-  const invoice_prefix = existing.some((s) => s.invoice_prefix === prefixBase)
-    ? `${prefixBase}${Date.now().toString().slice(-2)}`
-    : prefixBase;
-
-  const store = enrichStore({
-    id: crypto.randomUUID ? crypto.randomUUID() : `local-${Date.now()}`,
-    code,
-    name: payload.name,
-    display_name: payload.name,
-    manager_name: payload.manager_name || 'Unassigned',
-    gstin: payload.gstin,
-    state_code: '27',
-    legal_name: 'Star Enterprises',
-    trade_name: payload.name,
-    address_line1: payload.address_line1,
-    city: payload.city,
-    pincode: payload.pincode || '',
-    phone: payload.phone || '',
-    email: `${code}@starenterprises.in`,
-    invoice_prefix,
-    is_active: true,
-    is_local: true,
-  });
-
-  const next = [...getExtraStores(), store];
-  try {
-    localStorage.setItem(EXTRA_STORES_KEY, JSON.stringify(next));
-  } catch {
-    // Ignore localStorage write error
-  }
-  return store;
-}
-
 function mergeStoreLists(primary) {
   const extras = getExtraStores();
   const extraCodes = new Set(extras.map((s) => s.code));

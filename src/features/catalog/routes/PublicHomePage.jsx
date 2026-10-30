@@ -292,7 +292,7 @@ export function PublicHomePage() {
                       <div className="text-[11px] uppercase tracking-wider text-muted font-medium">
                         {product.brands?.name || 'Star Store'}
                       </div>
-                      <h3 className="text-base font-semibold text-text line-clamp-1 mt-0.5">
+                      <h3 className="text-base font-bold text-text line-clamp-1 mt-0.5">
                         {product.name}
                       </h3>
                       <p className="text-xs text-muted line-clamp-2 mt-1">

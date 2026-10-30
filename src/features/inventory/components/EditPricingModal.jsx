@@ -61,7 +61,7 @@ function EditPricingForm({ product, onClose }) {
           <span className="text-[10px] uppercase tracking-wider text-muted font-medium block mb-1">
             Current Listed Price
           </span>
-          <span className="text-xl font-medium text-text">
+          <span className="text-xl font-bold font-mono text-text">
             {formatCurrency(product.selling_price)}
           </span>
         </div>
