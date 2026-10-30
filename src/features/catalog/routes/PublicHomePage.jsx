@@ -336,15 +336,15 @@ export function PublicHomePage() {
                   <div className="pt-4 border-t border-border space-y-3">
                     <div className="flex items-baseline justify-between">
                       <div>
-                        <div className="text-lg font-medium text-text">
+                        <div className="text-xl sm:text-2xl font-bold font-mono text-text tracking-tight">
                           {formatCurrency(product.selling_price)}
                         </div>
-                        <div className="text-[10px] text-muted">
+                        <div className="text-xs text-muted mt-0.5">
                           Incl. {product.gst_rate}% GST
                         </div>
                       </div>
                       {product.mrp && product.mrp > product.selling_price && (
-                        <div className="text-xs text-muted line-through">
+                        <div className="text-sm text-muted line-through font-mono">
                           MRP {formatCurrency(product.mrp)}
                         </div>
                       )}

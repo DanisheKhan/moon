@@ -63,12 +63,22 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
   async function handleCreateSubmit(e) {
     e.preventDefault();
     if (!name.trim() || !sku.trim() || !sellingPrice) {
-      setError('Product name, SKU code, and selling price are required.');
+      setError('Product name, SKU code, and selling price are mandatory.');
       return;
     }
 
     const sp = parseFloat(sellingPrice);
     const cp = parseFloat(costPrice) || 0;
+
+    if (isNaN(sp) || sp <= 0) {
+      setError('Selling price must be greater than ₹0.');
+      return;
+    }
+
+    if (isNaN(cp) || cp < 0) {
+      setError('Cost price must be a valid non-negative number.');
+      return;
+    }
 
     setError('');
     try {
@@ -157,6 +167,7 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
               }
             }}
             options={categoryOptions}
+            required
           />
 
           {showNewCatInput && (

@@ -11,6 +11,7 @@ import { useProducts, useProductUnits } from '@/features/inventory';
 import { usePlaceSale, useInvoiceDetail } from '../hooks/useBilling';
 import { InvoicePrintModal } from '../components/InvoicePrintModal';
 import { formatCurrency } from '@/shared/lib/format';
+import { isValidIndianPhone, isValidGstin, cleanPhone } from '@/shared/lib/validation';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { cn } from '@/shared/lib/cn';
 import {
@@ -62,7 +63,7 @@ export function POSPage() {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerGstin, setCustomerGstin] = useState('');
-  const [billingNotes, setBillingNotes] = useState('');
+  const [customerAddress, setCustomerAddress] = useState('');
 
   // Payment Tender State (Step 3)
   const [settlementType, setSettlementType] = useState('full'); // 'full' | 'partial' | 'pending'
@@ -266,7 +267,7 @@ export function POSPage() {
     setCustomerName('');
     setCustomerPhone('');
     setCustomerGstin('');
-    setBillingNotes('');
+    setCustomerAddress('');
     setSettlementType('full');
     setPartialCollectedAmount('');
     setCashTendered('');
@@ -331,13 +332,38 @@ export function POSPage() {
       return;
     }
 
-    if (settlementType === 'partial' && effectiveCollectedAmount <= 0) {
-      setErrorMessage('Please enter an amount collected now, or choose "Pay Later (Credit)".');
+    if (!customerName.trim()) {
+      setErrorMessage('Customer Name is mandatory. Please provide the customer name in Step 2.');
+      setCurrentStep(2);
       return;
     }
 
-    if (settlementType === 'pending' && (!customerName.trim() || customerName.trim() === 'Walk-in Customer')) {
-      setErrorMessage('Please specify the customer name or phone number in Step 2 before creating a credit/pending bill.');
+    if (!isValidIndianPhone(customerPhone)) {
+      setErrorMessage('A valid 10-digit mobile number is mandatory (starts with 6-9).');
+      setCurrentStep(2);
+      return;
+    }
+
+    if (!customerAddress.trim()) {
+      setErrorMessage('Customer Address is mandatory. Please provide the address in Step 2.');
+      setCurrentStep(2);
+      return;
+    }
+
+    if (customerType === 'registered' && !customerGstin.trim()) {
+      setErrorMessage('Customer GSTIN is mandatory for B2B tax invoices.');
+      setCurrentStep(2);
+      return;
+    }
+
+    if (customerGstin.trim() && !isValidGstin(customerGstin)) {
+      setErrorMessage('Please enter a valid 15-character GSTIN (e.g. 27ABCDE1234F1Z5).');
+      setCurrentStep(2);
+      return;
+    }
+
+    if (settlementType === 'partial' && effectiveCollectedAmount <= 0) {
+      setErrorMessage('Please enter an amount collected now, or choose "Pay Later (Credit)".');
       return;
     }
 
@@ -353,10 +379,8 @@ export function POSPage() {
     setErrorMessage('');
 
     try {
-      const resolvedCustomerName =
-        customerType === 'walkin'
-          ? (customerName.trim() || 'Walk-in Customer (B2C)')
-          : (customerName.trim() || 'Walk-in Customer');
+      const resolvedCustomerName = customerName.trim();
+      const resolvedCustomerPhone = cleanPhone(customerPhone);
 
       const paymentsPayload =
         effectiveCollectedAmount > 0
@@ -376,9 +400,9 @@ export function POSPage() {
       const payload = {
         storeId: store?.id,
         customerName: resolvedCustomerName,
-        customerPhone: customerPhone.trim() || null,
+        customerPhone: resolvedCustomerPhone,
         customerGstin: customerGstin.trim().toUpperCase() || null,
-        notes: billingNotes.trim() || null,
+        notes: customerAddress.trim() || null,
         items: cart.map((item) => {
           const itemGross = (item.selling_price || 0) * (item.quantity || 1);
           const itemShareDiscount = grossTotal > 0 ? (billDiscountAmount * itemGross) / grossTotal : 0;
@@ -404,7 +428,7 @@ export function POSPage() {
       setCustomerName('');
       setCustomerPhone('');
       setCustomerGstin('');
-      setBillingNotes('');
+      setCustomerAddress('');
       setCashTendered('');
       setPaymentReference('');
 
@@ -471,7 +495,34 @@ export function POSPage() {
                 disabled={!isClickable && !isCurrent}
                 onClick={() => {
                   if (s.id === 2 && cart.length === 0) return;
-                  if (s.id === 3 && cart.length === 0) return;
+                  if (s.id === 3) {
+                    if (cart.length === 0) return;
+                    if (!customerName.trim()) {
+                      setErrorMessage('Customer Name is mandatory before proceeding to payment.');
+                      setCurrentStep(2);
+                      return;
+                    }
+                    if (!isValidIndianPhone(customerPhone)) {
+                      setErrorMessage('A valid 10-digit customer mobile number is mandatory (starts with 6-9).');
+                      setCurrentStep(2);
+                      return;
+                    }
+                    if (customerType === 'registered' && !customerGstin.trim()) {
+                      setErrorMessage('Customer GSTIN is mandatory for B2B billing.');
+                      setCurrentStep(2);
+                      return;
+                    }
+                    if (customerGstin.trim() && !isValidGstin(customerGstin)) {
+                      setErrorMessage('Please enter a valid 15-character GSTIN (e.g. 27ABCDE1234F1Z5).');
+                      setCurrentStep(2);
+                      return;
+                    }
+                    if (!customerAddress.trim()) {
+                      setErrorMessage('Customer Address is mandatory before proceeding to payment.');
+                      setCurrentStep(2);
+                      return;
+                    }
+                  }
                   setCurrentStep(s.id);
                   setErrorMessage('');
                 }}
@@ -632,12 +683,12 @@ export function POSPage() {
                               Serial
                             </Badge>
                           ) : (
-                            <span className="text-[10px] text-muted font-mono">
+                            <span className="text-xs text-muted font-mono font-medium">
                               Stock: {stockQty}
                             </span>
                           )}
                         </div>
-                        <div className="font-medium text-xs text-text line-clamp-2 leading-snug group-hover:text-accent">
+                        <div className="font-semibold text-sm text-text line-clamp-2 leading-snug group-hover:text-accent">
                           {p.name}
                         </div>
                       </div>
@@ -645,10 +696,10 @@ export function POSPage() {
 
                     <div className="pt-3 flex items-center justify-between border-t border-border/60 mt-2">
                       <div>
-                        <div className="font-semibold font-mono text-xs text-text">
+                        <div className="font-bold font-mono text-base text-text">
                           {formatCurrency(p.selling_price)}
                         </div>
-                        <div className="text-[9px] text-muted">
+                        <div className="text-xs text-muted">
                           +{p.gst_rate ?? 18}% GST
                         </div>
                       </div>
@@ -656,9 +707,9 @@ export function POSPage() {
                         size="sm"
                         variant="outline"
                         type="button"
-                        className="h-6 px-2 text-[11px] rounded-md gap-1 font-medium pointer-events-none"
+                        className="h-7 px-2.5 text-xs rounded-md gap-1 font-semibold pointer-events-none"
                       >
-                        <Plus size={11} /> Add
+                        <Plus size={12} /> Add
                       </Button>
                     </div>
                   </div>
@@ -711,8 +762,8 @@ export function POSPage() {
                         return (
                           <tr key={item.unit_id || `${item.product_id}-${idx}`} className="hover:bg-surface-subtle/40 transition-colors">
                             <td className="py-3 px-3 min-w-48">
-                              <div className="font-semibold text-text text-xs">{item.name}</div>
-                              <div className="text-[10px] text-muted font-mono flex items-center gap-1.5 mt-0.5">
+                              <div className="font-bold text-text text-sm">{item.name}</div>
+                              <div className="text-xs text-muted font-mono flex items-center gap-1.5 mt-0.5">
                                 <span>SKU: {item.sku}</span>
                                 {item.serial_number && (
                                   <>
@@ -723,7 +774,7 @@ export function POSPage() {
                               </div>
                             </td>
 
-                            <td className="py-3 px-3 text-right font-mono font-medium text-text whitespace-nowrap">
+                            <td className="py-3 px-3 text-right font-mono font-semibold text-sm text-text whitespace-nowrap">
                               {formatCurrency(item.selling_price)}
                             </td>
 
@@ -741,7 +792,7 @@ export function POSPage() {
                                   >
                                     <Minus size={12} />
                                   </button>
-                                  <span className="px-2 font-mono font-semibold text-xs text-text min-w-6 text-center">
+                                  <span className="px-2 font-mono font-bold text-xs text-text min-w-6 text-center">
                                     {item.quantity}
                                   </span>
                                   <button
@@ -759,7 +810,7 @@ export function POSPage() {
                               {item.gst_rate}%
                             </td>
 
-                            <td className="py-3 px-3 text-right font-mono font-semibold text-text whitespace-nowrap">
+                            <td className="py-3 px-3 text-right font-mono font-bold text-base text-text whitespace-nowrap">
                               {formatCurrency(lineTotal)}
                             </td>
 
@@ -781,12 +832,15 @@ export function POSPage() {
 
                 {/* Step 1 Footer Action Bar */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-border">
-                  <div className="space-y-0.5 text-xs">
-                    <div className="text-muted">
-                      Gross Subtotal: <strong className="font-mono text-text">{formatCurrency(grossTotal)}</strong>
+                  <div className="space-y-1">
+                    <div className="text-xs text-muted">
+                      Gross Subtotal: <strong className="font-mono text-text text-sm">{formatCurrency(grossTotal)}</strong>
                     </div>
-                    <div className="text-sm font-semibold text-text font-mono">
-                      Estimated Total: {formatCurrency(grandTotal)}
+                    <div className="text-sm text-muted">
+                      Estimated Total:{' '}
+                      <strong className="text-lg sm:text-xl font-extrabold text-text font-mono ml-1">
+                        {formatCurrency(grandTotal)}
+                      </strong>
                     </div>
                   </div>
 
@@ -874,54 +928,71 @@ export function POSPage() {
                 id="pos-customer-name"
                 label="Customer Name"
                 value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                placeholder={customerType === 'walkin' ? 'Walk-in Customer' : 'e.g. Rahul Sharma / Apex Tech'}
+                onChange={(e) => {
+                  setCustomerName(e.target.value);
+                  if (errorMessage) setErrorMessage('');
+                }}
+                placeholder="e.g. Rahul Sharma"
                 required
               />
 
               <Input
                 id="pos-customer-phone"
-                label="Mobile Number (WhatsApp Bill)"
+                label="Mobile Number"
+                type="tel"
                 value={customerPhone}
-                onChange={(e) => setCustomerPhone(e.target.value)}
+                onChange={(e) => {
+                  setCustomerPhone(e.target.value);
+                  if (errorMessage) setErrorMessage('');
+                }}
                 placeholder="e.g. 9820012345"
+                maxLength={10}
+                required
               />
 
               <Input
                 id="pos-customer-gstin"
-                label="Customer GSTIN (Optional B2B)"
+                label={customerType === 'registered' ? 'Customer GSTIN (Required B2B)' : 'Customer GSTIN (Optional B2B)'}
                 value={customerGstin}
-                onChange={(e) => setCustomerGstin(e.target.value)}
+                onChange={(e) => {
+                  setCustomerGstin(e.target.value.toUpperCase());
+                  if (errorMessage) setErrorMessage('');
+                }}
                 placeholder="e.g. 27ABCDE1234F1Z5"
                 maxLength={15}
+                required={customerType === 'registered'}
                 className="font-mono uppercase"
               />
             </div>
 
-            {/* Delivery / Invoice Remarks */}
+            {/* Customer Address */}
             <div>
               <Input
-                id="pos-billing-notes"
-                label="Delivery Remarks / In-Store Instructions"
-                value={billingNotes}
-                onChange={(e) => setBillingNotes(e.target.value)}
-                placeholder="e.g. Screen guard installed, 1-year store warranty acknowledged"
+                id="pos-customer-address"
+                label="Address"
+                value={customerAddress}
+                onChange={(e) => {
+                  setCustomerAddress(e.target.value);
+                  if (errorMessage) setErrorMessage('');
+                }}
+                placeholder="e.g. Flat 402, Royal Palms, MG Road, Mumbai"
+                required
               />
             </div>
 
             {/* Mini Bill Preview Strip */}
-            <div className="p-3.5 rounded-xl border border-border bg-surface-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-2">
-                <Receipt size={15} className="text-muted shrink-0" />
+            <div className="p-3.5 rounded-xl border border-border bg-surface-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
+              <div className="flex items-center gap-2.5">
+                <Receipt size={17} className="text-brand-sage shrink-0" />
                 <span className="text-muted">
-                  Billing <strong className="text-text">{cart.length} items</strong> for{' '}
-                  <strong className="text-text font-mono">{formatCurrency(grandTotal)}</strong>
+                  Billing <strong className="text-text font-semibold">{cart.length} items</strong> for{' '}
+                  <strong className="text-text font-mono font-bold text-base sm:text-lg">{formatCurrency(grandTotal)}</strong>
                 </span>
               </div>
               <button
                 type="button"
                 onClick={() => setCurrentStep(1)}
-                className="text-xs text-brand-sage hover:underline font-medium cursor-pointer"
+                className="text-xs text-brand-sage hover:underline font-semibold cursor-pointer"
               >
                 Modify Cart Items
               </button>
@@ -942,6 +1013,27 @@ export function POSPage() {
               <Button
                 type="button"
                 onClick={() => {
+                  if (!customerName.trim()) {
+                    setErrorMessage('Customer Name is mandatory. Please enter Customer Name.');
+                    return;
+                  }
+                  if (!isValidIndianPhone(customerPhone)) {
+                    setErrorMessage('A valid 10-digit mobile number is mandatory (starts with 6-9).');
+                    return;
+                  }
+                  if (customerType === 'registered' && !customerGstin.trim()) {
+                    setErrorMessage('Customer GSTIN is mandatory for B2B billing.');
+                    return;
+                  }
+                  if (customerGstin.trim() && !isValidGstin(customerGstin)) {
+                    setErrorMessage('Please enter a valid 15-character GSTIN (e.g. 27ABCDE1234F1Z5).');
+                    return;
+                  }
+                  if (!customerAddress.trim()) {
+                    setErrorMessage('Customer Address is mandatory. Please enter the address.');
+                    return;
+                  }
+                  setErrorMessage('');
                   setCurrentStep(3);
                 }}
                 className="rounded-lg gap-2 text-xs font-semibold px-6 shadow-2xs cursor-pointer"
@@ -1305,6 +1397,11 @@ export function POSPage() {
                   {customerName.trim() || 'Walk-in Customer (B2C)'}
                   {customerPhone && ` • ${customerPhone}`}
                 </div>
+                {customerAddress && (
+                  <div className="text-[11px] text-muted">
+                    <span className="font-semibold text-text">Address:</span> {customerAddress}
+                  </div>
+                )}
                 {customerGstin && (
                   <div className="text-[11px] font-mono text-muted">
                     GSTIN: {customerGstin.toUpperCase()}
@@ -1332,14 +1429,14 @@ export function POSPage() {
                   const lineTotal = Math.round((it.selling_price || 0) * (it.quantity || 1) * (1 + (it.gst_rate || 0) / 100));
 
                   return (
-                    <div key={idx} className="flex items-center justify-between text-xs py-1 border-b border-border/50">
+                    <div key={idx} className="flex items-center justify-between text-sm py-1.5 border-b border-border/50">
                       <div className="min-w-0 pr-2">
-                        <div className="font-medium text-text truncate">{it.name}</div>
-                        <div className="text-[10px] text-muted">
+                        <div className="font-semibold text-text text-sm truncate">{it.name}</div>
+                        <div className="text-xs text-muted">
                           Qty: {it.quantity} × {formatCurrency(it.selling_price)}
                         </div>
                       </div>
-                      <div className="font-mono font-semibold text-text shrink-0">
+                      <div className="font-mono font-bold text-sm sm:text-base text-text shrink-0">
                         {formatCurrency(lineTotal)}
                       </div>
                     </div>
@@ -1483,13 +1580,13 @@ export function POSPage() {
 
               {/* Total Payable Headline */}
               <div className="p-4 rounded-xl border border-border bg-surface-subtle text-center space-y-1">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted block">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted block">
                   TOTAL AMOUNT PAYABLE
                 </span>
-                <div className="text-3xl font-extrabold font-mono text-text tracking-tight">
+                <div className="text-3xl sm:text-4xl font-extrabold font-mono text-text tracking-tight">
                   {formatCurrency(grandTotal)}
                 </div>
-                <span className="text-[10px] text-muted block">
+                <span className="text-xs text-muted block">
                   {settlementType === 'full' && 'Includes CGST + SGST (GST Invoice Ready)'}
                   {settlementType === 'partial' && `Token of ${formatCurrency(effectiveCollectedAmount)} collected now`}
                   {settlementType === 'pending' && '100% Credit / Unpaid — Account Receivable'}

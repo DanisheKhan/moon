@@ -4,6 +4,7 @@ import { useUpsertStaffProfile } from '../hooks/useStaff';
 import { useStores } from '@/features/stores';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { formatCurrency } from '@/shared/lib/format';
+import { isValidIndianPhone, isValidEmail, cleanPhone } from '@/shared/lib/validation';
 
 function StaffForm({ staffToEdit, stores, onClose }) {
   const upsertMutation = useUpsertStaffProfile();
@@ -50,8 +51,25 @@ function StaffForm({ staffToEdit, stores, onClose }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!formData.full_name || !formData.email || !formData.phone) {
-      setError('Please provide employee full name, email, and phone number.');
+    if (!formData.full_name?.trim()) {
+      setError('Employee Full Name is mandatory.');
+      return;
+    }
+    if (!isValidIndianPhone(formData.phone)) {
+      setError('A valid 10-digit mobile phone number is mandatory (starts with 6-9).');
+      return;
+    }
+    if (!isValidEmail(formData.email)) {
+      setError('A valid Gmail or login email address is mandatory.');
+      return;
+    }
+    if (!formData.primary_store_id) {
+      setError('Please select an assigned store branch for this staff member.');
+      return;
+    }
+    const salary = parseFloat(formData.base_salary);
+    if (isNaN(salary) || salary <= 0) {
+      setError('Monthly base salary must be greater than ₹0.');
       return;
     }
 
@@ -59,7 +77,10 @@ function StaffForm({ staffToEdit, stores, onClose }) {
     try {
       await upsertMutation.mutateAsync({
         ...formData,
-        base_salary: parseFloat(formData.base_salary) || 0,
+        full_name: formData.full_name.trim(),
+        phone: cleanPhone(formData.phone),
+        email: formData.email.trim().toLowerCase(),
+        base_salary: Math.round(salary),
         annual_leave_quota: parseInt(formData.annual_leave_quota, 10) || 18,
       });
       onClose();
@@ -126,9 +147,11 @@ function StaffForm({ staffToEdit, stores, onClose }) {
         <Input
           id="emp-phone"
           label="Mobile Phone"
-          placeholder="+91 98200 11223"
+          type="tel"
+          placeholder="9820011223"
           value={formData.phone}
           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+          maxLength={10}
           required
         />
 
@@ -138,6 +161,7 @@ function StaffForm({ staffToEdit, stores, onClose }) {
           value={formData.primary_store_id}
           onChange={(e) => setFormData({ ...formData, primary_store_id: e.target.value })}
           options={storeOptions}
+          required
         />
 
         <Select
@@ -146,6 +170,7 @@ function StaffForm({ staffToEdit, stores, onClose }) {
           value={formData.designation}
           onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
           options={designationOptions}
+          required
         />
 
         <div>

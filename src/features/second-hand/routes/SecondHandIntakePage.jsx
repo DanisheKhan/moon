@@ -16,6 +16,7 @@ import {
 } from '@/shared/ui';
 import { useBuybackIntakes, useCreateBuybackIntake } from '../hooks/useSecondHand';
 import { formatCurrency, formatDate } from '@/shared/lib/format';
+import { isValidIndianPhone, isValidImei, cleanPhone } from '@/shared/lib/validation';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { Plus, ShieldAlert, FileText, Printer } from 'lucide-react';
 
@@ -59,17 +60,39 @@ export function SecondHandIntakePage() {
 
   async function handleSubmitIntake(e) {
     e.preventDefault();
-    if (!sellerName || !sellerPhone || !sellerIdNumber || !imei || !agreedPrice) {
-      setFormError('Please fill in all mandatory seller KYC and device fields.');
+    if (!sellerName.trim()) {
+      setFormError('Seller Full Name is mandatory.');
       return;
     }
+    if (!isValidIndianPhone(sellerPhone)) {
+      setFormError('A valid 10-digit seller mobile number is mandatory (starts with 6-9).');
+      return;
+    }
+    if (!sellerIdNumber.trim()) {
+      setFormError('Seller ID Document Number is mandatory for police/KYC compliance.');
+      return;
+    }
+    if (!modelName.trim()) {
+      setFormError('Device Model and Storage details are mandatory.');
+      return;
+    }
+    if (!isValidImei(imei)) {
+      setFormError('A valid 15-digit numeric IMEI is mandatory (dial *#06# on device).');
+      return;
+    }
+    const price = parseFloat(agreedPrice);
+    if (isNaN(price) || price <= 0) {
+      setFormError('Please enter a valid agreed buyback price greater than ₹0.');
+      return;
+    }
+
     setFormError('');
 
     try {
       const result = await createIntakeMutation.mutateAsync({
         store_id: store.id,
         seller_name: sellerName.trim(),
-        seller_phone: sellerPhone.trim(),
+        seller_phone: cleanPhone(sellerPhone),
         seller_id_type: sellerIdType,
         seller_id_number: sellerIdNumber.trim(),
         brand_name: brandName,
@@ -83,7 +106,7 @@ export function SecondHandIntakePage() {
           body_condition: bodyCondition,
         },
         calculated_grade: computedGrade,
-        agreed_price: parseFloat(agreedPrice) || 0,
+        agreed_price: Math.round(price),
         status: 'intake_completed',
       });
 
@@ -238,9 +261,11 @@ export function SecondHandIntakePage() {
               <Input
                 id="seller-phone"
                 label="Contact Phone"
+                type="tel"
                 placeholder="10-digit mobile"
                 value={sellerPhone}
                 onChange={(e) => setSellerPhone(e.target.value)}
+                maxLength={10}
                 required
               />
             </div>
@@ -256,6 +281,7 @@ export function SecondHandIntakePage() {
                 ]}
                 value={sellerIdType}
                 onChange={(e) => setSellerIdType(e.target.value)}
+                required
               />
               <Input
                 id="seller-id-number"
@@ -286,6 +312,7 @@ export function SecondHandIntakePage() {
                 ]}
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
+                required
               />
               <Input
                 id="intake-model"
@@ -302,6 +329,7 @@ export function SecondHandIntakePage() {
               placeholder="e.g. 358941091234567"
               value={imei}
               onChange={(e) => setImei(e.target.value)}
+              maxLength={15}
               required
             />
           </div>

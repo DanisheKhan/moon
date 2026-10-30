@@ -330,16 +330,16 @@ export function InvoicesListPage() {
 
                   {/* 2. Customer Name */}
                   <TableCell className="align-middle min-w-0">
-                    <div className="font-medium text-xs text-text truncate" title={inv.customer_name}>
+                    <div className="font-semibold text-sm text-text truncate" title={inv.customer_name}>
                       {inv.customer_name || 'Walk-in Customer'}
                     </div>
                     {inv.customer_phone && (
-                      <div className="text-[10px] text-muted font-mono truncate">
+                      <div className="text-xs text-muted font-mono truncate">
                         {inv.customer_phone}
                       </div>
                     )}
                     {inv.customer_gstin && (
-                      <div className="text-[9px] text-brand-sage font-mono uppercase truncate" title={inv.customer_gstin}>
+                      <div className="text-[10px] text-brand-sage font-mono uppercase truncate" title={inv.customer_gstin}>
                         GST: {inv.customer_gstin}
                       </div>
                     )}
@@ -347,11 +347,11 @@ export function InvoicesListPage() {
 
                   {/* 3. Item Summary */}
                   <TableCell className="align-middle min-w-0">
-                    <div className="text-xs text-text truncate" title={itemsPreview}>
+                    <div className="text-sm font-medium text-text truncate" title={itemsPreview}>
                       {itemsCount > 0 ? itemsPreview : 'No items'}
                     </div>
                     {itemsCount > 2 && (
-                      <div className="text-[10px] text-muted truncate">
+                      <div className="text-xs text-muted truncate">
                         +{itemsCount - 2} more {itemsCount - 2 === 1 ? 'item' : 'items'}
                       </div>
                     )}
@@ -359,21 +359,21 @@ export function InvoicesListPage() {
 
                   {/* 4. Grand Total */}
                   <TableCell className="align-middle whitespace-nowrap font-mono">
-                    <div className="font-semibold text-xs text-text">
+                    <div className="font-bold text-sm sm:text-base text-text">
                       {formatCurrency(inv.grand_total || 0)}
                     </div>
                     {inv.status === 'partial' && (
-                      <div className="text-[10px] text-amber-600 font-semibold font-mono truncate">
+                      <div className="text-xs text-amber-600 font-semibold font-mono truncate">
                         Paid: {formatCurrency(totalPaid)} • Due: {formatCurrency(balanceDue)}
                       </div>
                     )}
                     {inv.status === 'pending' && (
-                      <div className="text-[10px] text-danger font-semibold font-mono truncate">
+                      <div className="text-xs text-danger font-semibold font-mono truncate">
                         Full {formatCurrency(inv.grand_total || 0)} Due
                       </div>
                     )}
                     {inv.status !== 'partial' && inv.status !== 'pending' && (
-                      <div className="text-[10px] text-muted truncate">
+                      <div className="text-xs text-muted truncate">
                         Tax: {formatCurrency((inv.cgst_amount || 0) + (inv.sgst_amount || 0))}
                       </div>
                     )}

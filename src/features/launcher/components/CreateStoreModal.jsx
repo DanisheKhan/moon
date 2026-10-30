@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Modal, Input, Button } from '@/shared/ui';
+import { isValidIndianPhone, isValidGstin, isValidPincode, cleanPhone } from '@/shared/lib/validation';
 
 const EMPTY_FORM = {
   name: '',
@@ -27,19 +28,39 @@ export function CreateStoreModal({ isOpen, onClose, onCreate }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (!form.name.trim() || !form.gstin.trim() || !form.city.trim() || !form.address_line1.trim()) {
-      setError('Store name, GSTIN, city, and location are required.');
+    if (!form.name.trim()) {
+      setError('Store Name is mandatory.');
+      return;
+    }
+    if (!isValidGstin(form.gstin)) {
+      setError('A valid 15-character GSTIN is mandatory (e.g. 27AAAAA0000A1Z5).');
+      return;
+    }
+    if (!form.manager_name.trim()) {
+      setError('Store Manager Name is mandatory.');
+      return;
+    }
+    if (!form.city.trim() || !form.address_line1.trim()) {
+      setError('City and Store Location address are mandatory.');
+      return;
+    }
+    if (!isValidPincode(form.pincode)) {
+      setError('A valid 6-digit PIN code is mandatory (e.g. 400001).');
+      return;
+    }
+    if (!isValidIndianPhone(form.phone)) {
+      setError('A valid 10-digit store contact phone is mandatory (starts with 6-9).');
       return;
     }
 
     onCreate({
       name: form.name.trim(),
       gstin: form.gstin.trim().toUpperCase(),
-      manager_name: form.manager_name.trim() || 'Unassigned',
+      manager_name: form.manager_name.trim(),
       city: form.city.trim(),
       address_line1: form.address_line1.trim(),
       pincode: form.pincode.trim(),
-      phone: form.phone.trim(),
+      phone: cleanPhone(form.phone),
     });
 
     setForm(EMPTY_FORM);
@@ -67,6 +88,7 @@ export function CreateStoreModal({ isOpen, onClose, onCreate }) {
             value={form.name}
             onChange={(e) => update('name', e.target.value)}
             placeholder="Star Appliances"
+            required
           />
           <Input
             id="new-store-gstin"
@@ -74,6 +96,9 @@ export function CreateStoreModal({ isOpen, onClose, onCreate }) {
             value={form.gstin}
             onChange={(e) => update('gstin', e.target.value)}
             placeholder="27AAAAA0000A1Z5"
+            maxLength={15}
+            className="font-mono uppercase"
+            required
           />
           <Input
             id="new-store-manager"
@@ -81,6 +106,7 @@ export function CreateStoreModal({ isOpen, onClose, onCreate }) {
             value={form.manager_name}
             onChange={(e) => update('manager_name', e.target.value)}
             placeholder="Amit Sharma"
+            required
           />
           <Input
             id="new-store-city"
@@ -88,6 +114,7 @@ export function CreateStoreModal({ isOpen, onClose, onCreate }) {
             value={form.city}
             onChange={(e) => update('city', e.target.value)}
             placeholder="Mumbai"
+            required
           />
           <div className="sm:col-span-2 min-w-0">
             <Input
@@ -96,6 +123,7 @@ export function CreateStoreModal({ isOpen, onClose, onCreate }) {
               value={form.address_line1}
               onChange={(e) => update('address_line1', e.target.value)}
               placeholder="Shop 103, Main Road Market"
+              required
             />
           </div>
           <Input
@@ -104,13 +132,18 @@ export function CreateStoreModal({ isOpen, onClose, onCreate }) {
             value={form.pincode}
             onChange={(e) => update('pincode', e.target.value)}
             placeholder="400001"
+            maxLength={6}
+            required
           />
           <Input
             id="new-store-phone"
             label="Phone"
+            type="tel"
             value={form.phone}
             onChange={(e) => update('phone', e.target.value)}
-            placeholder="+91 98200 12347"
+            placeholder="9820012347"
+            maxLength={10}
+            required
           />
         </div>
 

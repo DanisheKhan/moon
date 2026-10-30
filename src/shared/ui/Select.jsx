@@ -34,6 +34,7 @@ export function Select({
   options: propOptions = [],
   className,
   disabled = false,
+  required = false,
   children,
   ...rest
 }) {
@@ -193,9 +194,12 @@ export function Select({
       {label && (
         <label
           htmlFor={id}
-          className="text-xs font-medium text-text uppercase tracking-wider block"
+          className="text-xs font-medium text-text uppercase tracking-wider flex items-center"
         >
-          {label}
+          <span>{label}</span>
+          {required && (
+            <span className="text-danger ml-0.5 font-bold" aria-hidden="true" title="Required field">*</span>
+          )}
         </label>
       )}
 

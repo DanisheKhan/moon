@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Modal, Button, Input, Badge } from '@/shared/ui';
 import { formatCurrency } from '@/shared/lib/format';
+import { isValidIndianPhone, isValidGstin, cleanPhone } from '@/shared/lib/validation';
 import { useInvoiceDetail, useUpdateInvoice } from '../hooks/useBilling';
 import {
   Pencil,
@@ -161,6 +162,21 @@ function EditInvoiceForm({ invoiceDetail, invoiceId, onClose }) {
     setErrorMessage('');
     setSuccessMessage('');
 
+    if (!customerName.trim()) {
+      setErrorMessage('Customer Name is mandatory.');
+      return;
+    }
+
+    if (!isValidIndianPhone(customerPhone)) {
+      setErrorMessage('A valid 10-digit customer mobile number is mandatory (starts with 6-9).');
+      return;
+    }
+
+    if (customerGstin.trim() && !isValidGstin(customerGstin)) {
+      setErrorMessage('Please enter a valid 15-character GSTIN (e.g. 27ABCDE1234F1Z5).');
+      return;
+    }
+
     if (items.length === 0) {
       setErrorMessage('The invoice must contain at least one item.');
       return;
@@ -170,8 +186,8 @@ function EditInvoiceForm({ invoiceDetail, invoiceId, onClose }) {
       await updateInvoiceMutation.mutateAsync({
         invoiceId,
         updates: {
-          customer_name: customerName.trim() || 'Walk-in Customer',
-          customer_phone: customerPhone.trim() || null,
+          customer_name: customerName.trim(),
+          customer_phone: cleanPhone(customerPhone),
           customer_gstin: customerGstin.trim().toUpperCase() || null,
           status,
           subtotal: financialTotals.subtotal,
@@ -233,10 +249,13 @@ function EditInvoiceForm({ invoiceDetail, invoiceId, onClose }) {
 
           <Input
             id="edit-customer-phone"
-            label="Mobile Number (WhatsApp)"
+            label="Mobile Number"
+            type="tel"
             value={customerPhone}
             onChange={(e) => setCustomerPhone(e.target.value)}
             placeholder="e.g. 9820012345"
+            maxLength={10}
+            required
           />
 
           <Input

@@ -37,9 +37,18 @@ export function EditProductModal({
       setError('Product name cannot be empty.');
       return;
     }
+    if (!sku.trim()) {
+      setError('Product SKU code is mandatory.');
+      return;
+    }
     const sp = parseFloat(sellingPrice);
-    if (isNaN(sp) || sp < 0) {
-      setError('Please provide a valid selling price.');
+    if (isNaN(sp) || sp <= 0) {
+      setError('Please provide a valid selling price greater than ₹0.');
+      return;
+    }
+    const cp = parseFloat(costPrice) || 0;
+    if (isNaN(cp) || cp < 0) {
+      setError('Please provide a valid non-negative cost price.');
       return;
     }
 
@@ -185,6 +194,7 @@ export function EditProductModal({
                 label="Cost Price (₹)"
                 value={costPrice}
                 onChange={(e) => setCostPrice(e.target.value)}
+                required
               />
             </div>
 
@@ -201,6 +211,7 @@ export function EditProductModal({
                 label="GST Rate"
                 value={gstRate}
                 onChange={(e) => setGstRate(e.target.value)}
+                required
                 options={[
                   { value: '18', label: '18% GST (Mobiles/Elec)' },
                   { value: '12', label: '12% GST (Furniture)' },
