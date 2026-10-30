@@ -1,5 +1,6 @@
 import { supabase } from '@/shared/lib/supabase';
 import { getProductImageUrl, FALLBACK_PRODUCTS } from '@/features/catalog';
+import { getPersistentCache, setPersistentCache } from '@/shared/lib/cachePersistence';
 
 const INVENTORY_CACHE_PREFIX = 'star_inv_prods_';
 
@@ -571,11 +572,16 @@ export async function listAllProducts({ storeId, categoryId, search } = {}) {
       image_url: getProductImageUrl(p),
     }));
 
-    if (list.length > 0) return list;
-    return FALLBACK_PRODUCTS;
+    if (list.length > 0) {
+      if (!storeId && !categoryId && !search) {
+        setPersistentCache('all_products', list);
+      }
+      return list;
+    }
+    return getPersistentCache('all_products') || FALLBACK_PRODUCTS;
   } catch (err) {
     console.warn('Network error listing all products, using catalog fallback:', err);
-    return FALLBACK_PRODUCTS;
+    return getPersistentCache('all_products') || FALLBACK_PRODUCTS;
   }
 }
 

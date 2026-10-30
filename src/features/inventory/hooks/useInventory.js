@@ -15,6 +15,7 @@ import {
   listCategoriesByStore,
   createCategory,
 } from '../api/inventory.api';
+import { getPersistentCache } from '@/shared/lib/cachePersistence';
 
 export const inventoryKeys = {
   all: ['inventory'],
@@ -30,8 +31,8 @@ export function useProducts(storeId, filters = {}) {
     queryFn: () => listProductsByStore({ storeId, ...filters }),
     placeholderData: () => (!hasFilters ? getCachedStoreProducts(storeId) || undefined : undefined),
     enabled: Boolean(storeId),
-    staleTime: 1000 * 15,
-    refetchOnMount: true,
+    staleTime: 1000 * 60 * 3,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -41,8 +42,8 @@ export function useProductUnits(storeId, productId = null, status = null, option
     queryKey: inventoryKeys.units(storeId, productId, status),
     queryFn: () => listProductUnits({ storeId, productId, status }),
     enabled: isEnabled,
-    staleTime: 1000 * 15,
-    refetchOnMount: true,
+    staleTime: 1000 * 60 * 3,
+    refetchOnWindowFocus: false,
     ...options,
   });
 }
@@ -114,11 +115,13 @@ export function useCreateProduct() {
 }
 
 export function useAllProducts(filters = {}) {
+  const isDefault = !filters || Object.keys(filters).length === 0;
   return useQuery({
     queryKey: [...inventoryKeys.all, 'all-products', filters],
     queryFn: () => listAllProducts(filters),
-    staleTime: 1000 * 15,
-    refetchOnMount: true,
+    placeholderData: () => (isDefault ? getPersistentCache('all_products') || undefined : undefined),
+    staleTime: 1000 * 60 * 3,
+    refetchOnWindowFocus: false,
   });
 }
 

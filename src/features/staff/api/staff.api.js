@@ -1,21 +1,29 @@
 import { supabase } from '@/shared/lib/supabase';
+import { getPersistentCache, setPersistentCache } from '@/shared/lib/cachePersistence';
 
 /**
  * Lists all staff members with their store assignment
  */
 export async function listStaffProfiles() {
-  const { data, error } = await supabase
-    .from('staff_profiles')
-    .select(`
-      id, employee_code, full_name, email, phone, designation, department,
-      primary_store_id, joining_date, emergency_phone, base_salary,
-      bank_name, account_number, ifsc_code, annual_leave_quota, status, created_at,
-      stores (id, code, name)
-    `)
-    .order('employee_code');
+  try {
+    const { data, error } = await supabase
+      .from('staff_profiles')
+      .select(`
+        id, employee_code, full_name, email, phone, designation, department,
+        primary_store_id, joining_date, emergency_phone, base_salary,
+        bank_name, account_number, ifsc_code, annual_leave_quota, status, created_at,
+        stores (id, code, name)
+      `)
+      .order('employee_code');
 
-  if (error) throw error;
-  return data || [];
+    if (error) throw error;
+    const profiles = data || [];
+    setPersistentCache('staff_profiles', profiles);
+    return profiles;
+  } catch (err) {
+    console.warn('[Staff API] Network error loading staff profiles, using cache:', err);
+    return getPersistentCache('staff_profiles') || [];
+  }
 }
 
 /**

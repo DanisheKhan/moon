@@ -1,4 +1,5 @@
 import { supabase } from '@/shared/lib/supabase';
+import { getPersistentCache, setPersistentCache } from '@/shared/lib/cachePersistence';
 
 /**
  * Places a sale transaction atomically via database RPC
@@ -28,15 +29,22 @@ export async function placeSale({
  * Lists past invoices for a store
  */
 export async function listInvoices({ storeId, limit = 50 } = {}) {
-  const { data, error } = await supabase
-    .from('invoices')
-    .select('id, store_id, invoice_number, financial_year, customer_name, customer_phone, subtotal, discount_amount, cgst_amount, sgst_amount, grand_total, status, created_at')
-    .eq('store_id', storeId)
-    .order('created_at', { ascending: false })
-    .limit(limit);
+  try {
+    const { data, error } = await supabase
+      .from('invoices')
+      .select('id, store_id, invoice_number, financial_year, customer_name, customer_phone, subtotal, discount_amount, cgst_amount, sgst_amount, grand_total, status, created_at')
+      .eq('store_id', storeId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
 
-  if (error) throw error;
-  return data || [];
+    if (error) throw error;
+    const items = data || [];
+    setPersistentCache(`invoices_${storeId}`, items);
+    return items;
+  } catch (err) {
+    console.warn(`[Billing API] Network error, loading cached invoices for ${storeId}:`, err);
+    return getPersistentCache(`invoices_${storeId}`) || [];
+  }
 }
 
 /**
@@ -81,30 +89,39 @@ export async function listAllInvoices({
     }
   }
 
-  const { data, error } = await query;
-  if (error) throw error;
+  try {
+    const { data, error } = await query;
+    if (error) throw error;
 
-  let results = data || [];
+    let results = data || [];
 
-  // Filter in memory by storeCode or store_id if not 'all'
-  if (storeId && storeId !== 'all') {
-    results = results.filter((inv) => inv.store_id === storeId || inv.stores?.code === storeId);
+    // Filter in memory by storeCode or store_id if not 'all'
+    if (storeId && storeId !== 'all') {
+      results = results.filter((inv) => inv.store_id === storeId || inv.stores?.code === storeId);
+    }
+
+    // Filter by search query
+    if (search && search.trim()) {
+      const q = search.trim().toLowerCase();
+      results = results.filter(
+        (inv) =>
+          (inv.invoice_number && inv.invoice_number.toLowerCase().includes(q)) ||
+          (inv.customer_name && inv.customer_name.toLowerCase().includes(q)) ||
+          (inv.customer_phone && inv.customer_phone.toLowerCase().includes(q)) ||
+          (inv.customer_gstin && inv.customer_gstin.toLowerCase().includes(q)) ||
+          (inv.stores?.name && inv.stores.name.toLowerCase().includes(q))
+      );
+    }
+
+    if (storeId === 'all' && status === 'all' && dateRange === 'all' && !search) {
+      setPersistentCache('all_invoices', results);
+    }
+
+    return results;
+  } catch (err) {
+    console.warn('[Billing API] Error fetching all invoices, using persistent cache:', err);
+    return getPersistentCache('all_invoices') || [];
   }
-
-  // Filter by search query
-  if (search && search.trim()) {
-    const q = search.trim().toLowerCase();
-    results = results.filter(
-      (inv) =>
-        (inv.invoice_number && inv.invoice_number.toLowerCase().includes(q)) ||
-        (inv.customer_name && inv.customer_name.toLowerCase().includes(q)) ||
-        (inv.customer_phone && inv.customer_phone.toLowerCase().includes(q)) ||
-        (inv.customer_gstin && inv.customer_gstin.toLowerCase().includes(q)) ||
-        (inv.stores?.name && inv.stores.name.toLowerCase().includes(q))
-    );
-  }
-
-  return results;
 }
 
 /**

@@ -159,6 +159,7 @@ export function AdminConsoleLayout() {
 
               <Link
                 to="/admin"
+                onMouseEnter={() => import('@/features/launcher').catch(() => {})}
                 className={cn(
                   'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
                   isLauncherActive
@@ -172,6 +173,7 @@ export function AdminConsoleLayout() {
 
               <Link
                 to="/admin/staff"
+                onMouseEnter={() => import('@/features/staff').catch(() => {})}
                 className={cn(
                   'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
                   isStaffActive
@@ -185,6 +187,7 @@ export function AdminConsoleLayout() {
 
               <Link
                 to="/admin/invoices"
+                onMouseEnter={() => import('@/features/billing').catch(() => {})}
                 className={cn(
                   'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
                   path === '/admin/invoices'
@@ -207,6 +210,7 @@ export function AdminConsoleLayout() {
                 {/* 1. Dashboard */}
                 <Link
                   to={basePath}
+                  onMouseEnter={() => import('@/features/launcher').catch(() => {})}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
                     isDashboardActive
@@ -221,6 +225,7 @@ export function AdminConsoleLayout() {
                 {/* 2. Billing (POS) */}
                 <Link
                   to={`${basePath}/billing`}
+                  onMouseEnter={() => import('@/features/billing').catch(() => {})}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
                     isBillingActive
@@ -235,6 +240,7 @@ export function AdminConsoleLayout() {
                 {/* 3. Bills & Invoices (Editable) */}
                 <Link
                   to={`${basePath}/invoices`}
+                  onMouseEnter={() => import('@/features/billing').catch(() => {})}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
                     isInvoicesActive && isStoreRoute
@@ -249,6 +255,7 @@ export function AdminConsoleLayout() {
                 {/* 4. Inventory */}
                 <Link
                   to={`${basePath}/inventory`}
+                  onMouseEnter={() => import('@/features/inventory').catch(() => {})}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
                     isInventoryActive
@@ -263,6 +270,7 @@ export function AdminConsoleLayout() {
                 {/* 5. Reports */}
                 <Link
                   to={`${basePath}/reports`}
+                  onMouseEnter={() => import('@/features/reports').catch(() => {})}
                   onClick={handleNavClick}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',

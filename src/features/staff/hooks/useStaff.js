@@ -11,6 +11,7 @@ import {
   upsertSalaryRecord,
   grantStaffLeave,
 } from '../api/staff.api';
+import { getPersistentCache } from '@/shared/lib/cachePersistence';
 
 export const STAFF_QUERY_KEYS = {
   allProfiles: ['staff', 'profiles'],
@@ -22,6 +23,9 @@ export function useStaffProfiles() {
   return useQuery({
     queryKey: STAFF_QUERY_KEYS.allProfiles,
     queryFn: listStaffProfiles,
+    placeholderData: () => getPersistentCache('staff_profiles') || undefined,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 }
 

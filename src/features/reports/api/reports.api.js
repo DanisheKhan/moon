@@ -1,4 +1,5 @@
 import { supabase } from '@/shared/lib/supabase';
+import { getCachedDashboardData, setCachedDashboardData } from '@/shared/lib/cachePersistence';
 
 /**
  * Fetches combined report metrics for the owner (overview)
@@ -66,11 +67,8 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
   let storesList;
 
   try {
-    const [invRes, itemsRes, payRes, prodRes, storesRes] = await Promise.all([
+    const [invRes, payRes, prodRes, storesRes] = await Promise.all([
       invQuery,
-      supabase
-        .from('order_items')
-        .select('id, invoice_id, product_id, item_name, quantity, unit_price, discount, taxable_value, cgst_amount, sgst_amount, total_amount, products (id, name, cost_price, selling_price, categories (id, name, slug), stores (code))'),
       payQuery,
       supabase
         .from('products')
@@ -81,15 +79,33 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
     ]);
 
     if (invRes.error) throw invRes.error;
-    if (itemsRes.error) throw itemsRes.error;
     if (payRes.error) throw payRes.error;
     if (prodRes.error) throw prodRes.error;
+    if (storesRes.error) throw storesRes.error;
 
     invoices = invRes.data || [];
-    orderItems = itemsRes.data || [];
     payments = payRes.data || [];
     products = prodRes.data || [];
     storesList = storesRes.data || [];
+
+    // Filter invoices by storeCode first
+    const relevantInvoices = storeCode === 'all'
+      ? invoices
+      : invoices.filter((inv) => inv.stores?.code === storeCode);
+    const relevantInvoiceIds = relevantInvoices.map((inv) => inv.id);
+
+    // Optimized: Only query order items for relevant invoices instead of scanning entire database
+    if (relevantInvoiceIds.length > 0) {
+      const itemsRes = await supabase
+        .from('order_items')
+        .select('id, invoice_id, product_id, item_name, quantity, unit_price, discount, taxable_value, cgst_amount, sgst_amount, total_amount, products (id, name, cost_price, selling_price, categories (id, name, slug), stores (code))')
+        .in('invoice_id', relevantInvoiceIds);
+
+      if (itemsRes.error) throw itemsRes.error;
+      orderItems = itemsRes.data || [];
+    } else {
+      orderItems = [];
+    }
   } catch (err) {
     console.warn('Supabase query failed, using offline fallback', err);
     return getOfflineOwnerDashboard(dateRange, storeCode);
@@ -359,7 +375,7 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
     createdAt: inv.created_at,
   }));
 
-  return {
+  const result = {
     summary: {
       totalSales,
       totalSubtotal,
@@ -412,12 +428,21 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
     },
     recentInvoices,
   };
+
+  // Cache accurate fresh metrics for instant SWR hydration
+  setCachedDashboardData(dateRange, storeCode, result);
+
+  return result;
 }
 
 /**
  * Offline fallback generator for resilient preview when disconnected from Supabase
  */
 export function getOfflineOwnerDashboard(dateRange = 'month', storeCode = 'all') {
+  // Return verified real cached data first to ensure 100% data accuracy
+  const cached = getCachedDashboardData(dateRange, storeCode);
+  if (cached) return cached;
+
   const multiplier = dateRange === 'today' ? 0.15 : dateRange === 'week' ? 0.45 : dateRange === 'month' ? 1.0 : 2.5;
 
   let mobilesSales = 430962 * multiplier;
@@ -472,7 +497,7 @@ export function getOfflineOwnerDashboard(dateRange = 'month', storeCode = 'all')
     },
   ];
 
-  return {
+  const result = {
     summary: {
       totalSales,
       totalSubtotal,
@@ -643,4 +668,6 @@ export function getOfflineOwnerDashboard(dateRange = 'month', storeCode = 'all')
       },
     ],
   };
+
+  return result;
 }

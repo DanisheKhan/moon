@@ -1,5 +1,8 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { Badge, Button } from '@/shared/ui';
 import { formatCurrency } from '@/shared/lib/format';
+import { billingKeys, listInvoices } from '@/features/billing';
+import { inventoryKeys, listProductsByStore } from '@/features/inventory';
 import {
   Armchair,
   Smartphone,
@@ -21,13 +24,37 @@ function StoreIcon({ code }) {
 }
 
 export function StorePickerCard({ store, analytics, onOpen }) {
+  const queryClient = useQueryClient();
   const displayName = store.display_name || store.name;
   const sales = analytics?.sales ?? 0;
   const invoiceCount = analytics?.invoiceCount ?? 0;
   const lowStockCount = analytics?.lowStockCount ?? 0;
 
+  const handlePrefetch = () => {
+    // Speculatively preload the Store Dashboard route module chunk
+    import('@/features/launcher').then((m) => m.StoreDashboardPage).catch(() => {});
+
+    // Pre-warm the store-specific queries in cache
+    if (store?.id) {
+      queryClient.prefetchQuery({
+        queryKey: billingKeys.invoices(store.id),
+        queryFn: () => listInvoices({ storeId: store.id }),
+        staleTime: 1000 * 60 * 3,
+      });
+      queryClient.prefetchQuery({
+        queryKey: inventoryKeys.products(store.id, {}),
+        queryFn: () => listProductsByStore({ storeId: store.id }),
+        staleTime: 1000 * 60 * 3,
+      });
+    }
+  };
+
   return (
-    <article className="rounded-xl border border-border bg-surface p-5 flex flex-col justify-between min-w-0 transition-colors hover:border-text/30 shadow-2xs">
+    <article
+      onMouseEnter={handlePrefetch}
+      onTouchStart={handlePrefetch}
+      className="rounded-xl border border-border bg-surface p-5 flex flex-col justify-between min-w-0 transition-colors hover:border-text/30 shadow-2xs"
+    >
       <div>
         {/* Top Header */}
         <div className="flex items-start justify-between gap-3 min-w-0">

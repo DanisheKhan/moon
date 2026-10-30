@@ -11,6 +11,7 @@ import {
   listReturns,
 } from '../api/billing.api';
 import { inventoryKeys } from '@/features/inventory';
+import { getPersistentCache } from '@/shared/lib/cachePersistence';
 
 export const billingKeys = {
   all: ['billing'],
@@ -23,22 +24,21 @@ export function useInvoices(storeId) {
   return useQuery({
     queryKey: billingKeys.invoices(storeId),
     queryFn: () => listInvoices({ storeId }),
+    placeholderData: () => getPersistentCache(`invoices_${storeId}`) || undefined,
     enabled: Boolean(storeId),
-    staleTime: 1000 * 5,
-    refetchOnMount: 'always',
-    refetchOnWindowFocus: true,
-    refetchInterval: 10000,
+    staleTime: 1000 * 60 * 3,
+    refetchOnWindowFocus: false,
   });
 }
 
 export function useAllInvoices(filters = {}) {
+  const isDefault = !filters || Object.keys(filters).length === 0;
   return useQuery({
     queryKey: billingKeys.allInvoices(filters),
     queryFn: () => listAllInvoices(filters),
-    staleTime: 1000 * 5,
-    refetchOnMount: 'always',
-    refetchOnWindowFocus: true,
-    refetchInterval: 10000,
+    placeholderData: () => (isDefault ? getPersistentCache('all_invoices') || undefined : undefined),
+    staleTime: 1000 * 60 * 3,
+    refetchOnWindowFocus: false,
   });
 }
 
