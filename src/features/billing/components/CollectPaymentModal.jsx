@@ -30,13 +30,13 @@ export function CollectPaymentModal({ isOpen, onClose, invoice }) {
 function CollectPaymentForm({ invoice, onClose }) {
   const recordPaymentMutation = useRecordPayment();
 
-  // Compute existing payments and balance due
-  const grandTotal = parseFloat(invoice.grand_total || 0);
+  // Compute existing payments and balance due (rounded to whole rupees)
+  const grandTotal = Math.round(parseFloat(invoice.grand_total || 0));
   const totalPaid = useMemo(() => {
-    return (invoice.payments || []).reduce((acc, p) => acc + (parseFloat(p.amount) || 0), 0);
+    return Math.round((invoice.payments || []).reduce((acc, p) => acc + (parseFloat(p.amount) || 0), 0));
   }, [invoice.payments]);
 
-  const balanceDue = Math.max(grandTotal - totalPaid, 0);
+  const balanceDue = Math.round(Math.max(grandTotal - totalPaid, 0));
 
   const [collectAmount, setCollectAmount] = useState(balanceDue.toString());
   const [paymentMethod, setPaymentMethod] = useState('cash');
@@ -44,8 +44,8 @@ function CollectPaymentForm({ invoice, onClose }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const parsedCollect = parseFloat(collectAmount) || 0;
-  const newBalance = Math.max(balanceDue - parsedCollect, 0);
+  const parsedCollect = Math.round(parseFloat(collectAmount) || 0);
+  const newBalance = Math.round(Math.max(balanceDue - parsedCollect, 0));
 
   async function handleSubmit(e) {
     e.preventDefault();

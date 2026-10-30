@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import {
   Button,
   Input,
@@ -44,6 +44,7 @@ const STEPS = [
 
 export function POSPage() {
   const { store } = useOutletContext();
+  const navigate = useNavigate();
   const searchInputRef = useRef(null);
 
   // Stepper state (1: Cart Items, 2: Customer, 3: Payment & Settlement)
@@ -303,21 +304,20 @@ export function POSPage() {
     }, 0);
   }, [cart, grossTotal, netTaxableSubtotal]);
 
-  const cgstAmount = Math.round((totalTax / 2) * 100) / 100;
-  const sgstAmount = Math.round((totalTax / 2) * 100) / 100;
-  const rawGrandTotal = netTaxableSubtotal + totalTax;
-  const grandTotal = Math.round(rawGrandTotal);
-  const roundOff = Math.round((grandTotal - rawGrandTotal) * 100) / 100;
+  const cgstAmount = Math.round(totalTax / 2);
+  const sgstAmount = Math.round(totalTax / 2);
+  const grandTotal = Math.round(netTaxableSubtotal + cgstAmount + sgstAmount);
+  const roundOff = 0;
 
-  // Effective Collected Amount and Balance Due (Step 3)
+  // Effective Collected Amount and Balance Due (Step 3 - rounded)
   const effectiveCollectedAmount = useMemo(() => {
     if (settlementType === 'full') return grandTotal;
     if (settlementType === 'pending') return 0;
     const p = parseFloat(partialCollectedAmount);
-    return isNaN(p) ? 0 : Math.min(Math.max(p, 0), grandTotal);
+    return isNaN(p) ? 0 : Math.round(Math.min(Math.max(p, 0), grandTotal));
   }, [settlementType, grandTotal, partialCollectedAmount]);
 
-  const balanceDueAmount = Math.max(grandTotal - effectiveCollectedAmount, 0);
+  const balanceDueAmount = Math.round(Math.max(grandTotal - effectiveCollectedAmount, 0));
 
   // Cash Change Calculation
   const targetCashAmount = settlementType === 'full' ? grandTotal : effectiveCollectedAmount;
@@ -363,11 +363,11 @@ export function POSPage() {
           ? [
               {
                 payment_method: paymentMode,
-                amount: effectiveCollectedAmount,
+                amount: Math.round(effectiveCollectedAmount),
                 reference_number:
                   paymentReference.trim() ||
                   (paymentMode === 'cash' && cashReceivedNum > 0
-                    ? `Cash: ₹${cashReceivedNum}, Change: ₹${changeDue}`
+                    ? `Cash: ₹${Math.round(cashReceivedNum)}, Change: ₹${Math.round(changeDue)}`
                     : null),
               },
             ]
@@ -387,8 +387,8 @@ export function POSPage() {
             product_id: item.product_id,
             unit_id: item.unit_id,
             quantity: item.quantity,
-            unit_price: item.selling_price,
-            discount: Math.round(unitDiscount * 100) / 100,
+            unit_price: Math.round(item.selling_price || 0),
+            discount: Math.round(unitDiscount),
           };
         }),
         payments: paymentsPayload,
@@ -407,7 +407,11 @@ export function POSPage() {
       setBillingNotes('');
       setCashTendered('');
       setPaymentReference('');
-      setIsReceiptOpen(true);
+
+      // Redirect immediately to the Bills page with print preview ready
+      const storeCode = store?.code;
+      const redirectPath = storeCode ? `/admin/${storeCode}/invoices` : '/admin/invoices';
+      navigate(`${redirectPath}?print=${result.invoice_id}`);
     } catch (err) {
       setErrorMessage(getErrorMessage(err));
     }
@@ -597,23 +601,45 @@ export function POSPage() {
                     onClick={() => handleAddProduct(p)}
                     className="p-3 rounded-xl border border-border bg-surface hover:border-text/40 hover:bg-surface-subtle transition-all cursor-pointer flex flex-col justify-between shadow-2xs group"
                   >
-                    <div className="space-y-1.5">
-                      <div className="flex items-start justify-between gap-1.5">
-                        <span className="text-[10px] font-mono text-muted uppercase tracking-wider truncate">
-                          {p.sku}
-                        </span>
-                        {p.is_serialized ? (
-                          <Badge variant="sage" className="text-[9px] px-1 py-0 uppercase">
-                            Serial
-                          </Badge>
+                    <div>
+                      {/* Product Image */}
+                      <div className="relative w-full h-32 rounded-lg overflow-hidden border border-border/60 bg-surface-subtle flex items-center justify-center p-2 mb-2 group-hover:border-border transition-colors">
+                        {p.image_url ? (
+                          <img
+                            src={p.image_url}
+                            alt={p.name}
+                            loading="lazy"
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
                         ) : (
-                          <span className="text-[10px] text-muted font-mono">
-                            Stock: {stockQty}
-                          </span>
+                          <div className="flex flex-col items-center gap-1 text-muted">
+                            <Package size={28} />
+                            <span className="text-[9px] font-mono">{p.sku}</span>
+                          </div>
                         )}
                       </div>
-                      <div className="font-medium text-xs text-text line-clamp-2 leading-snug group-hover:text-accent">
-                        {p.name}
+
+                      <div className="space-y-1.5">
+                        <div className="flex items-start justify-between gap-1.5">
+                          <span className="text-[10px] font-mono text-muted uppercase tracking-wider truncate">
+                            {p.sku}
+                          </span>
+                          {p.is_serialized ? (
+                            <Badge variant="sage" className="text-[9px] px-1 py-0 uppercase">
+                              Serial
+                            </Badge>
+                          ) : (
+                            <span className="text-[10px] text-muted font-mono">
+                              Stock: {stockQty}
+                            </span>
+                          )}
+                        </div>
+                        <div className="font-medium text-xs text-text line-clamp-2 leading-snug group-hover:text-accent">
+                          {p.name}
+                        </div>
                       </div>
                     </div>
 

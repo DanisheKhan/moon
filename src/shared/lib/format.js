@@ -1,19 +1,21 @@
 /**
- * Formats a numeric amount to Indian Rupee representation (e.g. ₹ 45,999.00 or ₹ 45,999).
+ * Formats a numeric amount to Indian Rupee representation rounded to whole rupees (e.g. ₹ 45,999).
+ * Decimals are rounded off to eliminate fractional pennies and floating-point precision leaks.
  * @param {number|string|null|undefined} amount
- * @param {boolean} [showDecimals=false]
+ * @param {boolean} [_showDecimals=false]
  * @returns {string}
  */
-export function formatCurrency(amount, showDecimals = false) {
+export function formatCurrency(amount, _showDecimals = false) {
   const num = typeof amount === 'number' ? amount : parseFloat(amount || '0');
   if (isNaN(num)) return '₹0';
 
+  const rounded = Math.round(num);
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
-    minimumFractionDigits: showDecimals ? 2 : 0,
-    maximumFractionDigits: showDecimals ? 2 : 0,
-  }).format(num);
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(rounded);
 }
 
 /**

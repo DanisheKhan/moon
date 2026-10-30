@@ -47,13 +47,13 @@ export function InvoicePrintModal({ isOpen, onClose, invoiceDetail }) {
   const store = invoiceDetail.stores || {};
   const items = invoiceDetail.items || [];
   const payments = invoiceDetail.payments || [];
-  const grandTotal = Number(invoiceDetail.grand_total || 0);
-  const subtotal = Number(invoiceDetail.subtotal || 0);
-  const cgstAmount = Number(invoiceDetail.cgst_amount || 0);
-  const sgstAmount = Number(invoiceDetail.sgst_amount || 0);
-  const discountAmount = Number(invoiceDetail.discount_amount || 0);
-  const totalPaid = payments.reduce((acc, p) => acc + (parseFloat(p.amount) || 0), 0);
-  const balanceDue = Math.max(grandTotal - totalPaid, 0);
+  const grandTotal = Math.round(Number(invoiceDetail.grand_total || 0));
+  const subtotal = Math.round(Number(invoiceDetail.subtotal || 0));
+  const cgstAmount = Math.round(Number(invoiceDetail.cgst_amount || 0));
+  const sgstAmount = Math.round(Number(invoiceDetail.sgst_amount || 0));
+  const discountAmount = Math.round(Number(invoiceDetail.discount_amount || 0));
+  const totalPaid = Math.round(payments.reduce((acc, p) => acc + (parseFloat(p.amount) || 0), 0));
+  const balanceDue = Math.round(Math.max(grandTotal - totalPaid, 0));
 
   /**
    * Triggers clean A4 invoice printing via #print-portal

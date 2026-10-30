@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useOutletContext, useParams } from 'react-router-dom';
+import { useOutletContext, useParams, useSearchParams } from 'react-router-dom';
 import {
   Button,
   Card,
@@ -11,7 +11,7 @@ import {
   TableCell,
   TableHeaderCell,
 } from '@/shared/ui';
-import { useAllInvoices, useInvoiceDetail, useVoidInvoice } from '../hooks/useBilling';
+import { useAllInvoices, useInvoiceDetail } from '../hooks/useBilling';
 import { useStores } from '@/features/stores';
 import { InvoicePrintModal } from '../components/InvoicePrintModal';
 import { EditInvoiceModal } from '../components/EditInvoiceModal';
@@ -25,7 +25,6 @@ import {
   Filter,
   Pencil,
   Printer,
-  Ban,
   Building2,
   Calendar,
   RotateCcw,
@@ -59,12 +58,26 @@ export function InvoicesListPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('month');
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Modals state
   const [editingInvoiceId, setEditingInvoiceId] = useState(null);
   const [viewingInvoiceId, setViewingInvoiceId] = useState(null);
   const [collectingInvoice, setCollectingInvoice] = useState(null);
   const [returningInvoice, setReturningInvoice] = useState(null);
+
+  // Auto-open print preview if redirected from POS via ?print=id
+  const printParamId = searchParams.get('print');
+  const activeViewingInvoiceId = viewingInvoiceId || printParamId;
+
+  const handleClosePrintModal = () => {
+    setViewingInvoiceId(null);
+    if (searchParams.has('print')) {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('print');
+      setSearchParams(nextParams, { replace: true });
+    }
+  };
 
   // Stores
   const { data: stores = [] } = useStores();
@@ -77,8 +90,7 @@ export function InvoicesListPage() {
     search: searchQuery,
   });
 
-  const { data: viewingInvoiceDetail } = useInvoiceDetail(viewingInvoiceId);
-  const voidInvoiceMutation = useVoidInvoice();
+  const { data: viewingInvoiceDetail } = useInvoiceDetail(activeViewingInvoiceId);
 
   // Summary Metrics
   const metrics = useMemo(() => {
@@ -108,21 +120,6 @@ export function InvoicesListPage() {
       totalBalanceDue,
     };
   }, [invoices]);
-
-  // Handle quick voiding
-  async function handleQuickVoid(inv) {
-    if (inv.status === 'void') return;
-    const confirmVoid = window.confirm(
-      `Are you sure you want to void invoice ${inv.invoice_number}? This will cancel its revenue and GST contribution in financial telemetry.`
-    );
-    if (!confirmVoid) return;
-
-    try {
-      await voidInvoiceMutation.mutateAsync(inv.id);
-    } catch (err) {
-      alert(`Failed to void invoice: ${err?.message || 'Error occurred'}`);
-    }
-  }
 
   return (
     <div className="space-y-6 min-w-0 pb-12">
@@ -460,18 +457,6 @@ export function InvoicesListPage() {
                         <Printer size={12} className="shrink-0" />
                         <span>Print</span>
                       </Button>
-
-                      {/* Quick Void Button */}
-                      {inv.status !== 'void' && (
-                        <button
-                          type="button"
-                          onClick={() => handleQuickVoid(inv)}
-                          title="Void invoice"
-                          className="p-1 text-muted hover:text-danger rounded-md hover:bg-danger/10 cursor-pointer transition-colors"
-                        >
-                          <Ban size={12} className="shrink-0" />
-                        </button>
-                      )}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -491,10 +476,10 @@ export function InvoicesListPage() {
       )}
 
       {/* 6. Invoice Print & Preview Modal */}
-      {viewingInvoiceId && (
+      {activeViewingInvoiceId && (
         <InvoicePrintModal
-          isOpen={Boolean(viewingInvoiceId)}
-          onClose={() => setViewingInvoiceId(null)}
+          isOpen={Boolean(activeViewingInvoiceId)}
+          onClose={handleClosePrintModal}
           invoiceDetail={viewingInvoiceDetail}
         />
       )}

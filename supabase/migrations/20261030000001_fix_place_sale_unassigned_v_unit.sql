@@ -1,8 +1,9 @@
 -- Migration: 20261030000001_fix_place_sale_unassigned_v_unit.sql
 -- Description: Fix "record 'v_unit' is not assigned yet" in place_sale for non-serialized items (furniture),
+-- round all financial monetary figures to whole integer rupees,
 -- and add RLS update/insert policies for invoices, order items, and payments.
 
--- 1. Replace place_sale function to fix unassigned v_unit when item is non-serialized (furniture/accessories)
+-- 1. Replace place_sale function to fix unassigned v_unit and round money
 create or replace function public.place_sale(
   p_store_id uuid,
   p_customer_name text,
@@ -83,20 +84,22 @@ begin
       raise exception 'Price for % is below minimum permitted selling price of %', v_prod.name, v_prod.min_selling_price;
     end if;
 
-    v_taxable := (v_price - v_disc) * v_qty;
-    v_item_cgst := round((v_taxable * (v_prod.gst_rate / 2.0) / 100.0), 2);
-    v_item_sgst := round((v_taxable * (v_prod.gst_rate / 2.0) / 100.0), 2);
+    v_taxable := round((v_price - v_disc) * v_qty);
+    v_item_cgst := round((v_taxable * (v_prod.gst_rate / 2.0) / 100.0));
+    v_item_sgst := round((v_taxable * (v_prod.gst_rate / 2.0) / 100.0));
     v_item_total := v_taxable + v_item_cgst + v_item_sgst;
 
-    v_subtotal := v_subtotal + (v_price * v_qty);
-    v_discount_total := v_discount_total + (v_disc * v_qty);
+    v_subtotal := v_subtotal + round(v_price * v_qty);
+    v_discount_total := v_discount_total + round(v_disc * v_qty);
     v_cgst_total := v_cgst_total + v_item_cgst;
     v_sgst_total := v_sgst_total + v_item_sgst;
     v_grand_total := v_grand_total + v_item_total;
   end loop;
 
+  v_grand_total := round(v_grand_total);
+
   if p_payments is not null and jsonb_array_length(p_payments) > 0 then
-    select coalesce(sum((p->>'amount')::numeric), 0) into v_paid_total
+    select coalesce(sum(round((p->>'amount')::numeric)), 0) into v_paid_total
     from jsonb_array_elements(p_payments) p;
   else
     v_paid_total := 0;
@@ -155,9 +158,9 @@ begin
     v_price := coalesce(v_item.unit_price, v_prod.selling_price);
     v_disc := coalesce(v_item.discount, 0);
 
-    v_taxable := (v_price - v_disc) * v_qty;
-    v_item_cgst := round((v_taxable * (v_prod.gst_rate / 2.0) / 100.0), 2);
-    v_item_sgst := round((v_taxable * (v_prod.gst_rate / 2.0) / 100.0), 2);
+    v_taxable := round((v_price - v_disc) * v_qty);
+    v_item_cgst := round((v_taxable * (v_prod.gst_rate / 2.0) / 100.0));
+    v_item_sgst := round((v_taxable * (v_prod.gst_rate / 2.0) / 100.0));
     v_item_total := v_taxable + v_item_cgst + v_item_sgst;
 
     v_serial_number := null;
@@ -251,7 +254,7 @@ begin
         ) values (
           v_invoice_id,
           v_payment.payment_method,
-          v_payment.amount,
+          round(v_payment.amount),
           v_payment.reference_number
         );
       end if;
@@ -314,4 +317,3 @@ create policy "Order items update policy"
   to anon, authenticated
   using (true)
   with check (true);
-
