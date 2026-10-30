@@ -125,7 +125,7 @@ export function SecondHandIntakePage() {
           No second-hand intake records yet. Click "New Device Intake" to start a buyback.
         </Card>
       ) : (
-        <Table>
+        <Table className="table-auto w-full">
           <TableHead>
             <TableRow>
               <TableHeaderCell>Seller & Contact</TableHeaderCell>

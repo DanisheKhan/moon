@@ -5,6 +5,7 @@
   "/admin/overview",
   "/admin/all",
   "/admin/staff",
+  "/admin/invoices",
   "/admin/my-portal",
   "/admin/mobiles",
   "/admin/mobiles/inventory",

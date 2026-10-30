@@ -26,7 +26,6 @@ import {
   Pencil,
   Printer,
   Ban,
-  Clock,
   Building2,
   Calendar,
   RotateCcw,
@@ -292,225 +291,194 @@ export function InvoicesListPage() {
           </p>
         </Card>
       ) : (
-        <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-2xs">
-          <Table>
-            <TableHead>
-              <TableRow className="bg-surface-subtle">
-                <TableHeaderCell>Invoice Details</TableHeaderCell>
-                <TableHeaderCell>Store Branch</TableHeaderCell>
-                <TableHeaderCell>Customer</TableHeaderCell>
-                <TableHeaderCell>Items Summary</TableHeaderCell>
-                <TableHeaderCell>Payment Mode</TableHeaderCell>
-                <TableHeaderCell>Grand Total</TableHeaderCell>
-                <TableHeaderCell>Status</TableHeaderCell>
-                <TableHeaderCell className="text-right">Actions</TableHeaderCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {invoices.map((inv) => {
-                const primaryPay = inv.payments?.[0];
-                const itemsCount = inv.order_items?.length || 0;
-                const itemsPreview = (inv.order_items || [])
-                  .slice(0, 2)
-                  .map((it) => `${it.item_name} (${it.quantity})`)
-                  .join(', ');
+        <Table className="w-full table-fixed" containerClassName="overflow-hidden">
+          <TableHead>
+            <TableRow className="bg-surface-subtle">
+              <TableHeaderCell className="w-[16%]">Date of Purchase</TableHeaderCell>
+              <TableHeaderCell className="w-[18%]">Customer Name</TableHeaderCell>
+              <TableHeaderCell className="w-[20%]">Item</TableHeaderCell>
+              <TableHeaderCell className="w-[12%]">Grand Total</TableHeaderCell>
+              <TableHeaderCell className="w-[10%] text-center px-1">Status</TableHeaderCell>
+              <TableHeaderCell className="w-[24%] text-right pr-4 pl-3 border-l border-border/60">
+                Actions
+              </TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {invoices.map((inv) => {
+              const itemsCount = inv.order_items?.length || 0;
+              const itemsPreview = (inv.order_items || [])
+                .slice(0, 2)
+                .map((it) => `${it.item_name} (${it.quantity})`)
+                .join(', ');
 
-                const totalPaid = (inv.payments || []).reduce(
-                  (acc, p) => acc + (parseFloat(p.amount) || 0),
-                  0
-                );
-                const balanceDue = Math.max((parseFloat(inv.grand_total) || 0) - totalPaid, 0);
+              const totalPaid = (inv.payments || []).reduce(
+                (acc, p) => acc + (parseFloat(p.amount) || 0),
+                0
+              );
+              const balanceDue = Math.max((parseFloat(inv.grand_total) || 0) - totalPaid, 0);
 
-                return (
-                  <TableRow key={inv.id} className="hover:bg-surface-subtle/50 transition-colors">
-                    {/* Invoice # & Date */}
-                    <TableCell className="whitespace-nowrap">
-                      <div className="font-mono text-xs font-semibold text-text">
-                        {inv.invoice_number}
+              return (
+                <TableRow key={inv.id} className="hover:bg-surface-subtle/50 transition-colors">
+                  {/* 1. Date of Purchase & Invoice # */}
+                  <TableCell className="align-middle min-w-0">
+                    <div className="text-xs font-semibold text-text flex items-center gap-1.5 truncate">
+                      <Calendar size={12} className="text-muted shrink-0" />
+                      <span className="truncate">{inv.created_at ? formatDate(inv.created_at) : '—'}</span>
+                    </div>
+                    <div className="font-mono text-[10px] text-muted truncate mt-0.5">
+                      #{inv.invoice_number}
+                    </div>
+                  </TableCell>
+
+                  {/* 2. Customer Name */}
+                  <TableCell className="align-middle min-w-0">
+                    <div className="font-medium text-xs text-text truncate" title={inv.customer_name}>
+                      {inv.customer_name || 'Walk-in Customer'}
+                    </div>
+                    {inv.customer_phone && (
+                      <div className="text-[10px] text-muted font-mono truncate">
+                        {inv.customer_phone}
                       </div>
-                      <div className="text-[10px] text-muted flex items-center gap-1 mt-0.5">
-                        <Clock size={11} />
-                        <span>{inv.created_at ? formatDate(inv.created_at) : '—'}</span>
+                    )}
+                    {inv.customer_gstin && (
+                      <div className="text-[9px] text-brand-sage font-mono uppercase truncate" title={inv.customer_gstin}>
+                        GST: {inv.customer_gstin}
                       </div>
-                    </TableCell>
+                    )}
+                  </TableCell>
 
-                    {/* Store Branch */}
-                    <TableCell className="whitespace-nowrap">
-                      <div className="text-xs font-medium text-text">
-                        {inv.stores?.name || 'Star Store'}
+                  {/* 3. Item Summary */}
+                  <TableCell className="align-middle min-w-0">
+                    <div className="text-xs text-text truncate" title={itemsPreview}>
+                      {itemsCount > 0 ? itemsPreview : 'No items'}
+                    </div>
+                    {itemsCount > 2 && (
+                      <div className="text-[10px] text-muted truncate">
+                        +{itemsCount - 2} more {itemsCount - 2 === 1 ? 'item' : 'items'}
                       </div>
-                      <div className="text-[10px] text-muted font-mono">
-                        {inv.stores?.code || '—'}
+                    )}
+                  </TableCell>
+
+                  {/* 4. Grand Total */}
+                  <TableCell className="align-middle whitespace-nowrap font-mono">
+                    <div className="font-semibold text-xs text-text">
+                      {formatCurrency(inv.grand_total || 0)}
+                    </div>
+                    {inv.status === 'partial' && (
+                      <div className="text-[10px] text-amber-600 font-semibold font-mono truncate">
+                        Paid: {formatCurrency(totalPaid)} • Due: {formatCurrency(balanceDue)}
                       </div>
-                    </TableCell>
-
-                    {/* Customer */}
-                    <TableCell>
-                      <div className="font-medium text-xs text-text truncate max-w-44" title={inv.customer_name}>
-                        {inv.customer_name || 'Walk-in Customer'}
+                    )}
+                    {inv.status === 'pending' && (
+                      <div className="text-[10px] text-danger font-semibold font-mono truncate">
+                        Full {formatCurrency(inv.grand_total || 0)} Due
                       </div>
-                      {inv.customer_phone && (
-                        <div className="text-[10px] text-muted font-mono truncate max-w-44">
-                          {inv.customer_phone}
-                        </div>
-                      )}
-                      {inv.customer_gstin && (
-                        <div className="text-[9px] text-brand-sage font-mono uppercase truncate max-w-44">
-                          GST: {inv.customer_gstin}
-                        </div>
-                      )}
-                    </TableCell>
-
-                    {/* Items Summary */}
-                    <TableCell>
-                      <div className="text-xs text-text truncate max-w-48" title={itemsPreview}>
-                        {itemsCount > 0 ? itemsPreview : 'No items'}
+                    )}
+                    {inv.status !== 'partial' && inv.status !== 'pending' && (
+                      <div className="text-[10px] text-muted truncate">
+                        Tax: {formatCurrency((inv.cgst_amount || 0) + (inv.sgst_amount || 0))}
                       </div>
-                      {itemsCount > 2 && (
-                        <div className="text-[10px] text-muted">
-                          +{itemsCount - 2} more {itemsCount - 2 === 1 ? 'item' : 'items'}
-                        </div>
+                    )}
+                  </TableCell>
+
+                  {/* 5. Status - Cleanly centered with dedicated visual column */}
+                  <TableCell className="align-middle text-center whitespace-nowrap px-1">
+                    <Badge
+                      variant={
+                        inv.status === 'paid'
+                          ? 'success'
+                          : inv.status === 'partial'
+                          ? 'amber'
+                          : inv.status === 'pending'
+                          ? 'danger'
+                          : inv.status === 'void'
+                          ? 'default'
+                          : 'outline'
+                      }
+                      className={cn(
+                        'text-[10px] font-semibold uppercase px-2 py-0.5 inline-flex justify-center',
+                        (inv.status === 'returned' || inv.status === 'partially_returned') &&
+                          'border-purple-300 text-purple-700 bg-purple-50'
                       )}
-                    </TableCell>
+                    >
+                      {inv.status === 'partially_returned' ? 'Part Return' : inv.status}
+                    </Badge>
+                  </TableCell>
 
-                    {/* Payment Mode */}
-                    <TableCell className="whitespace-nowrap">
-                      {primaryPay ? (
-                        <div>
-                          <Badge variant="outline" className="text-[10px] uppercase font-mono px-1.5 py-0.2">
-                            {primaryPay.payment_method}
-                          </Badge>
-                          {primaryPay.reference_number && (
-                            <div className="text-[10px] text-muted font-mono truncate max-w-32 mt-0.5">
-                              {primaryPay.reference_number}
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-xs text-muted font-mono">None (Credit)</span>
-                      )}
-                    </TableCell>
-
-                    {/* Grand Total */}
-                    <TableCell className="whitespace-nowrap font-mono">
-                      <div className="font-semibold text-xs text-text">
-                        {formatCurrency(inv.grand_total || 0)}
-                      </div>
-                      {inv.status === 'partial' && (
-                        <div className="text-[10px] text-amber-600 font-semibold font-mono">
-                          Paid: {formatCurrency(totalPaid)} • Due: {formatCurrency(balanceDue)}
-                        </div>
-                      )}
-                      {inv.status === 'pending' && (
-                        <div className="text-[10px] text-danger font-semibold font-mono">
-                          Full {formatCurrency(inv.grand_total || 0)} Due
-                        </div>
-                      )}
-                      {inv.status !== 'partial' && inv.status !== 'pending' && (
-                        <div className="text-[10px] text-muted">
-                          Tax: {formatCurrency((inv.cgst_amount || 0) + (inv.sgst_amount || 0))}
-                        </div>
-                      )}
-                    </TableCell>
-
-                    {/* Status */}
-                    <TableCell className="whitespace-nowrap">
-                      <Badge
-                        variant={
-                          inv.status === 'paid'
-                            ? 'success'
-                            : inv.status === 'partial'
-                            ? 'amber'
-                            : inv.status === 'pending'
-                            ? 'danger'
-                            : inv.status === 'void'
-                            ? 'default'
-                            : 'outline'
-                        }
-                        className={cn(
-                          'text-[10px] font-semibold uppercase',
-                          (inv.status === 'returned' || inv.status === 'partially_returned') &&
-                            'border-purple-300 text-purple-700 bg-purple-50'
-                        )}
-                      >
-                        {inv.status === 'partially_returned' ? 'Part Return' : inv.status}
-                      </Badge>
-                    </TableCell>
-
-                    {/* Actions: Collect, Return, Edit, Print, Void */}
-                    <TableCell className="text-right whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {/* Collect Payment (for Partial or Pending) */}
-                        {(inv.status === 'partial' || inv.status === 'pending') && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setCollectingInvoice(inv)}
-                            className="h-7 px-2 text-xs font-semibold rounded-lg gap-1 border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 cursor-pointer shadow-2xs"
-                            title="Collect Pending / Partial Payment"
-                          >
-                            <Coins size={12} />
-                            <span>Collect</span>
-                          </Button>
-                        )}
-
-                        {/* Process Return (for non-void and non-fully returned bills) */}
-                        {inv.status !== 'void' && inv.status !== 'returned' && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setReturningInvoice(inv)}
-                            className="h-7 px-2 text-xs font-medium rounded-lg gap-1 text-muted hover:text-danger hover:border-danger/30 cursor-pointer"
-                            title="Process Item Return & Refund"
-                          >
-                            <RotateCcw size={12} />
-                            <span className="hidden md:inline">Return</span>
-                          </Button>
-                        )}
-
-                        {/* Edit Button */}
-                        <Button
-                          size="sm"
-                          variant="solid"
-                          onClick={() => setEditingInvoiceId(inv.id)}
-                          className="h-7 px-2.5 text-xs font-medium rounded-lg gap-1.5 cursor-pointer shadow-2xs"
-                          title="Edit Customer, Line Items, & Payment Status"
-                        >
-                          <Pencil size={12} />
-                          <span>Edit</span>
-                        </Button>
-
-                        {/* View / Print Button */}
+                  {/* 6. Actions: Distinct column with divider line & uniform button sizing */}
+                  <TableCell className="align-middle text-right whitespace-nowrap pr-4 pl-3 border-l border-border/60">
+                    <div className="flex items-center justify-end gap-1.5 sm:gap-2">
+                      {/* Collect Payment (ONLY for Partial or Pending) */}
+                      {(inv.status === 'partial' || inv.status === 'pending') && (
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => setViewingInvoiceId(inv.id)}
-                          className="h-7 px-2 text-xs font-medium rounded-lg gap-1 text-muted hover:text-text cursor-pointer"
-                          title="View / Print Tax Invoice"
+                          onClick={() => setCollectingInvoice(inv)}
+                          className="h-7 px-2 text-xs font-medium rounded-lg gap-1 border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 cursor-pointer shadow-2xs"
+                          title="Collect Pending / Partial Payment"
                         >
-                          <Printer size={13} />
-                          <span className="hidden sm:inline">Print</span>
+                          <Coins size={12} className="shrink-0" />
+                          <span>Collect</span>
                         </Button>
+                      )}
 
-                        {/* Quick Void Button */}
-                        {inv.status !== 'void' && (
-                          <button
-                            type="button"
-                            onClick={() => handleQuickVoid(inv)}
-                            title="Void invoice"
-                            className="p-1.5 text-muted hover:text-danger rounded-md hover:bg-danger/10 cursor-pointer transition-colors"
-                          >
-                            <Ban size={13} />
-                          </button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </div>
+                      {/* Process Return (ONLY for fully Paid bills) */}
+                      {inv.status === 'paid' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setReturningInvoice(inv)}
+                          className="h-7 px-2 text-xs font-medium rounded-lg gap-1 text-muted hover:text-danger hover:border-danger/30 hover:bg-danger/5 cursor-pointer shadow-2xs"
+                          title="Process Item Return & Refund"
+                        >
+                          <RotateCcw size={12} className="shrink-0" />
+                          <span>Return</span>
+                        </Button>
+                      )}
+
+                      {/* Edit Button */}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setEditingInvoiceId(inv.id)}
+                        className="h-7 px-2 text-xs font-medium rounded-lg gap-1 hover:border-brand-sage hover:text-brand-sage hover:bg-brand-sage/5 cursor-pointer shadow-2xs"
+                        title="Edit Customer, Line Items, & Payment Status"
+                      >
+                        <Pencil size={12} className="shrink-0" />
+                        <span>Edit</span>
+                      </Button>
+
+                      {/* View / Print Button */}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setViewingInvoiceId(inv.id)}
+                        className="h-7 px-2 text-xs font-medium rounded-lg gap-1 text-muted hover:text-text hover:bg-surface-subtle cursor-pointer shadow-2xs"
+                        title="View / Print Tax Invoice"
+                      >
+                        <Printer size={12} className="shrink-0" />
+                        <span>Print</span>
+                      </Button>
+
+                      {/* Quick Void Button */}
+                      {inv.status !== 'void' && (
+                        <button
+                          type="button"
+                          onClick={() => handleQuickVoid(inv)}
+                          title="Void invoice"
+                          className="p-1 text-muted hover:text-danger rounded-md hover:bg-danger/10 cursor-pointer transition-colors"
+                        >
+                          <Ban size={12} className="shrink-0" />
+                        </button>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       )}
 
       {/* 5. Edit Invoice Modal */}

@@ -8,14 +8,18 @@ import { cn } from '@/shared/lib/cn';
  * @param {import('react').ReactNode} props.children
  */
 export function Table({ className, containerClassName, children, ...rest }) {
+  const isAuto = className?.includes('table-auto');
+  const layoutClass = isAuto ? '' : className?.includes('table-fixed') ? '' : 'table-fixed';
+
   return (
     <div
       className={cn(
-        'w-full overflow-x-auto overflow-y-hidden rounded-xl border border-border bg-surface min-w-0 shadow-2xs no-scrollbar scrollbar-none',
+        'w-full rounded-xl border border-border bg-surface min-w-0 shadow-2xs',
+        containerClassName?.includes('overflow-') ? '' : 'overflow-x-auto',
         containerClassName
       )}
     >
-      <table className={cn('w-full text-left border-collapse text-sm table-fixed', className)} {...rest}>
+      <table className={cn('w-full text-left border-collapse text-sm', layoutClass, className)} {...rest}>
         {children}
       </table>
     </div>
@@ -46,7 +50,7 @@ export function TableBody({ className, children, ...rest }) {
 
 export function TableRow({ className, children, ...rest }) {
   return (
-    <tr className={cn('min-h-14 hover:bg-surface-subtle/50 transition-colors', className)} {...rest}>
+    <tr className={cn('hover:bg-surface-subtle/50 transition-colors', className)} {...rest}>
       {children}
     </tr>
   );
@@ -54,7 +58,7 @@ export function TableRow({ className, children, ...rest }) {
 
 export function TableCell({ className, children, ...rest }) {
   return (
-    <td className={cn('px-2.5 sm:px-3 py-2.5 align-middle font-normal', className)} {...rest}>
+    <td className={cn('px-3.5 sm:px-4 py-3 sm:py-3.5 align-middle font-normal', className)} {...rest}>
       {children}
     </td>
   );
@@ -62,7 +66,7 @@ export function TableCell({ className, children, ...rest }) {
 
 export function TableHeaderCell({ className, children, ...rest }) {
   return (
-    <th className={cn('h-10 px-2.5 sm:px-3 py-0 align-middle font-medium whitespace-nowrap', className)} {...rest}>
+    <th className={cn('h-11 px-3.5 sm:px-4 py-2.5 align-middle font-medium whitespace-nowrap', className)} {...rest}>
       {children}
     </th>
   );
