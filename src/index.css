@@ -13,6 +13,7 @@
   --color-border-strong: var(--border-strong);
   --color-accent: var(--accent);
   --color-accent-fg: var(--accent-fg);
+  --color-text-inverse: var(--text-inverse);
   --color-danger: var(--danger);
 
   --color-brand-sage: var(--brand-sage);
@@ -20,6 +21,24 @@
   --color-brand-sage-subtle: var(--brand-sage-subtle);
   --color-brand-sage-border: var(--brand-sage-border);
   --color-brand-sage-text: var(--brand-sage-text);
+
+  --color-brand-crimson: var(--brand-crimson);
+  --color-brand-crimson-hover: var(--brand-crimson-hover);
+  --color-brand-crimson-subtle: var(--brand-crimson-subtle);
+  --color-brand-crimson-border: var(--brand-crimson-border);
+  --color-brand-crimson-text: var(--brand-crimson-text);
+
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-gold-hover: var(--brand-gold-hover);
+  --color-brand-gold-subtle: var(--brand-gold-subtle);
+  --color-brand-gold-border: var(--brand-gold-border);
+  --color-brand-gold-text: var(--brand-gold-text);
+
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-blue-hover: var(--brand-blue-hover);
+  --color-brand-blue-subtle: var(--brand-blue-subtle);
+  --color-brand-blue-border: var(--brand-blue-border);
+  --color-brand-blue-text: var(--brand-blue-text);
 
   --color-sidebar-bg: var(--sidebar-bg);
   --color-sidebar-surface: var(--sidebar-surface);

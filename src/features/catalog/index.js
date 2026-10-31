@@ -1,6 +1,13 @@
 export { PublicHomePage } from './routes/PublicHomePage';
 export { CartDrawer } from './components/CartDrawer';
 export { ProductDetailModal } from './components/ProductDetailModal';
+export { StoreHeroShowcase } from './components/StoreHeroShowcase';
+export { StoreBrandsStrip } from './components/StoreBrandsStrip';
+export { StoreDepartmentsSection } from './components/StoreDepartmentsSection';
+export { StoreEmiCalculatorSection } from './components/StoreEmiCalculatorSection';
+export { StoreReviewsSection } from './components/StoreReviewsSection';
+export { StoreSpotlightSection } from './components/StoreSpotlightSection';
+export { StoreFaqSection } from './components/StoreFaqSection';
+export { StoreFooter } from './components/StoreFooter';
 export { CartProvider, useCart, usePublicProducts } from './hooks/useCatalog';
 export { listPublicProducts, getProductImageUrl, FALLBACK_PRODUCTS } from './api/catalog.api';
-

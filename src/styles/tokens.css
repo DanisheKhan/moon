@@ -29,6 +29,27 @@
   --brand-sage-border: #BCE2CC;
   --brand-sage-text: #174E36;
 
+  /* Brand Crimson Tokens (Matches Star 3D Showroom Logo) */
+  --brand-crimson: #C22026;
+  --brand-crimson-hover: #A51A1F;
+  --brand-crimson-subtle: #FEF2F2;
+  --brand-crimson-border: #FECACA;
+  --brand-crimson-text: #991B1B;
+
+  /* Brand Gold / Warm Amber Tokens (Matches Star Emblem Accents & 0% Finance) */
+  --brand-gold: #D97706;
+  --brand-gold-hover: #B45309;
+  --brand-gold-subtle: #FFFBEB;
+  --brand-gold-border: #FDE68A;
+  --brand-gold-text: #92400E;
+
+  /* Brand Royal Blue Tokens (Matches Electronics & Cooling Badges) */
+  --brand-blue: #2563EB;
+  --brand-blue-hover: #1D4ED8;
+  --brand-blue-subtle: #EFF6FF;
+  --brand-blue-border: #BFDBFE;
+  --brand-blue-text: #1E40AF;
+
   /* Unified Strict Radius Scale */
   --radius: 10px;
   --radius-xs: 4px;

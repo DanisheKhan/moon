@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart, CartDrawer } from '@/features/catalog';
-import { Container, Button } from '@/shared/ui';
+import { Button } from '@/shared/ui';
 import { SITE } from '@/shared/lib/site';
 import { ShoppingBag, Phone, Shield } from 'lucide-react';
 
@@ -14,68 +14,101 @@ export function RootLayout() {
 
   return (
     <div className="min-h-screen bg-bg text-text flex flex-col font-sans overflow-x-hidden">
-      {/* Top Application Bar */}
-      <header className="border-b border-border bg-surface sticky top-0 z-40">
-        <Container size="xl" className="h-14 flex items-center justify-between gap-4">
-          {/* Left Brand */}
-          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+      {/* Classic Fixed Header — full-width bar with bottom border */}
+      <header className="fixed top-0 inset-x-0 z-50 bg-surface border-b border-border h-16">
+        <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between gap-4">
+
+          {/* Left: Logotype */}
+          <div className="flex items-center shrink-0">
             <Link
               to={isPublicPage ? '/' : '/admin'}
-              className="font-medium text-text tracking-tight flex items-center gap-2 shrink-0 text-xs sm:text-base"
+              className="flex items-center gap-0 font-black tracking-tight text-sm sm:text-base leading-none"
             >
-              <span className="w-2.5 h-2.5 rounded-full bg-accent inline-block shrink-0" />
-              <span className="truncate">STAR ENTERPRISES</span>
+              <span className="text-brand-crimson font-black tracking-tight">STAR</span>
+              <span className="text-text font-black tracking-tight ml-1">ENTERPRISES</span>
             </Link>
           </div>
 
-          {/* Right Actions */}
+          {/* Center: Classic text nav links (public only) */}
+          {isPublicPage && (
+            <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-muted">
+              <a
+                href="#catalog-grid-section"
+                className="hover:text-text transition-colors border-b-2 border-transparent hover:border-brand-crimson pb-0.5"
+              >
+                Catalog
+              </a>
+              <a
+                href="#departments-section"
+                className="hover:text-text transition-colors border-b-2 border-transparent hover:border-brand-crimson pb-0.5"
+              >
+                Departments
+              </a>
+              <a
+                href="#emi-calculator-section"
+                className="hover:text-text transition-colors border-b-2 border-transparent hover:border-brand-crimson pb-0.5"
+              >
+                0% EMI
+              </a>
+              <a
+                href="#showroom-section"
+                className="hover:text-text transition-colors border-b-2 border-transparent hover:border-brand-crimson pb-0.5"
+              >
+                Showroom
+              </a>
+              <a
+                href="#reviews-section"
+                className="hover:text-text transition-colors border-b-2 border-transparent hover:border-brand-crimson pb-0.5"
+              >
+                Reviews
+              </a>
+            </nav>
+          )}
+
+          {/* Right: Actions */}
           {isPublicPage ? (
-            /* Public Storefront Actions */
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               <a
-                href={`https://wa.me/${SITE.whatsappPhone}`}
-                target="_blank"
-                rel="noreferrer"
-                className="hidden md:flex items-center gap-1.5 text-xs text-muted hover:text-text transition-colors mr-1"
+                href={`tel:${SITE.supportPhone}`}
+                className="hidden lg:flex items-center gap-1.5 text-xs text-muted hover:text-text transition-colors"
               >
-                <Phone size={13} />
-                <span>+91 98200 12345</span>
+                <Phone size={13} className="text-brand-crimson" />
+                <span className="font-mono font-semibold">{SITE.displayPhone}</span>
               </a>
 
-              {/* Cart Drawer Trigger */}
+              {/* Cart Trigger */}
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setIsCartOpen(true)}
-                className="text-xs gap-1.5 cursor-pointer relative"
+                className="text-xs gap-1.5 cursor-pointer relative font-semibold border-border rounded-lg"
                 aria-label="View shopping cart"
               >
                 <ShoppingBag size={14} />
                 <span>Cart</span>
                 {totalCount > 0 && (
-                  <span className="bg-accent text-accent-fg text-[10px] font-medium px-1.5 py-0.2 rounded-md ml-0.5">
+                  <span className="bg-brand-crimson text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-0.5">
                     {totalCount}
                   </span>
                 )}
               </Button>
 
-              {/* Discreet Owner Portal Link */}
+              {/* Owner Portal */}
               <Link
                 to="/login"
-                className="text-xs px-2.5 sm:px-3 py-1.5 rounded-lg border border-border text-muted hover:text-text hover:bg-bg transition-colors flex items-center gap-1.5 font-medium"
+                className="text-xs px-3 py-1.5 rounded-lg border border-border text-muted hover:text-text hover:bg-surface-hover transition-colors flex items-center gap-1.5 font-medium"
               >
                 <Shield size={13} />
                 <span className="hidden sm:inline">Owner Portal</span>
               </Link>
             </div>
           ) : (
-            /* Admin & Workspace Actions */
-            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => navigate('/')}
-                className="text-xs px-2.5 sm:px-3"
+                className="text-xs px-3 rounded-lg"
                 title="View Public Storefront"
               >
                 <span className="hidden sm:inline">Storefront</span>
@@ -83,18 +116,18 @@ export function RootLayout() {
               </Button>
             </div>
           )}
-        </Container>
+        </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="flex-1 min-w-0">
+      {/* Main Content — push below fixed 64px header */}
+      <main className="flex-1 min-w-0 pt-16">
         <Suspense fallback={<div className="py-20 text-center text-muted">Loading page...</div>}>
           <Outlet />
         </Suspense>
       </main>
 
-      {/* Cart Drawer for Public Browsing */}
-      {isPublicPage && <CartDrawer />}
+      {/* Cart Slider Drawer */}
+      <CartDrawer />
     </div>
   );
 }

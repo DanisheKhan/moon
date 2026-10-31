@@ -1,14 +1,20 @@
 /**
  * Site metadata configuration for SEO and canonical URLs
+ * Sourced directly from physical flagship showroom: Near Reliance Smart, Md. Ali Road, Bhiwandi
  */
 export const SITE = {
   name: 'Star Enterprises',
-  legalName: 'Star Enterprises Mumbai',
-  description: 'Certified smartphones, home electronics, and premium modern furniture across two specialized stores with warranty and GST invoicing.',
+  legalName: 'Star Enterprises Bhiwandi',
+  tagline: 'Furniture, Electronics & Mobiles Showroom',
+  description: 'Bhiwandi’s flagship showroom for hallmark furniture, top-brand electronics, home appliances, and certified smartphones with official warranty, GST billing, and 0% EMI financing.',
   url: 'https://starenterprises.store',
-  defaultImage: 'https://starenterprises.store/og-banner.jpg',
-  supportPhone: '+91 98200 12345',
-  whatsappPhone: '919820012345',
-  gstin: '27AAAAA0000A1Z5',
-  address: 'Shop 101 & 102, Main Road Market, Mumbai, Maharashtra 400001',
+  defaultImage: '/images/storePic.jpeg',
+  supportPhone: '+91 9370011653',
+  whatsappPhone: '919370011653',
+  displayPhone: '+91 93700 11653',
+  gstin: '27AATPQ6775F1ZV',
+  landmark: 'Near Reliance Smart',
+  address: 'Near Reliance Smart, Md. Ali Road, Bhiwandi, Maharashtra 421302',
+  openingHours: 'Mon - Sun: 10:00 AM - 10:00 PM',
+  financePartners: ['Bajaj Finserv', 'HDB Financial Services', 'TVS Credit'],
 };
