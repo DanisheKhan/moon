@@ -5,12 +5,15 @@ import {
   MapPin,
   MessageCircle,
   Calculator,
-  Clock,
   Store,
+  ArrowUpRight,
 } from 'lucide-react';
 import { Container, Button } from '@/shared/ui';
 import { motion } from '@/shared/motion';
 import { SITE } from '@/shared/lib/site';
+import { FlipWords } from '@/components/ui/flip-words';
+
+const HERO_WORDS = ['Enterprises', 'Furniture', 'Electronics', 'Smartphones'];
 
 /**
  * @param {Object} props
@@ -28,7 +31,7 @@ export function StoreHeroShowcase({ onExploreCatalog, onOpenCalculator }) {
       {/* ── Main hero body ── */}
       <div className="flex-1 flex items-center py-12 sm:py-16 lg:py-20">
         <Container size="xl" className="w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-stretch min-w-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center min-w-0">
 
             {/* ── Left: Typography column ── */}
             <div className="flex flex-col gap-7 min-w-0">
@@ -46,9 +49,12 @@ export function StoreHeroShowcase({ onExploreCatalog, onOpenCalculator }) {
                 <h1 className="text-[clamp(3rem,8vw,5.5rem)] font-black tracking-tight leading-[0.95] text-brand-crimson">
                   STAR
                 </h1>
-                <p className="text-[clamp(1.8rem,5vw,3.2rem)] font-black tracking-tight leading-tight text-text">
-                  Enterprises
-                </p>
+                <div className="text-[clamp(1.8rem,5vw,3.2rem)] font-black tracking-tight leading-tight text-text">
+                  <FlipWords
+                    words={HERO_WORDS}
+                    className="px-0 text-text font-black tracking-tight"
+                  />
+                </div>
                 {/* Gold rule with tagline */}
                 <div className="flex items-center gap-3 pt-3">
                   <span className="h-px flex-1 bg-brand-gold/40" />
@@ -120,65 +126,51 @@ export function StoreHeroShowcase({ onExploreCatalog, onOpenCalculator }) {
               </div>
             </div>
 
-            {/* ── Right: Showroom image ── */}
+            {/* ── Right: Flagship Showroom Hero Visual ── */}
             <motion.div
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="rounded-2xl overflow-hidden border border-border bg-surface shadow-sm min-w-0 h-full flex flex-col"
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="relative rounded-2xl overflow-hidden border border-border bg-surface shadow-sm min-w-0 aspect-video w-full"
             >
-              {/* Image — flex-1 fills remaining height, no fixed aspect ratio */}
-              <div className="relative flex-1 min-h-0 overflow-hidden bg-surface-subtle">
-                <img
-                  src="/images/storePic.jpeg"
-                  alt="Star Enterprises Flagship Showroom — Md. Ali Road, Bhiwandi"
-                  className="absolute inset-0 w-full h-full object-cover object-center block"
-                  loading="eager"
-                />
-                {/* Minimal corner badge */}
-                <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface/95 border border-border text-[11px] font-semibold shadow-sm">
-                  <Store size={11} className="text-brand-crimson" />
-                  <span>Md. Ali Road Showroom</span>
+              <img
+                src="/images/storePic.jpeg"
+                alt="Star Enterprises Flagship Showroom — Md. Ali Road, Bhiwandi"
+                className="w-full h-full object-cover block"
+                style={{ width: '100%', height: '100%' }}
+                loading="eager"
+              />
+
+              {/* Top status overlay */}
+              <div className="absolute top-3 inset-x-3 flex items-center justify-between gap-2 pointer-events-none">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface/95 border border-border text-xs font-semibold text-text shadow-xs">
+                  <span className="w-2 h-2 rounded-full bg-brand-sage shrink-0" />
+                  <span>Open 7 Days · 10 AM – 10 PM</span>
+                </div>
+                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface/95 border border-border text-xs font-semibold text-brand-crimson shadow-xs">
+                  <Store size={13} className="shrink-0" />
+                  <span>Flagship Showroom</span>
                 </div>
               </div>
 
-              {/* Card footer */}
-              <div className="px-5 py-3.5 bg-surface border-t border-border flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
-                <div className="flex items-center gap-4">
-                  <span className="flex items-center gap-1.5">
-                    <Clock size={12} className="text-brand-sage shrink-0" />
-                    Open 7 Days · 10 AM – 10 PM
-                  </span>
+              {/* Bottom location & direction strip overlay */}
+              <div className="absolute bottom-3 inset-x-3 flex items-center justify-between gap-2 pointer-events-auto">
+                <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface/95 border border-border text-xs font-medium text-text shadow-xs truncate">
+                  <MapPin size={13} className="text-brand-crimson shrink-0" />
+                  <span className="truncate">Near Reliance Smart, Md. Ali Road</span>
                 </div>
+
                 <a
                   href="https://maps.google.com/?q=Near+Reliance+Smart+Md+Ali+Road+Bhiwandi"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-xs text-brand-crimson hover:underline font-bold"
+                  className="inline-flex items-center gap-1 px-3.5 py-2 rounded-xl bg-text text-accent-fg hover:bg-accent text-xs font-semibold transition-colors shadow-xs shrink-0"
                 >
-                  Get Directions →
+                  <span>Directions</span>
+                  <ArrowUpRight size={13} />
                 </a>
               </div>
             </motion.div>
-          </div>
-        </Container>
-      </div>
-
-      {/* ── Bottom stat bar — full width, separated by top border ── */}
-      <div className="border-t border-border bg-surface-subtle py-4">
-        <Container size="xl">
-          <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-6 text-[11px] font-bold uppercase tracking-[0.15em] text-muted">
-            <span>10+ Years of Trust</span>
-            <span className="w-px h-3.5 bg-border hidden sm:block" />
-            <span>500+ Happy Families</span>
-            <span className="w-px h-3.5 bg-border hidden sm:block" />
-            <span>0% Interest EMI</span>
-            <span className="w-px h-3.5 bg-border hidden sm:block" />
-            <span>Official GST Billing</span>
-            <span className="w-px h-3.5 bg-border hidden sm:block" />
-            <span className="font-mono normal-case tracking-normal text-text font-bold">
-              {SITE.displayPhone}
-            </span>
           </div>
         </Container>
       </div>
