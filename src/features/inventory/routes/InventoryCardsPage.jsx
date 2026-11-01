@@ -311,7 +311,7 @@ export function InventoryCardsPage() {
               >
                 {/* Card Top: Image & Status Badges */}
                 <div className="space-y-2.5">
-                  <div className="relative w-full h-32 rounded-lg overflow-hidden border border-border bg-bg/40 flex items-center justify-center">
+                  <div className="relative w-full aspect-[16/10] rounded-lg overflow-hidden border border-border bg-bg/40 flex items-center justify-center">
                     {prod.image_url ? (
                       <img
                         src={prod.image_url}
@@ -372,11 +372,11 @@ export function InventoryCardsPage() {
 
                   {/* Category & Brand tags */}
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-xs font-medium px-2.5 py-0.5 rounded-md bg-bg border border-border text-muted">
+                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-surface-subtle border border-border text-muted">
                       {prod.categories?.name || 'General'}
                     </span>
                     {prod.brands?.name && prod.brands.name !== '-' && (
-                      <span className="text-xs font-medium px-2.5 py-0.5 rounded-md bg-bg border border-border text-muted">
+                      <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-surface-subtle border border-border text-muted">
                         {prod.brands.name}
                       </span>
                     )}
@@ -384,10 +384,10 @@ export function InventoryCardsPage() {
 
                   {/* Title & SKU */}
                   <div>
-                    <h3 className="font-bold text-base text-text line-clamp-1" title={prod.name}>
+                    <h3 className="font-bold text-sm sm:text-base text-text line-clamp-2 min-h-11 leading-snug" title={prod.name}>
                       {prod.name}
                     </h3>
-                    <div className="text-xs font-mono text-muted flex items-center gap-2 mt-0.5">
+                    <div className="text-[11px] font-mono text-muted flex items-center gap-2 mt-1">
                       <span>SKU: {prod.sku}</span>
                       {prod.hsn_code && <span>• HSN {prod.hsn_code}</span>}
                     </div>
@@ -397,17 +397,17 @@ export function InventoryCardsPage() {
                 {/* Card Middle: Price & GST info */}
                 <div className="pt-2.5 border-t border-border flex items-baseline justify-between">
                   <div>
-                    <div className="text-xl sm:text-2xl font-extrabold text-text font-mono tracking-tight">
+                    <div className="text-lg sm:text-xl font-bold text-text font-mono tracking-tight">
                       {formatCurrency(prod.selling_price)}
                     </div>
-                    <div className="text-xs text-muted mt-0.5">
+                    <div className="text-[11px] text-muted mt-0.5">
                       GST {prod.gst_rate}% Included
                     </div>
                   </div>
                   {prod.cost_price > 0 && (
                     <div className="text-right">
-                      <span className="text-xs uppercase tracking-wider text-muted font-semibold block">Cost</span>
-                      <span className="text-sm font-bold font-mono text-muted">{formatCurrency(prod.cost_price)}</span>
+                      <span className="text-[10px] uppercase tracking-wider text-muted font-medium block">Cost</span>
+                      <span className="text-xs font-semibold font-mono text-muted">{formatCurrency(prod.cost_price)}</span>
                     </div>
                   )}
                 </div>
@@ -420,7 +420,7 @@ export function InventoryCardsPage() {
                       setProductToEdit(prod);
                       setEditInitialTab('details');
                     }}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold bg-surface-subtle hover:bg-surface text-text border border-border hover:border-brand-sage transition-all cursor-pointer shadow-2xs"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold bg-surface-subtle hover:bg-surface text-text border border-border hover:border-brand-sage transition-all cursor-pointer shadow-2xs"
                     title="Edit details, pricing, and stock"
                   >
                     <Pencil size={12} className="text-brand-sage" />
@@ -430,7 +430,7 @@ export function InventoryCardsPage() {
                   <button
                     type="button"
                     onClick={() => setProductToDelete(prod)}
-                    className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-danger/30 bg-danger/5 hover:bg-danger/10 text-danger transition-colors cursor-pointer"
+                    className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-lg text-xs font-medium border border-danger/30 bg-danger/5 hover:bg-danger/10 text-danger transition-colors cursor-pointer"
                     title="Delete Product"
                   >
                     <Trash2 size={12} />

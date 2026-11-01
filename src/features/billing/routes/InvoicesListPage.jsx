@@ -56,7 +56,7 @@ export function InvoicesListPage() {
   // Filters state
   const [storeFilter, setStoreFilter] = useState(initialStoreCode);
   const [statusFilter, setStatusFilter] = useState('all');
-  const [dateFilter, setDateFilter] = useState('month');
+  const [dateFilter, setDateFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
 
