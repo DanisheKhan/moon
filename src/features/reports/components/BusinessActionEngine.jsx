@@ -6,12 +6,14 @@ import {
   ArrowRight,
   ShieldAlert,
 } from 'lucide-react';
+import { DiscountLeakageCard } from './DiscountLeakageCard';
 
 export function BusinessActionEngine({ actions = {} }) {
   const stockoutAlerts = actions.stockoutAlerts || [];
   const attachOpportunity = actions.attachOpportunity || {};
   const deadCapital = actions.deadCapital || { totalTrappedCapital: 0, items: [] };
   const mdrSavings = actions.mdrSavings || { currentCost: 0, potentialSavings: 0 };
+  const discountLeakage = actions.discountLeakage || {};
 
   return (
     <div className="space-y-6">
@@ -22,17 +24,17 @@ export function BusinessActionEngine({ actions = {} }) {
             Executive Business Improvement Engine
           </h2>
           <p className="text-xs text-muted">
-            Actionable profit levers, inventory capital preservation, and fee reduction recommendations.
+            Actionable profit levers, inventory capital preservation, fee reduction, and discount monitoring.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-surface border border-border text-muted">
-            4 Actionable Levers Active
+            5 Actionable Levers Active
           </span>
         </div>
       </div>
 
-      {/* 4 Action Cards Grid */}
+      {/* Action Cards Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Lever 1: Stockout Prevention Watchlist */}
         <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs space-y-4 min-w-0">
@@ -237,6 +239,9 @@ export function BusinessActionEngine({ actions = {} }) {
             </p>
           </div>
         </div>
+
+        {/* Lever 5: Counter Discount & Margin Leakage Watchdog */}
+        <DiscountLeakageCard discountLeakage={discountLeakage} />
       </div>
     </div>
   );

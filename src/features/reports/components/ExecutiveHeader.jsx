@@ -1,4 +1,4 @@
-import { Building2 } from 'lucide-react';
+import { Building2, Printer, Download } from 'lucide-react';
 
 const DATE_RANGES = [
   { id: 'today', label: 'Today' },
@@ -18,6 +18,8 @@ export function ExecutiveHeader({
   setDateRange,
   storeCode,
   setStoreCode,
+  onOpenEodModal,
+  onExportGstr1,
 }) {
   return (
     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-border">
@@ -34,6 +36,32 @@ export function ExecutiveHeader({
       </div>
 
       <div className="flex items-center gap-2 flex-wrap">
+        {/* Quick Action: Day-End Z-Report */}
+        {onOpenEodModal && (
+          <button
+            type="button"
+            onClick={onOpenEodModal}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface-subtle text-text text-xs font-semibold transition-all cursor-pointer shadow-2xs shrink-0 select-none"
+            title="Open printable Day-End EOD Z-Report for cashier handover"
+          >
+            <Printer size={13} className="text-muted" />
+            <span className="hidden sm:inline">Day-End</span> Z-Report
+          </button>
+        )}
+
+        {/* Quick Action: GSTR-1 Export */}
+        {onExportGstr1 && (
+          <button
+            type="button"
+            onClick={onExportGstr1}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-sage-border bg-brand-sage-subtle text-brand-sage-text hover:bg-brand-sage-subtle/80 text-xs font-semibold transition-all cursor-pointer shadow-2xs shrink-0 select-none"
+            title="Export GSTR-1 Sales Register as CSV"
+          >
+            <Download size={13} className="text-brand-sage" />
+            <span>GSTR-1 CSV</span>
+          </button>
+        )}
+
         {/* Store Branch Selector */}
         <div className="relative">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface text-xs font-medium text-text">

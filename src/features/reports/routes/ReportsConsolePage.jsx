@@ -2,30 +2,34 @@ import { useState } from 'react';
 import { useOwnerDashboard } from '../hooks/useReports';
 import { ExecutiveHeader } from '../components/ExecutiveHeader';
 import { ExecutiveKpiGrid } from '../components/ExecutiveKpiGrid';
+import { SalesVelocityTimeline } from '../components/SalesVelocityTimeline';
+import { CashDrawerReconciliation } from '../components/CashDrawerReconciliation';
+import { GstTaxConsole } from '../components/GstTaxConsole';
+import { MerchandiseRankings } from '../components/MerchandiseRankings';
 import { BusinessActionEngine } from '../components/BusinessActionEngine';
-import { CategoryMarginTable } from '../components/CategoryMarginTable';
-import { OperationalHourlyHeatmap } from '../components/OperationalHourlyHeatmap';
 import { PaymentAndBranchSplit } from '../components/PaymentAndBranchSplit';
+import { DayEndZReportModal } from '../components/DayEndZReportModal';
 import { KpiGridSkeleton } from '@/shared/ui';
 import {
   LayoutDashboard,
+  Receipt,
+  PackageSearch,
   Zap,
-  Layers,
-  Clock,
   Info,
 } from 'lucide-react';
 
 const PERSPECTIVES = [
   { id: 'overview', label: 'Overview & Financials', icon: LayoutDashboard },
-  { id: 'actions', label: 'Business Action Engine', icon: Zap, badge: '4 Levers' },
-  { id: 'categories', label: 'Category & Margins', icon: Layers },
-  { id: 'operations', label: 'Operational Heatmap', icon: Clock },
+  { id: 'gst', label: 'GST & Tax Register', icon: Receipt, badge: 'GSTR-1' },
+  { id: 'merchandise', label: 'Merchandise & Stock Velocity', icon: PackageSearch },
+  { id: 'actions', label: 'Business Action Engine', icon: Zap, badge: '5 Levers' },
 ];
 
 export function ReportsConsolePage() {
   const [dateRange, setDateRange] = useState('month');
   const [storeCode, setStoreCode] = useState('all');
   const [activeTab, setActiveTab] = useState('overview');
+  const [isEodModalOpen, setIsEodModalOpen] = useState(false);
 
   const {
     data: dashboardData,
@@ -36,18 +40,75 @@ export function ReportsConsolePage() {
   const payments = dashboardData?.payments || {};
   const branches = dashboardData?.branches || [];
   const categories = dashboardData?.categories || [];
-  const hourlySales = dashboardData?.hourlySales || [];
   const businessActions = dashboardData?.businessActions || {};
   const recentInvoices = dashboardData?.recentInvoices || [];
+  const salesVelocity = dashboardData?.salesVelocity || [];
+  const cashDrawer = dashboardData?.cashDrawer || {};
+  const gstCompliance = dashboardData?.gstCompliance || {};
+  const merchandise = dashboardData?.merchandise || {};
+  const eodReport = dashboardData?.eodReport || {};
+
+  const handleExportGstr1 = () => {
+    const gstr1Rows = gstCompliance.gstr1Rows || [];
+    if (gstr1Rows.length === 0) return;
+
+    const headers = [
+      'Invoice Number',
+      'Invoice Date',
+      'Store Branch',
+      'Customer Name',
+      'Customer Phone',
+      'Customer GSTIN',
+      'Place of Supply',
+      'Taxable Value (INR)',
+      'CGST Amount (INR)',
+      'SGST Amount (INR)',
+      'IGST Amount (INR)',
+      'Grand Total (INR)',
+      'Invoice Status',
+    ];
+
+    const csvContent = [
+      headers.join(','),
+      ...gstr1Rows.map((r) =>
+        [
+          `"${r.invoiceNumber}"`,
+          `"${r.invoiceDate}"`,
+          `"${r.storeName}"`,
+          `"${r.customerName}"`,
+          `"${r.customerPhone}"`,
+          `"${r.customerGstin}"`,
+          `"${r.placeOfSupply}"`,
+          r.taxableValue,
+          r.cgstAmount,
+          r.sgstAmount,
+          r.igstAmount,
+          r.grandTotal,
+          `"${r.status}"`,
+        ].join(',')
+      ),
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Star_Enterprises_GSTR1_${dateRange}_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="space-y-6 pb-12">
-      {/* 1. Executive Control Header */}
+      {/* 1. Executive Control Header with 1-Click Operational Actions */}
       <ExecutiveHeader
         dateRange={dateRange}
         setDateRange={setDateRange}
         storeCode={storeCode}
         setStoreCode={setStoreCode}
+        onOpenEodModal={() => setIsEodModalOpen(true)}
+        onExportGstr1={handleExportGstr1}
       />
 
       {/* Zero Transaction Notice if current filter is empty */}
@@ -107,25 +168,53 @@ export function ReportsConsolePage() {
       {/* 4. Dynamic Perspective Viewport */}
       <div className="pt-2">
         {activeTab === 'overview' && (
-          <PaymentAndBranchSplit
-            payments={payments}
-            branches={branches}
-            recentInvoices={recentInvoices}
+          <div className="space-y-6">
+            {/* Sales Velocity Daily Trajectory Curve */}
+            <SalesVelocityTimeline
+              salesVelocity={salesVelocity}
+              periodComparison={summary.periodComparison}
+            />
+
+            {/* Cash Drawer & Daily Till Reconciliation */}
+            <CashDrawerReconciliation
+              cashDrawer={cashDrawer}
+              totalSales={summary.totalSales}
+            />
+
+            {/* Channels & Multi-Branch Split */}
+            <PaymentAndBranchSplit
+              payments={payments}
+              branches={branches}
+              recentInvoices={recentInvoices}
+            />
+          </div>
+        )}
+
+        {activeTab === 'gst' && (
+          <GstTaxConsole
+            gstCompliance={gstCompliance}
+            dateRange={dateRange}
+          />
+        )}
+
+        {activeTab === 'merchandise' && (
+          <MerchandiseRankings
+            merchandise={merchandise}
+            categories={categories}
           />
         )}
 
         {activeTab === 'actions' && (
           <BusinessActionEngine actions={businessActions} />
         )}
-
-        {activeTab === 'categories' && (
-          <CategoryMarginTable categories={categories} />
-        )}
-
-        {activeTab === 'operations' && (
-          <OperationalHourlyHeatmap hourlySales={hourlySales} />
-        )}
       </div>
+
+      {/* Day-End EOD Z-Report Modal */}
+      <DayEndZReportModal
+        isOpen={isEodModalOpen}
+        onClose={() => setIsEodModalOpen(false)}
+        eodData={eodReport}
+      />
     </div>
   );
 }

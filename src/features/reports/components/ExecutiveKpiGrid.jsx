@@ -5,16 +5,20 @@ import {
   CreditCard,
   CircleDollarSign,
   Package,
+  ArrowUpRight,
 } from 'lucide-react';
 
 export function ExecutiveKpiGrid({ summary = {} }) {
   const totalSales = summary.totalSales || 0;
   const totalGst = summary.totalGst ?? summary.totalTax ?? 0;
+  const totalCgst = summary.totalCgst ?? Math.round(totalGst / 2);
+  const totalSgst = summary.totalSgst ?? Math.round(totalGst / 2);
   const totalInvoices = summary.totalInvoices ?? summary.invoiceCount ?? 0;
   const averageTicket = summary.averageTicket || (totalInvoices > 0 ? Math.round(totalSales / totalInvoices) : 0);
   const estimatedGrossProfit = summary.estimatedGrossProfit || 0;
   const grossMarginPercent = summary.grossMarginPercent || (totalSales > 0 ? (estimatedGrossProfit / totalSales) * 100 : 0);
   const totalInventoryValue = summary.totalInventoryValue || 0;
+  const periodComparison = summary.periodComparison;
 
   return (
     <div className="space-y-4">
@@ -30,9 +34,16 @@ export function ExecutiveKpiGrid({ summary = {} }) {
               {formatCurrency(totalSales)}
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted truncate">
-              <span>Tax inclusive revenue</span>
+              {periodComparison?.deltaPct !== undefined ? (
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[10px] font-semibold bg-brand-sage-subtle text-brand-sage-text border border-brand-sage-border font-mono">
+                  <ArrowUpRight size={11} className="text-brand-sage" />
+                  +{periodComparison.deltaPct}%
+                </span>
+              ) : (
+                <span>Tax inclusive</span>
+              )}
               <span>•</span>
-              <span className="font-mono">{totalInvoices} bills</span>
+              <span className="font-mono">{totalInvoices} {totalInvoices === 1 ? 'bill' : 'bills'}</span>
             </div>
           </div>
           <div className="w-10 h-10 rounded-lg bg-bg border border-border flex items-center justify-center text-text shrink-0">
@@ -50,7 +61,7 @@ export function ExecutiveKpiGrid({ summary = {} }) {
               {formatCurrency(estimatedGrossProfit)}
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted truncate">
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-brand-sage-subtle text-brand-sage-text border border-brand-sage-border">
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-brand-sage-subtle text-brand-sage-text border border-brand-sage-border font-mono">
                 {grossMarginPercent.toFixed(1)}% margin
               </span>
               <span>Net of unit COGS</span>
@@ -70,7 +81,9 @@ export function ExecutiveKpiGrid({ summary = {} }) {
             <div className="text-2xl font-bold font-mono tracking-tight text-text truncate">
               {formatCurrency(totalGst)}
             </div>
-            <span className="text-xs text-muted block truncate">CGST + SGST (GSTR-1 Ready)</span>
+            <span className="text-xs text-muted block truncate font-mono text-[11px]">
+              CGST: {formatCurrency(totalCgst)} • SGST: {formatCurrency(totalSgst)}
+            </span>
           </div>
           <div className="w-10 h-10 rounded-lg bg-bg border border-border flex items-center justify-center text-text shrink-0">
             <Receipt size={18} />
@@ -86,7 +99,9 @@ export function ExecutiveKpiGrid({ summary = {} }) {
             <div className="text-2xl font-bold font-mono tracking-tight text-text truncate">
               {formatCurrency(averageTicket)}
             </div>
-            <span className="text-xs text-muted block truncate">Basket spend per customer bill</span>
+            <span className="text-xs text-muted block truncate">
+              Basket spend per customer bill
+            </span>
           </div>
           <div className="w-10 h-10 rounded-lg bg-bg border border-border flex items-center justify-center text-text shrink-0">
             <CreditCard size={18} />
