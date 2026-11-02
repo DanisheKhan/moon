@@ -45,7 +45,16 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
 
   let invQuery = supabase
     .from('invoices')
-    .select('id, store_id, invoice_number, customer_name, subtotal, discount_amount, cgst_amount, sgst_amount, igst_amount, grand_total, status, created_at, stores (id, name, code, invoice_prefix, gstin)')
+    .select(`
+      id, store_id, invoice_number, customer_name, subtotal, discount_amount,
+      cgst_amount, sgst_amount, igst_amount, grand_total, status, created_at,
+      stores (id, name, code, invoice_prefix, gstin),
+      order_items (
+        id, invoice_id, product_id, item_name, quantity, unit_price, discount,
+        taxable_value, cgst_amount, sgst_amount, total_amount,
+        products (id, name, cost_price, selling_price, categories (id, name, slug), stores (code))
+      )
+    `)
     .order('created_at', { ascending: false });
 
   if (dateFilter) {
@@ -88,24 +97,8 @@ export async function getOwnerDashboardData({ dateRange = 'month', storeCode = '
     products = prodRes.data || [];
     storesList = storesRes.data || [];
 
-    // Filter invoices by storeCode first
-    const relevantInvoices = storeCode === 'all'
-      ? invoices
-      : invoices.filter((inv) => inv.stores?.code === storeCode);
-    const relevantInvoiceIds = relevantInvoices.map((inv) => inv.id);
-
-    // Optimized: Only query order items for relevant invoices instead of scanning entire database
-    if (relevantInvoiceIds.length > 0) {
-      const itemsRes = await supabase
-        .from('order_items')
-        .select('id, invoice_id, product_id, item_name, quantity, unit_price, discount, taxable_value, cgst_amount, sgst_amount, total_amount, products (id, name, cost_price, selling_price, categories (id, name, slug), stores (code))')
-        .in('invoice_id', relevantInvoiceIds);
-
-      if (itemsRes.error) throw itemsRes.error;
-      orderItems = itemsRes.data || [];
-    } else {
-      orderItems = [];
-    }
+    // Extract all order items directly from the embedded parallel query with 0 extra network hops
+    orderItems = invoices.flatMap((inv) => (inv.order_items || []).map((it) => ({ ...it, invoice_id: inv.id })));
   } catch (err) {
     console.warn('Supabase query failed, using offline fallback', err);
     return getOfflineOwnerDashboard(dateRange, storeCode);

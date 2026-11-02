@@ -15,7 +15,7 @@ import {
   listCategoriesByStore,
   createCategory,
 } from '../api/inventory.api';
-import { getPersistentCache } from '@/shared/lib/cachePersistence';
+import { getPersistentCache, evictPersistentCache } from '@/shared/lib/cachePersistence';
 
 export const inventoryKeys = {
   all: ['inventory'],
@@ -31,8 +31,8 @@ export function useProducts(storeId, filters = {}) {
     queryFn: () => listProductsByStore({ storeId, ...filters }),
     placeholderData: () => (!hasFilters ? getCachedStoreProducts(storeId) || undefined : undefined),
     enabled: Boolean(storeId),
-    staleTime: 1000 * 60 * 3,
-    refetchOnWindowFocus: false,
+    staleTime: 1000 * 15,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -42,8 +42,8 @@ export function useProductUnits(storeId, productId = null, status = null, option
     queryKey: inventoryKeys.units(storeId, productId, status),
     queryFn: () => listProductUnits({ storeId, productId, status }),
     enabled: isEnabled,
-    staleTime: 1000 * 60 * 3,
-    refetchOnWindowFocus: false,
+    staleTime: 1000 * 15,
+    refetchOnWindowFocus: true,
     ...options,
   });
 }
@@ -53,6 +53,9 @@ export function useCreateProductUnit() {
   return useMutation({
     mutationFn: createProductUnit,
     onSuccess: () => {
+      evictPersistentCache('inv_prods');
+      evictPersistentCache('all_products');
+      evictPersistentCache('dashboard');
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
@@ -64,6 +67,9 @@ export function useAdjustStock() {
   return useMutation({
     mutationFn: adjustInventoryStock,
     onSuccess: () => {
+      evictPersistentCache('inv_prods');
+      evictPersistentCache('all_products');
+      evictPersistentCache('dashboard');
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
@@ -75,6 +81,9 @@ export function useAddSerializedUnit() {
   return useMutation({
     mutationFn: addSerializedUnit,
     onSuccess: () => {
+      evictPersistentCache('inv_prods');
+      evictPersistentCache('all_products');
+      evictPersistentCache('dashboard');
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
@@ -86,6 +95,9 @@ export function useRemoveSerializedUnit() {
   return useMutation({
     mutationFn: removeSerializedUnit,
     onSuccess: () => {
+      evictPersistentCache('inv_prods');
+      evictPersistentCache('all_products');
+      evictPersistentCache('dashboard');
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
@@ -97,6 +109,9 @@ export function useUpdatePricing() {
   return useMutation({
     mutationFn: updateProductPricing,
     onSuccess: () => {
+      evictPersistentCache('inv_prods');
+      evictPersistentCache('all_products');
+      evictPersistentCache('dashboard');
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
@@ -108,6 +123,9 @@ export function useCreateProduct() {
   return useMutation({
     mutationFn: createProduct,
     onSuccess: () => {
+      evictPersistentCache('inv_prods');
+      evictPersistentCache('all_products');
+      evictPersistentCache('dashboard');
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
@@ -120,8 +138,8 @@ export function useAllProducts(filters = {}) {
     queryKey: [...inventoryKeys.all, 'all-products', filters],
     queryFn: () => listAllProducts(filters),
     placeholderData: () => (isDefault ? getPersistentCache('all_products') || undefined : undefined),
-    staleTime: 1000 * 60 * 3,
-    refetchOnWindowFocus: false,
+    staleTime: 1000 * 15,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -130,6 +148,9 @@ export function useUpdateProduct() {
   return useMutation({
     mutationFn: ({ productId, updates }) => updateProduct(productId, updates),
     onSuccess: () => {
+      evictPersistentCache('inv_prods');
+      evictPersistentCache('all_products');
+      evictPersistentCache('dashboard');
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
@@ -141,6 +162,9 @@ export function useDeleteProduct() {
   return useMutation({
     mutationFn: deleteProduct,
     onSuccess: () => {
+      evictPersistentCache('inv_prods');
+      evictPersistentCache('all_products');
+      evictPersistentCache('dashboard');
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
@@ -151,7 +175,8 @@ export function useCategories(storeId) {
   return useQuery({
     queryKey: inventoryKeys.categories(storeId),
     queryFn: () => listCategoriesByStore(storeId),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 30,
+    refetchOnWindowFocus: true,
   });
 }
 

@@ -410,6 +410,12 @@ export function AdminConsoleLayout() {
 
           {/* Right Header Items / Nav Menu */}
           <div className="flex items-center gap-3 shrink-0">
+            {/* Real-time sync indicator */}
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-subtle border border-border text-[11px] select-none shadow-2xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-sage animate-pulse shrink-0" />
+              <span className="font-medium text-text">Live Sync</span>
+            </div>
+
             {/* Live Clock */}
             <div className="text-xs font-mono font-medium text-muted px-2 py-1 select-none">
               {currentTime}

@@ -7,4 +7,12 @@ export { Container } from './Container';
 export { Modal } from './Modal';
 export { Table, TableHead, TableBody, TableRow, TableCell, TableHeaderCell } from './Table';
 export { RouteErrorBoundary } from './RouteErrorBoundary';
+export {
+  Skeleton,
+  Spinner,
+  TableSkeleton,
+  KpiGridSkeleton,
+  CardSkeleton,
+  PosCatalogSkeleton,
+} from './Skeleton';
 

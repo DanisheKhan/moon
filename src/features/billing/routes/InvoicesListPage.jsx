@@ -10,6 +10,7 @@ import {
   TableRow,
   TableCell,
   TableHeaderCell,
+  TableSkeleton,
 } from '@/shared/ui';
 import { useAllInvoices, useInvoiceDetail } from '../hooks/useBilling';
 import { useStores } from '@/features/stores';
@@ -273,10 +274,7 @@ export function InvoicesListPage() {
 
       {/* 4. Bills Table */}
       {isLoading ? (
-        <div className="py-20 text-center space-y-3">
-          <div className="w-8 h-8 rounded-full border-2 border-accent border-t-transparent animate-spin mx-auto" />
-          <p className="text-xs text-muted">Retrieving all store invoices...</p>
-        </div>
+        <TableSkeleton rows={7} cols={6} />
       ) : invoices.length === 0 ? (
         <Card className="p-12 text-center space-y-2 border-dashed">
           <Receipt size={32} className="text-muted mx-auto" />

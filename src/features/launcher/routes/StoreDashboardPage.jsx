@@ -4,7 +4,7 @@ import { useStores, useStore } from '@/features/stores';
 import { useAllProducts } from '@/features/inventory';
 import { useInvoices } from '@/features/billing';
 import { useOwnerDashboard } from '@/features/reports';
-import { Button, Badge } from '@/shared/ui';
+import { Button, Badge, Skeleton } from '@/shared/ui';
 import { formatCurrency, formatDate } from '@/shared/lib/format';
 import {
   IndianRupee,
@@ -91,7 +91,7 @@ export function StoreDashboardPage() {
   }, [storeProducts]);
 
   // Live store-specific financials from real transactional data
-  const { data: dashboardData } = useOwnerDashboard({
+  const { data: dashboardData, isLoading: isDashboardLoading } = useOwnerDashboard({
     dateRange: selectedPeriod,
     storeCode: effectiveStoreCode,
   });
@@ -174,6 +174,22 @@ export function StoreDashboardPage() {
       </div>
 
       {/* 3 CORE FINANCIAL CARDS */}
+      {isDashboardLoading && !dashboardData ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 min-w-0">
+          {[1, 2, 3].map((idx) => (
+            <div key={`store-card-skel-${idx}`} className="p-5 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-4 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="w-8 h-8 rounded-lg" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-36" />
+                <Skeleton className="h-3 w-48" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 min-w-0">
         {/* Card 1: Total Sales */}
         <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-4 shadow-2xs">
@@ -239,6 +255,7 @@ export function StoreDashboardPage() {
           </div>
         </div>
       </div>
+      )}
 
       {/* TWO COLUMN SECTION: STOCK ALERTS & LIVE POS FEED */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-w-0">

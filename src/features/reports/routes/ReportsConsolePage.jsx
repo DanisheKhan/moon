@@ -6,6 +6,7 @@ import { BusinessActionEngine } from '../components/BusinessActionEngine';
 import { CategoryMarginTable } from '../components/CategoryMarginTable';
 import { OperationalHourlyHeatmap } from '../components/OperationalHourlyHeatmap';
 import { PaymentAndBranchSplit } from '../components/PaymentAndBranchSplit';
+import { KpiGridSkeleton } from '@/shared/ui';
 import {
   LayoutDashboard,
   Zap,
@@ -69,7 +70,11 @@ export function ReportsConsolePage() {
       )}
 
       {/* 2. Core 4 Financial Telemetry Cards */}
-      <ExecutiveKpiGrid summary={summary} />
+      {isLoading && !dashboardData ? (
+        <KpiGridSkeleton count={4} />
+      ) : (
+        <ExecutiveKpiGrid summary={summary} />
+      )}
 
       {/* 3. Executive Perspective Switcher Tabs */}
       <div className="flex items-center gap-1.5 border-b border-border overflow-x-auto pb-px">

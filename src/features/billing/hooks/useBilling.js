@@ -11,7 +11,7 @@ import {
   listReturns,
 } from '../api/billing.api';
 import { inventoryKeys } from '@/features/inventory';
-import { getPersistentCache } from '@/shared/lib/cachePersistence';
+import { getPersistentCache, evictPersistentCache } from '@/shared/lib/cachePersistence';
 
 export const billingKeys = {
   all: ['billing'],
@@ -26,8 +26,8 @@ export function useInvoices(storeId) {
     queryFn: () => listInvoices({ storeId }),
     placeholderData: () => getPersistentCache(`invoices_${storeId}`) || undefined,
     enabled: Boolean(storeId),
-    staleTime: 1000 * 60 * 3,
-    refetchOnWindowFocus: false,
+    staleTime: 1000 * 15,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -37,8 +37,8 @@ export function useAllInvoices(filters = {}) {
     queryKey: billingKeys.allInvoices(filters),
     queryFn: () => listAllInvoices(filters),
     placeholderData: () => (isDefault ? getPersistentCache('all_invoices') || undefined : undefined),
-    staleTime: 1000 * 60 * 3,
-    refetchOnWindowFocus: false,
+    staleTime: 1000 * 15,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -55,6 +55,10 @@ export function usePlaceSale() {
   return useMutation({
     mutationFn: placeSale,
     onSuccess: () => {
+      evictPersistentCache('invoices');
+      evictPersistentCache('dashboard');
+      evictPersistentCache('inv_prods');
+      evictPersistentCache('all_products');
       queryClient.invalidateQueries({ queryKey: billingKeys.all });
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
@@ -68,6 +72,8 @@ export function useUpdateInvoice() {
   return useMutation({
     mutationFn: updateInvoice,
     onSuccess: () => {
+      evictPersistentCache('invoices');
+      evictPersistentCache('dashboard');
       queryClient.invalidateQueries({ queryKey: billingKeys.all });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
       queryClient.invalidateQueries({ queryKey: ['inventory'] });
@@ -81,6 +87,8 @@ export function useVoidInvoice() {
   return useMutation({
     mutationFn: voidInvoice,
     onSuccess: () => {
+      evictPersistentCache('invoices');
+      evictPersistentCache('dashboard');
       queryClient.invalidateQueries({ queryKey: billingKeys.all });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
       queryClient.invalidateQueries({ queryKey: ['stores'] });
@@ -93,6 +101,8 @@ export function useRecordPayment() {
   return useMutation({
     mutationFn: recordPayment,
     onSuccess: () => {
+      evictPersistentCache('invoices');
+      evictPersistentCache('dashboard');
       queryClient.invalidateQueries({ queryKey: billingKeys.all });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
       queryClient.invalidateQueries({ queryKey: ['stores'] });
@@ -105,6 +115,10 @@ export function useProcessReturn() {
   return useMutation({
     mutationFn: processReturn,
     onSuccess: () => {
+      evictPersistentCache('invoices');
+      evictPersistentCache('dashboard');
+      evictPersistentCache('inv_prods');
+      evictPersistentCache('all_products');
       queryClient.invalidateQueries({ queryKey: billingKeys.all });
       queryClient.invalidateQueries({ queryKey: inventoryKeys.all });
       queryClient.invalidateQueries({ queryKey: ['inventory'] });

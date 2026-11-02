@@ -176,6 +176,27 @@ export function setPersistentCache(key, value) {
 }
 
 /**
+ * Evicts cache keys matching a pattern, or all if pattern === 'all'
+ */
+export function evictPersistentCache(pattern) {
+  try {
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key) continue;
+      if (pattern === 'all' && (key.startsWith(PREFIX) || key.startsWith('star_'))) {
+        keysToRemove.push(key);
+      } else if (key.includes(pattern)) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach((k) => localStorage.removeItem(k));
+  } catch (err) {
+    console.warn('[Cache] Failed to evict cache pattern:', pattern, err);
+  }
+}
+
+/**
  * Safely reads an item from local storage
  */
 export function getPersistentCache(key, maxAgeMs = 1000 * 60 * 60 * 24) {
@@ -201,27 +222,6 @@ export function getCachedDashboardData(dateRange = 'month', storeCode = 'all') {
   const cacheKey = `dashboard_${dateRange}_${storeCode}`;
   const cached = getPersistentCache(cacheKey);
   if (cached) return cached;
-
-  // Return verified real database seed for the default month/all view
-  if (dateRange === 'month' && storeCode === 'all') {
-    return VERIFIED_DASHBOARD_SEED;
-  }
-
-  // Filter seed by storeCode if available
-  if (dateRange === 'month' && storeCode !== 'all') {
-    const storeMetrics = VERIFIED_DASHBOARD_SEED.stores[storeCode];
-    if (storeMetrics) {
-      return {
-        ...VERIFIED_DASHBOARD_SEED,
-        summary: {
-          ...VERIFIED_DASHBOARD_SEED.summary,
-          totalSales: storeMetrics.sales,
-          invoiceCount: storeMetrics.invoiceCount,
-          totalInvoices: storeMetrics.invoiceCount,
-        },
-      };
-    }
-  }
 
   return null;
 }

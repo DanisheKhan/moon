@@ -9,6 +9,7 @@ import {
   TableRow,
   TableCell,
   TableHeaderCell,
+  TableSkeleton,
   Modal,
   Input,
   Select,
@@ -335,7 +336,7 @@ export function StaffManagementPage() {
           </div>
 
           {staffLoading ? (
-            <div className="py-16 text-center text-muted text-xs">Loading staff profiles...</div>
+            <TableSkeleton rows={6} cols={6} />
           ) : filteredStaffList.length === 0 ? (
             <div className="py-14 text-center border border-border rounded-xl bg-surface space-y-2">
               <Users size={32} className="mx-auto text-muted" />
@@ -546,7 +547,7 @@ export function StaffManagementPage() {
               </Button>
             </div>
             {leavesLoading ? (
-              <div className="py-12 text-center text-muted">Loading leave logs...</div>
+              <TableSkeleton rows={4} cols={5} />
             ) : leaves.length === 0 ? (
               <div className="py-12 text-center border border-border rounded-2xl bg-surface text-muted text-xs">
                 No leave applications recorded.
@@ -621,7 +622,7 @@ export function StaffManagementPage() {
           </div>
 
           {salariesLoading ? (
-            <div className="py-16 text-center text-muted">Loading monthly payroll register...</div>
+            <TableSkeleton rows={5} cols={6} />
           ) : salaries.length === 0 ? (
             <div className="py-16 text-center border border-border rounded-2xl bg-surface text-muted text-xs">
               No salary entries for this cycle.

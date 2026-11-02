@@ -6,6 +6,7 @@ import {
   Badge,
   Card,
   Modal,
+  PosCatalogSkeleton,
 } from '@/shared/ui';
 import { useProducts, useProductUnits } from '@/features/inventory';
 import { usePlaceSale, useInvoiceDetail } from '../hooks/useBilling';
@@ -86,7 +87,7 @@ export function POSPage() {
   const [pendingProduct, setPendingProduct] = useState(null);
 
   // Data Queries
-  const { data: products = [] } = useProducts(store?.id);
+  const { data: products = [], isLoading: isProductsLoading } = useProducts(store?.id);
   const { data: availableUnits = [], isLoading: unitsLoading } = useProductUnits(
     store?.id,
     pendingProduct?.id,
@@ -643,79 +644,89 @@ export function POSPage() {
               </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              {displayItems.map((p) => {
-                const stockQty = p.inventory?.[0]?.quantity_on_hand ?? 0;
-                return (
-                  <div
-                    key={p.id}
-                    onClick={() => handleAddProduct(p)}
-                    className="p-3 rounded-xl border border-border bg-surface hover:border-text/40 hover:bg-surface-subtle transition-all cursor-pointer flex flex-col justify-between shadow-2xs group"
-                  >
-                    <div>
-                      {/* Product Image */}
-                      <div className="relative w-full h-32 rounded-lg overflow-hidden border border-border/60 bg-surface-subtle flex items-center justify-center p-2 mb-2 group-hover:border-border transition-colors">
-                        {p.image_url ? (
-                          <img
-                            src={p.image_url}
-                            alt={p.name}
-                            loading="lazy"
-                            className="w-full h-full object-contain"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                        ) : (
-                          <div className="flex flex-col items-center gap-1 text-muted">
-                            <Package size={28} />
-                            <span className="text-[9px] font-mono">{p.sku}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <div className="flex items-start justify-between gap-1.5">
-                          <span className="text-[10px] font-mono text-muted uppercase tracking-wider truncate">
-                            {p.sku}
-                          </span>
-                          {p.is_serialized ? (
-                            <Badge variant="sage" className="text-[9px] px-1 py-0 uppercase">
-                              Serial
-                            </Badge>
+            {isProductsLoading ? (
+              <PosCatalogSkeleton count={8} />
+            ) : displayItems.length === 0 ? (
+              <div className="py-12 text-center border border-dashed border-border rounded-xl space-y-2">
+                <Package size={28} className="text-muted mx-auto" />
+                <p className="text-xs font-semibold text-text">No items found</p>
+                <p className="text-[11px] text-muted">Try adjusting your search query or category filter</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                {displayItems.map((p) => {
+                  const stockQty = p.inventory?.[0]?.quantity_on_hand ?? 0;
+                  return (
+                    <div
+                      key={p.id}
+                      onClick={() => handleAddProduct(p)}
+                      className="p-3 rounded-xl border border-border bg-surface hover:border-text/40 hover:bg-surface-subtle transition-all cursor-pointer flex flex-col justify-between shadow-2xs group"
+                    >
+                      <div>
+                        {/* Product Image */}
+                        <div className="relative w-full h-32 rounded-lg overflow-hidden border border-border/60 bg-surface-subtle flex items-center justify-center p-2 mb-2 group-hover:border-border transition-colors">
+                          {p.image_url ? (
+                            <img
+                              src={p.image_url}
+                              alt={p.name}
+                              loading="lazy"
+                              className="w-full h-full object-contain"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
                           ) : (
-                            <span className="text-xs text-muted font-mono font-medium">
-                              Stock: {stockQty}
-                            </span>
+                            <div className="flex flex-col items-center gap-1 text-muted">
+                              <Package size={28} />
+                              <span className="text-[9px] font-mono">{p.sku}</span>
+                            </div>
                           )}
                         </div>
-                        <div className="font-semibold text-sm text-text line-clamp-2 leading-snug group-hover:text-accent">
-                          {p.name}
-                        </div>
-                      </div>
-                    </div>
 
-                    <div className="pt-3 flex items-center justify-between border-t border-border/60 mt-2">
-                      <div>
-                        <div className="font-bold font-mono text-base text-text">
-                          {formatCurrency(p.selling_price)}
-                        </div>
-                        <div className="text-xs text-muted">
-                          +{p.gst_rate ?? 18}% GST
+                        <div className="space-y-1.5">
+                          <div className="flex items-start justify-between gap-1.5">
+                            <span className="text-[10px] font-mono text-muted uppercase tracking-wider truncate">
+                              {p.sku}
+                            </span>
+                            {p.is_serialized ? (
+                              <Badge variant="sage" className="text-[9px] px-1 py-0 uppercase">
+                                Serial
+                              </Badge>
+                            ) : (
+                              <span className="text-xs text-muted font-mono font-medium">
+                                Stock: {stockQty}
+                              </span>
+                            )}
+                          </div>
+                          <div className="font-semibold text-sm text-text line-clamp-2 leading-snug group-hover:text-accent">
+                            {p.name}
+                          </div>
                         </div>
                       </div>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        type="button"
-                        className="h-7 px-2.5 text-xs rounded-md gap-1 font-semibold pointer-events-none"
-                      >
-                        <Plus size={12} /> Add
-                      </Button>
+
+                      <div className="pt-3 flex items-center justify-between border-t border-border/60 mt-2">
+                        <div>
+                          <div className="font-bold font-mono text-base text-text">
+                            {formatCurrency(p.selling_price)}
+                          </div>
+                          <div className="text-xs text-muted">
+                            +{p.gst_rate ?? 18}% GST
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          type="button"
+                          className="h-7 px-2.5 text-xs rounded-md gap-1 font-semibold pointer-events-none"
+                        >
+                          <Plus size={12} /> Add
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Active Bill Cart */}

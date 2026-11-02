@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card } from '@/shared/ui';
+import { Card, KpiGridSkeleton } from '@/shared/ui';
 import { useStores } from '@/features/stores';
 import { useOwnerDashboard } from '@/features/reports';
 import { formatCurrency } from '@/shared/lib/format';
@@ -25,7 +25,7 @@ function sortOwnerStores(stores) {
 export function LauncherPage() {
   const navigate = useNavigate();
   const { data: stores = [], isLoading } = useStores();
-  const { data: dashboardData } = useOwnerDashboard('month');
+  const { data: dashboardData, isLoading: isDashboardLoading } = useOwnerDashboard('month');
 
   const storesMetrics = dashboardData?.stores || {};
   const summary = dashboardData?.summary || {};
@@ -61,6 +61,9 @@ export function LauncherPage() {
       </div>
 
       {/* 2. Standard 4-Card Executive KPI Metrics Ribbon */}
+      {isDashboardLoading && !dashboardData ? (
+        <KpiGridSkeleton count={4} />
+      ) : (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 min-w-0">
         {/* KPI 1: Combined Sales */}
         <div className="p-4 rounded-xl border border-border bg-surface shadow-2xs space-y-1 min-w-0">
@@ -134,6 +137,7 @@ export function LauncherPage() {
           </span>
         </div>
       </div>
+      )}
 
       {/* 3. Store Cards Grid */}
       {isLoading ? (

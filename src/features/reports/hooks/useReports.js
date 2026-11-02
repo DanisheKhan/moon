@@ -31,9 +31,9 @@ export function useOwnerDashboard(options = 'month') {
   return useQuery({
     queryKey: reportKeys.dashboard(dateRange, storeCode),
     queryFn: () => getOwnerDashboardData({ dateRange, storeCode }),
-    initialData: () => getCachedDashboardData(dateRange, storeCode) || undefined,
-    staleTime: 1000 * 60 * 3,
-    refetchOnWindowFocus: false,
+    placeholderData: () => getCachedDashboardData(dateRange, storeCode) || undefined,
+    staleTime: 1000 * 15,
+    refetchOnWindowFocus: true,
     retry: 2,
   });
 }

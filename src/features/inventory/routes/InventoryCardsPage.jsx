@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { Button, Input, Select } from '@/shared/ui';
+import { Button, Input, Select, CardSkeleton } from '@/shared/ui';
 import {
   useAllProducts,
   AddProductModal,
@@ -276,9 +276,10 @@ export function InventoryCardsPage() {
 
       {/* Products in Card Format */}
       {isLoading ? (
-        <div className="py-20 text-center space-y-3">
-          <div className="w-8 h-8 rounded-full border-2 border-accent border-t-transparent animate-spin mx-auto" />
-          <p className="text-xs text-muted">Loading product catalog cards...</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <CardSkeleton key={`inv-skel-${i}`} />
+          ))}
         </div>
       ) : filteredProducts.length === 0 ? (
         <div className="py-20 text-center border border-dashed border-border rounded-xl bg-surface space-y-3">

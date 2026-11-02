@@ -11,9 +11,10 @@ import {
   upsertSalaryRecord,
   grantStaffLeave,
 } from '../api/staff.api';
-import { getPersistentCache } from '@/shared/lib/cachePersistence';
+import { getPersistentCache, evictPersistentCache } from '@/shared/lib/cachePersistence';
 
 export const STAFF_QUERY_KEYS = {
+  all: ['staff'],
   allProfiles: ['staff', 'profiles'],
   leaves: (status) => ['staff', 'leaves', { status }],
   salaries: (monthYear) => ['staff', 'salaries', { monthYear }],
@@ -24,8 +25,8 @@ export function useStaffProfiles() {
     queryKey: STAFF_QUERY_KEYS.allProfiles,
     queryFn: listStaffProfiles,
     placeholderData: () => getPersistentCache('staff_profiles') || undefined,
-    staleTime: 1000 * 60 * 5,
-    refetchOnWindowFocus: false,
+    staleTime: 1000 * 15,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -34,6 +35,7 @@ export function useUpsertStaffProfile() {
   return useMutation({
     mutationFn: upsertStaffProfile,
     onSuccess: () => {
+      evictPersistentCache('staff');
       queryClient.invalidateQueries({ queryKey: STAFF_QUERY_KEYS.allProfiles });
     },
   });
@@ -44,6 +46,7 @@ export function useUpdateStaffStatus() {
   return useMutation({
     mutationFn: ({ staffId, status }) => updateStaffStatus(staffId, status),
     onSuccess: () => {
+      evictPersistentCache('staff');
       queryClient.invalidateQueries({ queryKey: STAFF_QUERY_KEYS.allProfiles });
     },
   });
@@ -53,6 +56,8 @@ export function useStaffLeaves(status) {
   return useQuery({
     queryKey: STAFF_QUERY_KEYS.leaves(status),
     queryFn: () => listStaffLeaves({ status }),
+    staleTime: 1000 * 15,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -61,6 +66,7 @@ export function useSubmitLeaveRequest() {
   return useMutation({
     mutationFn: submitLeaveRequest,
     onSuccess: () => {
+      evictPersistentCache('staff');
       queryClient.invalidateQueries({ queryKey: ['staff', 'leaves'] });
     },
   });
@@ -71,6 +77,7 @@ export function useReviewLeaveRequest() {
   return useMutation({
     mutationFn: reviewLeaveRequest,
     onSuccess: () => {
+      evictPersistentCache('staff');
       queryClient.invalidateQueries({ queryKey: ['staff', 'leaves'] });
     },
   });
@@ -80,6 +87,8 @@ export function useStaffSalaries(monthYear) {
   return useQuery({
     queryKey: STAFF_QUERY_KEYS.salaries(monthYear),
     queryFn: () => listStaffSalaries({ monthYear }),
+    staleTime: 1000 * 15,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -88,6 +97,7 @@ export function useMarkSalaryPaid() {
   return useMutation({
     mutationFn: markSalaryPaid,
     onSuccess: () => {
+      evictPersistentCache('staff');
       queryClient.invalidateQueries({ queryKey: ['staff', 'salaries'] });
     },
   });
@@ -98,6 +108,7 @@ export function useUpsertSalaryRecord() {
   return useMutation({
     mutationFn: upsertSalaryRecord,
     onSuccess: () => {
+      evictPersistentCache('staff');
       queryClient.invalidateQueries({ queryKey: ['staff', 'salaries'] });
     },
   });
@@ -108,6 +119,7 @@ export function useGrantStaffLeave() {
   return useMutation({
     mutationFn: grantStaffLeave,
     onSuccess: () => {
+      evictPersistentCache('staff');
       queryClient.invalidateQueries({ queryKey: ['staff', 'leaves'] });
       queryClient.invalidateQueries({ queryKey: ['staff', 'salaries'] });
       queryClient.invalidateQueries({ queryKey: STAFF_QUERY_KEYS.allProfiles });
