@@ -8,10 +8,14 @@
   "/admin/invoices",
   "/admin/my-portal",
   "/admin/mobiles",
+  "/admin/mobiles/billing",
   "/admin/mobiles/inventory",
   "/admin/mobiles/second-hand",
   "/admin/mobiles/invoices",
+  "/admin/mobiles/reports",
   "/admin/furniture-electronics",
+  "/admin/furniture-electronics/billing",
   "/admin/furniture-electronics/inventory",
-  "/admin/furniture-electronics/invoices"
+  "/admin/furniture-electronics/invoices",
+  "/admin/furniture-electronics/reports"
 ]

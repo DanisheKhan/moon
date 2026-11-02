@@ -11,7 +11,7 @@ import { Container, Card } from '@/shared/ui';
 import { SITE } from '@/shared/lib/site';
 
 export function StoreSpotlightSection() {
-  const mapsUrl = 'https://maps.google.com/?q=Near+Reliance+Smart+Md+Ali+Road+Bhiwandi+Maharashtra';
+  const mapsUrl = 'https://maps.google.com/?q=Reliance+Smart+Bazar+Khadka+Road+Bhusawal+425201';
   const whatsappUrl = `https://wa.me/${SITE.whatsappPhone}?text=${encodeURIComponent(
     'Hello Star Enterprises! I would like to check my 0% EMI finance eligibility with Bajaj Finserv / TVS Credit.'
   )}`;
@@ -26,7 +26,7 @@ export function StoreSpotlightSection() {
             SHOWROOM & SERVICES
           </span>
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-text">
-            Visit Us in Bhiwandi
+            Visit Us in Bhusawal
           </h2>
           <p className="text-sm text-muted max-w-xl">
             Test furniture comfort and live appliance displays in person, or get instant paperless financing on any purchase above ₹5,000.
@@ -49,9 +49,9 @@ export function StoreSpotlightSection() {
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-text">Near Reliance Smart, Bhiwandi</h3>
+                <h3 className="text-lg font-bold text-text">Near Reliance Smart Bazar, Bhusawal</h3>
                 <p className="text-xs text-muted mt-1 leading-relaxed">
-                  Md. Ali Road, Bhiwandi, Maharashtra 421302. Over 2,500 sq.ft showroom featuring hall sofas, dining sets, refrigerators, split ACs, and certified smartphones.
+                  Khadka Road, near Reliance Smart Bazar, Bhusawal, Maharashtra 425201. Over 2,500 sq.ft showroom featuring hall sofas, dining sets, refrigerators, split ACs, and certified smartphones.
                 </p>
               </div>
 
@@ -62,7 +62,7 @@ export function StoreSpotlightSection() {
                 </div>
                 <div className="flex items-center gap-2 text-muted">
                   <MapPin size={14} className="text-brand-sage shrink-0" />
-                  <span>Landmark: <strong className="text-text font-medium">Directly next to Reliance Smart</strong></span>
+                  <span>Landmark: <strong className="text-text font-medium">Directly next to Reliance Smart Bazar</strong></span>
                 </div>
                 <div className="flex items-center gap-2 text-muted">
                   <Phone size={14} className="text-brand-sage shrink-0" />

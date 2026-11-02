@@ -288,7 +288,7 @@ export function InvoicesListPage() {
           </p>
         </Card>
       ) : (
-        <Table className="w-full table-fixed" containerClassName="overflow-hidden">
+        <Table className="w-full min-w-180 table-fixed">
           <TableHead>
             <TableRow className="bg-surface-subtle">
               <TableHeaderCell className="w-[16%]">Date of Purchase</TableHeaderCell>

@@ -140,9 +140,9 @@ export function StoreDashboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 w-full sm:w-auto">
           {/* Period selector */}
-          <div className="flex items-center bg-surface border border-border rounded-lg p-1 text-xs shadow-2xs">
+          <div className="flex items-center bg-surface border border-border rounded-lg p-1 text-xs shadow-2xs overflow-x-auto max-w-full no-scrollbar">
             <Calendar size={13} className="text-muted ml-2 mr-1.5 shrink-0" />
             <div className="flex items-center gap-1">
               {PERIODS.map((period) => (
@@ -150,7 +150,7 @@ export function StoreDashboardPage() {
                   key={period.id}
                   type="button"
                   onClick={() => setSelectedPeriod(period.id)}
-                  className={`px-2.5 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors ${
+                  className={`px-2 sm:px-2.5 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors whitespace-nowrap ${
                     selectedPeriod === period.id
                       ? 'bg-accent text-accent-fg shadow-2xs'
                       : 'text-muted hover:text-text hover:bg-surface-subtle'
@@ -165,10 +165,10 @@ export function StoreDashboardPage() {
           <Button
             size="sm"
             onClick={() => navigate(`/admin/${effectiveStoreCode}/billing`)}
-            className="rounded-lg gap-1.5 font-medium text-xs shadow-2xs"
+            className="rounded-lg gap-1.5 font-medium text-xs shadow-2xs shrink-0"
           >
             <PlusCircle size={14} />
-            <span className="hidden sm:inline">New Bill</span>
+            <span>New Bill</span>
           </Button>
         </div>
       </div>
@@ -176,7 +176,7 @@ export function StoreDashboardPage() {
       {/* 3 CORE FINANCIAL CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 min-w-0">
         {/* Card 1: Total Sales */}
-        <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-4 shadow-2xs">
+        <div className="p-4 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-3 sm:space-y-4 shadow-2xs min-w-0">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
               TOTAL SALES
@@ -185,19 +185,19 @@ export function StoreDashboardPage() {
               <IndianRupee size={15} />
             </div>
           </div>
-          <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-text">
+          <div className="space-y-1 min-w-0">
+            <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-text truncate">
               {formatCurrency(financialSummary.totalSales)}
             </div>
-            <p className="text-xs text-muted flex items-center gap-1">
-              <TrendingUp size={13} className="text-brand-sage" />
-              <span>Revenue across paid & counter sales</span>
+            <p className="text-xs text-muted flex items-center gap-1 truncate">
+              <TrendingUp size={13} className="text-brand-sage shrink-0" />
+              <span className="truncate">Revenue across paid & counter sales</span>
             </p>
           </div>
         </div>
 
         {/* Card 2: Total Expenses */}
-        <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-4 shadow-2xs">
+        <div className="p-4 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-3 sm:space-y-4 shadow-2xs min-w-0">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
               TOTAL EXPENSES
@@ -206,18 +206,18 @@ export function StoreDashboardPage() {
               <Receipt size={15} />
             </div>
           </div>
-          <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-text">
+          <div className="space-y-1 min-w-0">
+            <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-text truncate">
               {formatCurrency(financialSummary.totalExpenses)}
             </div>
-            <p className="text-xs text-muted">
+            <p className="text-xs text-muted truncate">
               Procurement COGS + store branch overhead
             </p>
           </div>
         </div>
 
         {/* Card 3: Total Profit */}
-        <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-4 shadow-2xs">
+        <div className="p-4 sm:p-6 rounded-xl border border-border bg-surface flex flex-col justify-between space-y-3 sm:space-y-4 shadow-2xs min-w-0">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
               TOTAL PROFIT
@@ -226,15 +226,15 @@ export function StoreDashboardPage() {
               <PiggyBank size={15} />
             </div>
           </div>
-          <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-text">
+          <div className="space-y-1 min-w-0">
+            <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-text truncate">
               {formatCurrency(financialSummary.totalProfit)}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md bg-brand-sage-subtle text-brand-sage-text border border-brand-sage-border">
                 {financialSummary.profitMargin}% Net Margin
               </span>
-              <span className="text-xs text-muted">Sales minus expenses</span>
+              <span className="text-xs text-muted truncate">Sales minus expenses</span>
             </div>
           </div>
         </div>
@@ -243,22 +243,22 @@ export function StoreDashboardPage() {
       {/* TWO COLUMN SECTION: STOCK ALERTS & LIVE POS FEED */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-w-0">
         {/* Left Column (col-span-6): Stock Alerts */}
-        <div className="lg:col-span-6 space-y-4">
-          <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs flex flex-col justify-between h-full">
+        <div className="lg:col-span-6 space-y-4 min-w-0">
+          <div className="p-4 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs flex flex-col justify-between h-full min-w-0">
             <div>
               <div className="flex items-center justify-between pb-3 border-b border-border">
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-8 h-8 rounded-lg bg-surface-subtle border border-border text-amber-600 flex items-center justify-center shrink-0">
                     <AlertTriangle size={15} />
                   </div>
-                  <div>
-                    <h2 className="text-base sm:text-lg font-bold text-text">Critical Stock Alerts</h2>
-                    <p className="text-xs text-muted">
+                  <div className="min-w-0">
+                    <h2 className="text-base sm:text-lg font-bold text-text truncate">Critical Stock Alerts</h2>
+                    <p className="text-xs text-muted truncate">
                       Items at or below reorder threshold
                     </p>
                   </div>
                 </div>
-                <Badge variant={stockAlerts.length > 0 ? 'amber' : 'success'} className="text-[10px] font-medium">
+                <Badge variant={stockAlerts.length > 0 ? 'amber' : 'success'} className="text-[10px] font-medium shrink-0">
                   {stockAlerts.length} {stockAlerts.length === 1 ? 'Alert' : 'Alerts'}
                 </Badge>
               </div>
@@ -283,7 +283,7 @@ export function StoreDashboardPage() {
                   {stockAlerts.map((item) => (
                     <div
                       key={item.id}
-                      className="p-3 rounded-lg border border-border bg-surface-subtle flex items-center justify-between gap-3 transition-colors hover:bg-surface-hover"
+                      className="p-3 rounded-lg border border-border bg-surface-subtle flex items-center justify-between gap-3 transition-colors hover:bg-surface-hover min-w-0"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-9 h-9 rounded-lg bg-surface border border-border flex items-center justify-center shrink-0 overflow-hidden">
@@ -304,12 +304,12 @@ export function StoreDashboardPage() {
                           <div className="text-xs font-semibold text-text truncate">
                             {item.name}
                           </div>
-                          <div className="text-[10px] text-muted flex items-center gap-1.5 font-mono">
+                          <div className="text-[10px] text-muted flex items-center gap-1.5 font-mono truncate">
                             <span>SKU: {item.sku}</span>
                             {item.categories?.name && (
                               <>
                                 <span>•</span>
-                                <span>{item.categories.name}</span>
+                                <span className="truncate">{item.categories.name}</span>
                               </>
                             )}
                           </div>
@@ -352,20 +352,20 @@ export function StoreDashboardPage() {
         </div>
 
         {/* Right Column (col-span-6): Live Branch Transactions Feed */}
-        <div className="lg:col-span-6 space-y-4">
-          <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs flex flex-col justify-between h-full">
+        <div className="lg:col-span-6 space-y-4 min-w-0">
+          <div className="p-4 sm:p-6 rounded-xl border border-border bg-surface space-y-4 shadow-2xs flex flex-col justify-between h-full min-w-0">
             <div>
               <div className="flex items-center justify-between pb-3 border-b border-border">
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-8 h-8 rounded-lg bg-surface-subtle border border-border flex items-center justify-center text-text shrink-0">
                     <Receipt size={15} />
                   </div>
-                  <div>
-                    <h2 className="text-base sm:text-lg font-bold text-text">Recent Store Transactions</h2>
-                    <p className="text-xs text-muted">Live checkout activity at this counter</p>
+                  <div className="min-w-0">
+                    <h2 className="text-base sm:text-lg font-bold text-text truncate">Recent Store Transactions</h2>
+                    <p className="text-xs text-muted truncate">Live checkout activity at this counter</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 text-[11px] text-muted font-medium">
+                <div className="flex items-center gap-1.5 text-[11px] text-muted font-medium shrink-0">
                   <span className="w-2 h-2 rounded-full bg-brand-sage animate-pulse" />
                   <span>Realtime</span>
                 </div>
@@ -386,11 +386,11 @@ export function StoreDashboardPage() {
                   {invoices.slice(0, 4).map((inv) => (
                     <div
                       key={inv.id}
-                      className="p-3 rounded-lg border border-border bg-surface-subtle flex items-center justify-between gap-3 transition-colors hover:bg-surface-hover text-xs"
+                      className="p-3 rounded-lg border border-border bg-surface-subtle flex items-center justify-between gap-3 transition-colors hover:bg-surface-hover text-xs min-w-0"
                     >
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-text font-mono text-[11px]">
+                          <span className="font-semibold text-text font-mono text-[11px] shrink-0">
                             {inv.invoice_number}
                           </span>
                           <span className="text-muted">•</span>
@@ -399,10 +399,10 @@ export function StoreDashboardPage() {
                           </span>
                         </div>
                         <div className="text-[10px] text-muted flex items-center gap-1.5 mt-0.5">
-                          <Clock size={11} />
-                          <span>{inv.created_at ? formatDate(inv.created_at) : 'Today'}</span>
+                          <Clock size={11} className="shrink-0" />
+                          <span className="truncate">{inv.created_at ? formatDate(inv.created_at) : 'Today'}</span>
                           {inv.status && (
-                            <Badge variant="sage" className="text-[9px] px-1 py-0 uppercase">
+                            <Badge variant="sage" className="text-[9px] px-1 py-0 uppercase shrink-0">
                               {inv.status}
                             </Badge>
                           )}

@@ -138,7 +138,7 @@ function StaffForm({ staffToEdit, stores, onClose }) {
           id="emp-email"
           type="email"
           label="Gmail / Login Email"
-          placeholder="e.g. staff@starenterprises.com"
+          placeholder="e.g. staff@gmail.com"
           value={formData.email}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           required
@@ -148,7 +148,7 @@ function StaffForm({ staffToEdit, stores, onClose }) {
           id="emp-phone"
           label="Mobile Phone"
           type="tel"
-          placeholder="9820011223"
+          placeholder="9370011653"
           value={formData.phone}
           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
           maxLength={10}
@@ -212,7 +212,7 @@ function StaffForm({ staffToEdit, stores, onClose }) {
         <Input
           id="emp-emergency"
           label="Emergency Contact Phone"
-          placeholder="+91 98200 99999"
+          placeholder="+91 93700 11653"
           value={formData.emergency_phone}
           onChange={(e) => setFormData({ ...formData, emergency_phone: e.target.value })}
         />

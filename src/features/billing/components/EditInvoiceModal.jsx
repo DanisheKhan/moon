@@ -253,7 +253,7 @@ function EditInvoiceForm({ invoiceDetail, invoiceId, onClose }) {
             type="tel"
             value={customerPhone}
             onChange={(e) => setCustomerPhone(e.target.value)}
-            placeholder="e.g. 9820012345"
+            placeholder="e.g. 9370011653"
             maxLength={10}
             required
           />

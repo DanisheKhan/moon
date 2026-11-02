@@ -299,26 +299,26 @@ export function AdminConsoleLayout() {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 lg:pl-64 flex flex-col h-screen min-w-0 overflow-hidden w-full max-w-full">
         {/* TOP HEADER BAR - Clean Solid Bar without Banned Glassmorphism */}
-        <header className="h-16 shrink-0 bg-surface border-b border-border z-30 flex items-center justify-between px-4 sm:px-6 shadow-2xs">
+        <header className="h-16 shrink-0 bg-surface border-b border-border z-30 flex items-center justify-between px-3 sm:px-6 shadow-2xs gap-2">
           {/* Left: Mobile Toggle & In-Header Store Switcher Dropdown */}
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             {/* Hamburger Button for mobile */}
             <button
               type="button"
               onClick={() => setIsMobileDrawerOpen(true)}
-              className="lg:hidden p-2 rounded-lg border border-border bg-surface text-text hover:bg-surface-subtle cursor-pointer"
+              className="lg:hidden p-2 rounded-lg border border-border bg-surface text-text hover:bg-surface-subtle cursor-pointer shrink-0"
               aria-label="Open side drawer"
             >
               <Menu size={18} />
             </button>
 
             {/* Interactive In-Header Store Context Switcher */}
-            <div className="relative" ref={storeSwitcherRef}>
+            <div className="relative min-w-0" ref={storeSwitcherRef}>
               <button
                 type="button"
                 onClick={() => setIsStoreSwitcherOpen((prev) => !prev)}
                 className={cn(
-                  'flex items-center gap-2.5 px-3 py-1.5 rounded-lg border transition-all cursor-pointer shadow-2xs select-none',
+                  'flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg border transition-all cursor-pointer shadow-2xs select-none min-w-0',
                   isStoreSwitcherOpen
                     ? 'border-border-strong bg-surface-subtle'
                     : 'border-border bg-surface hover:bg-surface-subtle text-text'
@@ -330,17 +330,17 @@ export function AdminConsoleLayout() {
                   {currentStoreCode === 'mobiles' ? <Smartphone size={14} /> : <Armchair size={14} />}
                 </div>
                 <div className="min-w-0 text-left">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-muted leading-tight">
+                  <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-muted leading-tight truncate">
                     {isStoreRoute ? 'STORE WORKSPACE' : 'ENTERPRISE SCOPE'}
                   </div>
-                  <div className="text-xs font-semibold text-text truncate max-w-44 sm:max-w-64 leading-tight">
+                  <div className="text-xs font-semibold text-text truncate max-w-28 xs:max-w-44 sm:max-w-64 leading-tight">
                     {activeStoreName}
                   </div>
                 </div>
                 <ChevronDown
                   size={13}
                   className={cn(
-                    'text-muted transition-transform duration-150',
+                    'text-muted transition-transform duration-150 shrink-0',
                     isStoreSwitcherOpen && 'rotate-180 text-text'
                   )}
                 />
@@ -409,9 +409,9 @@ export function AdminConsoleLayout() {
           </div>
 
           {/* Right Header Items / Nav Menu */}
-          <div className="flex items-center gap-3 shrink-0">
-            {/* Live Clock */}
-            <div className="text-xs font-mono font-medium text-muted px-2 py-1 select-none">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Live Clock - hidden on small mobile to avoid header squeezing */}
+            <div className="hidden sm:block text-xs font-mono font-medium text-muted px-2 py-1 select-none">
               {currentTime}
             </div>
 
@@ -421,7 +421,7 @@ export function AdminConsoleLayout() {
                 type="button"
                 onClick={() => setIsProfileMenuOpen((prev) => !prev)}
                 className={cn(
-                  'flex items-center gap-2 px-2.5 py-1.5 rounded-lg border transition-all cursor-pointer shadow-2xs select-none',
+                  'flex items-center gap-2 px-2 sm:px-2.5 py-1.5 rounded-lg border transition-all cursor-pointer shadow-2xs select-none',
                   isProfileMenuOpen
                     ? 'border-border-strong bg-surface-subtle'
                     : 'border-border bg-surface hover:bg-surface-subtle text-text'
@@ -493,7 +493,7 @@ export function AdminConsoleLayout() {
         </header>
 
         {/* Content Body - Smooth independent vertical scrolling */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 min-w-0 w-full max-w-full">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 lg:p-8 min-w-0 w-full max-w-full">
           <div className="w-full max-w-7xl mx-auto space-y-6 min-w-0">
             <Outlet context={{ store: currentStore, storeCode: currentStoreCode }} />
           </div>

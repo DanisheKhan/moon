@@ -34,51 +34,53 @@ export function OperationalHourlyHeatmap({ hourlySales = [] }) {
       </div>
 
       {/* Hourly Bar Chart Container */}
-      <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs space-y-4 min-w-0">
+      <div className="p-4 sm:p-6 rounded-xl border border-border bg-surface shadow-2xs space-y-4 min-w-0">
         <div className="flex items-center justify-between text-xs text-muted pb-2 border-b border-border">
           <span>Sales Volume Density</span>
           <span>Hours of Store Operation</span>
         </div>
 
-        {/* 12-Hour Vertical Bars */}
-        <div className="grid grid-cols-6 sm:grid-cols-12 gap-2 pt-6 pb-2 items-end min-h-48">
-          {hourlySales.map((item) => {
-            const heightPct = Math.max(12, Math.round((item.revenue / maxRevenue) * 100));
-            const isPeak = peakHour && item.hour === peakHour.hour && item.revenue > 0;
+        {/* 12-Hour Vertical Bars with Horizontal Scroll on Mobile */}
+        <div className="overflow-x-auto min-w-0 no-scrollbar">
+          <div className="min-w-140 grid grid-cols-12 gap-2 pt-6 pb-2 items-end min-h-48">
+            {hourlySales.map((item) => {
+              const heightPct = Math.max(12, Math.round((item.revenue / maxRevenue) * 100));
+              const isPeak = peakHour && item.hour === peakHour.hour && item.revenue > 0;
 
-            return (
-              <div key={item.hour} className="flex flex-col items-center gap-2 group min-w-0">
-                {/* Popover/Value on top */}
-                <div className="text-[10px] font-mono text-muted group-hover:text-text transition-colors text-center truncate w-full">
-                  {item.revenue > 0 ? formatCurrency(item.revenue) : '—'}
-                </div>
-
-                {/* The Bar */}
-                <div className="w-full max-w-8 h-36 bg-bg/80 rounded-t-md relative flex items-end overflow-hidden border border-border">
-                  <div
-                    className={`w-full rounded-t transition-all ${
-                      isPeak
-                        ? 'bg-blue-600'
-                        : item.revenue > 0
-                        ? 'bg-text/75 hover:bg-text'
-                        : 'bg-muted/20'
-                    }`}
-                    style={{ height: `${heightPct}%` }}
-                  />
-                </div>
-
-                {/* Hour Label & Bills */}
-                <div className="text-center">
-                  <div className={`text-[11px] font-medium ${isPeak ? 'text-blue-600 font-semibold' : 'text-text'}`}>
-                    {item.label}
+              return (
+                <div key={item.hour} className="flex flex-col items-center gap-2 group min-w-0">
+                  {/* Popover/Value on top */}
+                  <div className="text-[10px] font-mono text-muted group-hover:text-text transition-colors text-center truncate w-full">
+                    {item.revenue > 0 ? formatCurrency(item.revenue) : '—'}
                   </div>
-                  <div className="text-[9px] text-muted font-mono">
-                    {item.invoices} {item.invoices === 1 ? 'bill' : 'bills'}
+
+                  {/* The Bar */}
+                  <div className="w-full max-w-8 h-36 bg-bg/80 rounded-t-md relative flex items-end overflow-hidden border border-border">
+                    <div
+                      className={`w-full rounded-t transition-all ${
+                        isPeak
+                          ? 'bg-blue-600'
+                          : item.revenue > 0
+                          ? 'bg-text/75 hover:bg-text'
+                          : 'bg-muted/20'
+                      }`}
+                      style={{ height: `${heightPct}%` }}
+                    />
+                  </div>
+
+                  {/* Hour Label & Bills */}
+                  <div className="text-center">
+                    <div className={`text-[11px] font-medium ${isPeak ? 'text-blue-600 font-semibold' : 'text-text'}`}>
+                      {item.label}
+                    </div>
+                    <div className="text-[9px] text-muted font-mono">
+                      {item.invoices} {item.invoices === 1 ? 'bill' : 'bills'}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
         {/* Operational Staffing Guidelines */}

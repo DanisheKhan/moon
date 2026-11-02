@@ -58,7 +58,7 @@ export function AuthProvider({ children }) {
     ? profile
     : {
         id: 'demo-user',
-        email: 'owner@starenterprises.com',
+        email: 'mazharq82@gmail.com',
         full_name: 'Store Owner (Admin)',
         role: 'owner',
         assignedBranch: 'all',
@@ -78,6 +78,7 @@ export function AuthProvider({ children }) {
 
     // 1. Standard owner account match
     if (
+      trimmedEmail === 'mazharq82@gmail.com' ||
       trimmedEmail === 'owner@starenterprises.com' ||
       trimmedEmail === 'admin@star.com' ||
       trimmedEmail.includes('owner') ||

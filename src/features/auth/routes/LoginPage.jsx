@@ -87,7 +87,7 @@ export function LoginPage() {
               id="login-email"
               type="email"
               label="Store Owner Email Address"
-              placeholder="e.g. owner@starenterprises.com"
+              placeholder="e.g. mazharq82@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -131,7 +131,7 @@ export function LoginPage() {
                     <span className="truncate">Store Owner (Full Business Access)</span>
                   </div>
                   <div className="text-[11px] text-muted font-mono truncate">
-                    owner@starenterprises.com
+                    mazharq82@gmail.com
                   </div>
                 </div>
                 <Button

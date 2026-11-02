@@ -5,7 +5,7 @@ const REVIEWS = [
   {
     id: 1,
     name: 'Farhan Ansari',
-    location: 'Dhamankar Naka, Bhiwandi',
+    location: 'Khadka Road, Bhusawal',
     product: '7-Seater Hall L-Shape Sofa & Haier Double Door Fridge',
     rating: 5,
     date: '2 weeks ago',
@@ -15,7 +15,7 @@ const REVIEWS = [
   {
     id: 2,
     name: 'Siddharth Patil',
-    location: 'Kalyan Road, Bhiwandi',
+    location: 'Jamner Road, Bhusawal',
     product: 'Apple iPhone 15 & 20W Fast Charger',
     rating: 5,
     date: '1 month ago',
@@ -25,58 +25,58 @@ const REVIEWS = [
   {
     id: 3,
     name: 'Aamir Momin',
-    location: 'Md. Ali Road, Bhiwandi',
+    location: 'Station Road, Bhusawal',
     product: 'Lloyd 1.5 Ton 5-Star Inverter AC',
     rating: 5,
     date: '3 weeks ago',
     comment:
-      'Being right next to Reliance Smart makes visiting very convenient. Tested the cooling in person at the showroom. Delivery and installation technician arrived next morning with official GST bill.',
+      'Being right next to Reliance Smart Bazar makes visiting very convenient. Tested the cooling in person at the showroom. Delivery and installation technician arrived next morning with official GST bill.',
   },
 ];
 
 export function StoreReviewsSection() {
   return (
-    <section id="reviews-section" className="py-20 sm:py-28 border-b border-border bg-surface min-w-0">
-      <Container size="xl" className="space-y-10 sm:space-y-12">
+    <section id="reviews-section" className="py-16 sm:py-24 lg:py-28 border-b border-border bg-surface min-w-0">
+      <Container size="xl" className="space-y-8 sm:space-y-12">
 
         {/* Consistent Section Header with Rating Badge */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="space-y-2">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 min-w-0">
+          <div className="space-y-2 min-w-0">
             <span className="text-xs font-bold uppercase tracking-widest text-brand-sage">
               VERIFIED REVIEWS
             </span>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-text">
-              Trusted by Bhiwandi Families
+              Trusted by Bhusawal Families
             </h2>
-            <p className="text-sm text-muted max-w-xl">
-              Real experiences from real customers who visited our Md. Ali Road showroom.
+            <p className="text-xs sm:text-sm text-muted max-w-xl leading-relaxed">
+              Real experiences from real customers who visited our Khadka Road showroom.
             </p>
           </div>
 
-          {/* Aggregate Rating Badge */}
-          <div className="inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-bg border border-border shadow-sm shrink-0">
+          {/* Aggregate Rating Badge - Responsive padding and wrapping */}
+          <div className="inline-flex flex-wrap items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-bg border border-border shadow-sm shrink-0">
             <div className="flex items-center gap-0.5 text-brand-gold">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={15} className="fill-brand-gold" />
+                <Star key={i} size={14} className="fill-brand-gold" />
               ))}
             </div>
-            <span className="text-sm font-bold text-text">4.9 / 5.0</span>
-            <span className="text-xs text-muted border-l border-border pl-3">
+            <span className="text-xs sm:text-sm font-bold text-text">4.9 / 5.0</span>
+            <span className="text-[11px] sm:text-xs text-muted border-l border-border pl-2 sm:pl-3">
               500+ Showroom Deliveries
             </span>
           </div>
         </div>
 
         {/* 3 Review Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-w-0">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 min-w-0">
           {REVIEWS.map((review) => (
             <Card
               key={review.id}
-              className="p-6 h-full flex flex-col justify-between space-y-5 bg-bg border border-border rounded-2xl shadow-sm min-w-0"
+              className="p-5 sm:p-6 h-full flex flex-col justify-between space-y-4 sm:space-y-5 bg-bg border border-border rounded-2xl shadow-sm min-w-0"
             >
-              <div className="space-y-4 min-w-0">
+              <div className="space-y-3 sm:space-y-4 min-w-0">
                 {/* Large quote mark */}
-                <div className="text-4xl font-black text-brand-gold/30 leading-none select-none">"</div>
+                <div className="text-3xl sm:text-4xl font-black text-brand-gold/30 leading-none select-none">"</div>
 
                 {/* Stars & Verified */}
                 <div className="flex items-center justify-between">
@@ -97,7 +97,7 @@ export function StoreReviewsSection() {
               </div>
 
               {/* Reviewer Details */}
-              <div className="pt-4 border-t border-border space-y-1">
+              <div className="pt-3 sm:pt-4 border-t border-border space-y-1">
                 <div className="flex items-center justify-between text-xs font-bold text-text">
                   <span>{review.name}</span>
                   <span className="text-[10px] font-normal text-muted">{review.date}</span>

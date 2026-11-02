@@ -97,7 +97,7 @@ export function InvoicePrintModal({ isOpen, onClose, invoiceDetail }) {
           <div>{store.address_line1}, {store.city} {store.pincode ? `- ${store.pincode}` : ''}</div>
           <div><span className="font-semibold">GSTIN:</span> {store.gstin || '27AAAAA0000A1Z5'}</div>
           <div><span className="font-semibold">State:</span> Maharashtra (Code: 27)</div>
-          <div><span className="font-semibold">Phone:</span> {store.phone || '+91 98200 12345'}</div>
+          <div><span className="font-semibold">Phone:</span> {store.phone || '+91 93700 11653'}</div>
           {store.email && <div><span className="font-semibold">Email:</span> {store.email}</div>}
         </div>
 
@@ -153,8 +153,8 @@ export function InvoicePrintModal({ isOpen, onClose, invoiceDetail }) {
       </div>
 
       {/* GST Products & Items Table */}
-      <div className="pt-3">
-        <table className="w-full border-collapse border border-black text-[10.5px]">
+      <div className="pt-3 overflow-x-auto max-w-full no-scrollbar">
+        <table className="w-full border-collapse border border-black text-[10.5px] min-w-140">
           <thead>
             <tr className="bg-gray-100 border-b border-black text-center font-bold">
               <th className="border border-black p-1.5 w-8">#</th>

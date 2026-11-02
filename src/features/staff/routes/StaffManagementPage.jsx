@@ -176,7 +176,7 @@ export function StaffManagementPage() {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex items-center gap-2 border-b border-border pb-3">
+      <div className="flex items-center gap-2 border-b border-border pb-3 overflow-x-auto max-w-full no-scrollbar">
         <button
           type="button"
           onClick={() => setActiveTab('directory')}

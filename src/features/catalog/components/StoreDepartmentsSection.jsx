@@ -77,7 +77,7 @@ export function StoreDepartmentsSection({ onSelectDepartment }) {
             Shop by Category
           </h2>
           <p className="text-sm text-muted max-w-xl">
-            Everything for your home under one roof. Inspect real floor models at our Bhiwandi showroom with direct warranty.
+            Everything for your home under one roof. Inspect real floor models at our Bhusawal showroom with direct warranty.
           </p>
         </div>
 

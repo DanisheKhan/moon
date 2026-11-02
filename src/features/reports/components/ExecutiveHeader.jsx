@@ -53,13 +53,13 @@ export function ExecutiveHeader({
         </div>
 
         {/* Date Filters */}
-        <div className="flex items-center bg-surface border border-border rounded-lg p-1 text-xs">
+        <div className="flex items-center bg-surface border border-border rounded-lg p-1 text-xs overflow-x-auto max-w-full no-scrollbar">
           {DATE_RANGES.map((r) => (
             <button
               key={r.id}
               type="button"
               onClick={() => setDateRange(r.id)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer transition-colors ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer transition-colors whitespace-nowrap ${
                 dateRange === r.id
                   ? 'bg-text text-bg'
                   : 'text-muted hover:text-text'

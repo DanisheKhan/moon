@@ -48,7 +48,7 @@ export function LoginForm({ onSuccess }) {
           id="email"
           type="email"
           label="Owner Email"
-          placeholder="owner@starenterprises.com"
+          placeholder="mazharq82@gmail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

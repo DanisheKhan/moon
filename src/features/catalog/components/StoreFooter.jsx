@@ -22,7 +22,7 @@ export function StoreFooter({ onSelectCategory }) {
                 <span className="text-white font-black ml-1">ENTERPRISES</span>
               </div>
               <div className="text-xs text-white/50 font-medium mt-1">
-                Flagship Retail Showroom • Bhiwandi
+                Flagship Retail Showroom • Bhusawal
               </div>
             </div>
 

@@ -44,7 +44,7 @@ export function Modal({ isOpen, onClose, title, size = 'lg', className, children
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 animate-in fade-in-0 duration-150"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/60 animate-in fade-in-0 duration-150"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
@@ -59,7 +59,7 @@ export function Modal({ isOpen, onClose, title, size = 'lg', className, children
         onClick={(e) => e.stopPropagation()}
       >
         {(title || onClose) && (
-          <div className="flex items-center justify-between px-6 py-4.5 sm:px-8 sm:py-5 border-b border-border bg-surface rounded-t-xl shrink-0">
+          <div className="flex items-center justify-between px-4 py-3.5 sm:px-6 sm:py-4 md:px-8 md:py-5 border-b border-border bg-surface rounded-t-xl shrink-0">
             {title ? (
               <h3 className="text-base sm:text-lg font-bold tracking-tight text-text truncate pr-4">
                 {title}
@@ -79,7 +79,7 @@ export function Modal({ isOpen, onClose, title, size = 'lg', className, children
             )}
           </div>
         )}
-        <div className="flex-1 overflow-y-auto px-6 py-6 sm:px-8 sm:py-7 min-w-0">
+        <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-7 min-w-0">
           {children}
         </div>
       </div>

@@ -29,7 +29,7 @@ export function CategoryMarginTable({ categories = [] }) {
       {/* Table Container */}
       <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-2xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left text-xs min-w-160">
             <thead className="bg-bg/60 border-b border-border text-[11px] font-semibold text-muted uppercase tracking-wider">
               <tr className="h-11">
                 <th className="px-4 py-0 align-middle">Product Category</th>

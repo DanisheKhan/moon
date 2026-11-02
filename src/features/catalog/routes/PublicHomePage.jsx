@@ -123,8 +123,8 @@ export function PublicHomePage() {
   return (
     <div className="min-w-0 flex flex-col bg-bg text-text">
       <Seo
-        title="Star Enterprises — Hall Furniture, Electronics & Mobiles | Bhiwandi Flagship"
-        description="Bhiwandi’s flagship showroom near Reliance Smart on Md. Ali Road. Hallmark living furniture, inverter ACs, double-door refrigerators, washing machines, and certified smartphones with 0% EMI financing and GST billing."
+        title="Star Enterprises — Hall Furniture, Electronics & Mobiles | Bhusawal Flagship"
+        description="Bhusawal’s flagship showroom near Reliance Smart Bazar on Khadka Road. Hallmark living furniture, inverter ACs, double-door refrigerators, washing machines, and certified smartphones with 0% EMI financing and GST billing."
         path="/"
       />
 
@@ -182,7 +182,7 @@ export function PublicHomePage() {
           <div className="border border-border rounded-2xl bg-bg p-4 sm:p-5 space-y-4 shadow-sm">
             {/* Primary Department Switcher */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-border">
-              <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+              <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 no-scrollbar">
                 <button
                   type="button"
                   onClick={() => {
@@ -258,7 +258,7 @@ export function PublicHomePage() {
 
             {/* Category Sub-Filters */}
             {availableCategories.length > 0 && (
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
                 <span className="text-muted font-medium shrink-0">Filter:</span>
                 <button
                   type="button"
@@ -484,7 +484,7 @@ export function PublicHomePage() {
       {/* 6. Showroom Visit & In-Person Experience */}
       <StoreSpotlightSection />
 
-      {/* 7. Local Bhiwandi Customer Stories */}
+      {/* 7. Local Bhusawal Customer Stories */}
       <StoreReviewsSection />
 
       {/* 8. Frequently Asked Questions */}

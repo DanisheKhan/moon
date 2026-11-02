@@ -8,8 +8,8 @@ const FAQS = [
     a: 'We offer zero-interest financing on all purchases above ₹5,000. Simply bring your Aadhaar Card, PAN Card, and bank details to our showroom desk. Approval is completed biometrically in under 10 minutes with flexible 3, 6, 9, or 12-month tenures and zero down payment options.',
   },
   {
-    q: 'Do you provide home delivery and furniture assembly in Bhiwandi and Thane?',
-    a: 'Yes! We provide same-day or scheduled doorstep delivery across Bhiwandi, Kalyan, Thane, and Mumbai. In-house technicians assemble all beds, sofas, and dining sets at your home without extra charges.',
+    q: 'Do you provide home delivery and furniture assembly in Bhusawal and surrounding areas?',
+    a: 'Yes! We provide same-day or scheduled doorstep delivery across Bhusawal, Jalgaon, Varangaon, and surrounding regions. In-house technicians assemble all beds, sofas, and dining sets at your home without extra charges.',
   },
   {
     q: 'Are all electronics and appliances covered by official brand warranty?',

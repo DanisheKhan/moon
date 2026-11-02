@@ -171,6 +171,18 @@ img, video, svg, canvas {
   padding: 1.5rem;
 }
 
+
+@media (max-width: 640px) {
+  .invoice-dialog-window {
+    height: 96dvh;
+  }
+  .invoice-preview-body {
+    padding: 0.5rem;
+  }
+  .preview-sheet-normal {
+    padding: 0.75rem;
+  }
+}
 .preview-sheet-normal {
   width: 100%;
   max-width: 52rem;

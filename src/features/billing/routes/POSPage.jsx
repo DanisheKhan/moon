@@ -643,7 +643,7 @@ export function POSPage() {
               </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {displayItems.map((p) => {
                 const stockQty = p.inventory?.[0]?.quantity_on_hand ?? 0;
                 return (
@@ -743,7 +743,7 @@ export function POSPage() {
             ) : (
               <div className="space-y-4">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs divide-y divide-border">
+                  <table className="w-full text-left text-xs divide-y divide-border min-w-130">
                     <thead>
                       <tr className="text-[10px] uppercase font-semibold text-muted bg-surface-subtle">
                         <th className="py-2.5 px-3">Item Description</th>
@@ -885,7 +885,7 @@ export function POSPage() {
               </div>
 
               {/* Quick Customer Type Selector */}
-              <div className="inline-flex rounded-lg border border-border bg-surface-subtle p-1 text-xs">
+              <div className="inline-flex rounded-lg border border-border bg-surface-subtle p-1 text-xs overflow-x-auto max-w-full no-scrollbar">
                 <button
                   type="button"
                   onClick={() => {
@@ -945,7 +945,7 @@ export function POSPage() {
                   setCustomerPhone(e.target.value);
                   if (errorMessage) setErrorMessage('');
                 }}
-                placeholder="e.g. 9820012345"
+                placeholder="e.g. 9370011653"
                 maxLength={10}
                 required
               />

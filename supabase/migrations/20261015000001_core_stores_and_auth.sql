@@ -200,11 +200,11 @@ values
     '27',
     'Star Enterprises',
     'Star Mobiles',
-    'Shop 101, Main Road Market',
-    'Mumbai',
-    '400001',
-    '+91 98200 12345',
-    'mobiles@starenterprises.in',
+    'Khadka Road, Near Reliance Smart Bazar',
+    'Bhusawal',
+    '425201',
+    '+91 93700 11653',
+    'mazharq82@gmail.com',
     'MOB'
   ),
   (
@@ -214,11 +214,11 @@ values
     '27',
     'Star Enterprises',
     'Star Furniture & Electronics',
-    'Shop 102, Main Road Market',
-    'Mumbai',
-    '400001',
-    '+91 98200 12346',
-    'fe@starenterprises.in',
+    'Khadka Road, Near Reliance Smart Bazar',
+    'Bhusawal',
+    '425201',
+    '+91 93700 11653',
+    'mazharq82@gmail.com',
     'FE'
   )
 on conflict (code) do nothing;

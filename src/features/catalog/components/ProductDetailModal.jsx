@@ -105,7 +105,7 @@ export function ProductDetailModal({ product, isOpen, onClose }) {
             <h4 className="text-xs font-medium uppercase tracking-wider text-muted">
               Technical Specifications
             </h4>
-            <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="grid grid-cols-1 xs:grid-cols-2 gap-2 text-xs">
               {Object.entries(product.specs).map(([key, val]) => (
                 <div
                   key={key}
