@@ -61,7 +61,7 @@ export function ExecutiveHeader({
               onClick={() => setDateRange(r.id)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer transition-colors ${
                 dateRange === r.id
-                  ? 'bg-text text-bg'
+                  ? 'bg-brand-sage text-white font-semibold shadow-2xs'
                   : 'text-muted hover:text-text'
               }`}
             >

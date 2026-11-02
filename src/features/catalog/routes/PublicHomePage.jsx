@@ -191,7 +191,7 @@ export function PublicHomePage() {
                   }}
                   className={`px-3.5 py-1.5 text-xs rounded-lg border cursor-pointer font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${
                     selectedStore === 'all'
-                      ? 'bg-text text-accent-fg border-text shadow-2xs font-semibold'
+                      ? 'bg-accent text-accent-fg border-accent shadow-2xs font-semibold'
                       : 'bg-surface text-muted border-border hover:text-text hover:bg-surface-hover'
                   }`}
                 >
@@ -205,7 +205,7 @@ export function PublicHomePage() {
                   }}
                   className={`px-3.5 py-1.5 text-xs rounded-lg border cursor-pointer font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${
                     selectedStore === 'furniture-electronics'
-                      ? 'bg-text text-accent-fg border-text shadow-2xs font-semibold'
+                      ? 'bg-accent text-accent-fg border-accent shadow-2xs font-semibold'
                       : 'bg-surface text-muted border-border hover:text-text hover:bg-surface-hover'
                   }`}
                 >
@@ -219,7 +219,7 @@ export function PublicHomePage() {
                   }}
                   className={`px-3.5 py-1.5 text-xs rounded-lg border cursor-pointer font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${
                     selectedStore === 'mobiles'
-                      ? 'bg-text text-accent-fg border-text shadow-2xs font-semibold'
+                      ? 'bg-accent text-accent-fg border-accent shadow-2xs font-semibold'
                       : 'bg-surface text-muted border-border hover:text-text hover:bg-surface-hover'
                   }`}
                 >

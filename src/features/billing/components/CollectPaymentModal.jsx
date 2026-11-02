@@ -198,7 +198,7 @@ function CollectPaymentForm({ invoice, onClose }) {
                   className={cn(
                     'p-2.5 rounded-lg border text-xs font-medium flex items-center gap-2 transition-all cursor-pointer',
                     isSelected
-                      ? 'bg-text text-bg border-text font-semibold shadow-2xs'
+                      ? 'bg-brand-sage text-white border-brand-sage font-semibold shadow-2xs'
                       : 'border-border bg-surface text-muted hover:text-text hover:bg-surface-subtle'
                   )}
                 >

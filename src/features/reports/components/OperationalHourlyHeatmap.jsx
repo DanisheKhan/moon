@@ -60,7 +60,7 @@ export function OperationalHourlyHeatmap({ hourlySales = [] }) {
                       isPeak
                         ? 'bg-blue-600'
                         : item.revenue > 0
-                        ? 'bg-text/75 hover:bg-text'
+                        ? 'bg-brand-sage hover:bg-brand-sage-hover'
                         : 'bg-muted/20'
                     }`}
                     style={{ height: `${heightPct}%` }}

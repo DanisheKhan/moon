@@ -275,7 +275,7 @@ export function StockAdjustmentForm({ product, storeId, onClose }) {
             className={cn(
               'px-4 py-2.5 border-b-2 transition-colors cursor-pointer flex items-center gap-2',
               activeTab === 'serial_units'
-                ? 'border-text text-text font-semibold'
+                ? 'border-brand-sage text-brand-sage font-semibold'
                 : 'border-transparent text-muted hover:text-text'
             )}
           >
@@ -288,7 +288,7 @@ export function StockAdjustmentForm({ product, storeId, onClose }) {
             className={cn(
               'px-4 py-2.5 border-b-2 transition-colors cursor-pointer flex items-center gap-2',
               activeTab === 'quantity'
-                ? 'border-text text-text font-semibold'
+                ? 'border-brand-sage text-brand-sage font-semibold'
                 : 'border-transparent text-muted hover:text-text'
             )}
           >

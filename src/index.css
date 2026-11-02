@@ -12,6 +12,7 @@
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
   --color-accent-fg: var(--accent-fg);
   --color-text-inverse: var(--text-inverse);
   --color-danger: var(--danger);

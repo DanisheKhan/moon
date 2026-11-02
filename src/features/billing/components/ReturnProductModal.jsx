@@ -282,7 +282,7 @@ function ReturnProductForm({ invoice, onClose }) {
                           onClick={() => handleUpdateRestock(it.id, true)}
                           className={cn(
                             'px-2.5 py-1 rounded-md cursor-pointer font-semibold transition-colors',
-                            state.restock ? 'bg-text text-bg' : 'text-muted hover:text-text'
+                            state.restock ? 'bg-brand-sage text-white shadow-2xs' : 'text-muted hover:text-text'
                           )}
                         >
                           Restock
@@ -341,7 +341,7 @@ function ReturnProductForm({ invoice, onClose }) {
                   className={cn(
                     'p-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer select-none',
                     isSelected
-                      ? 'bg-text text-bg border-text shadow-2xs'
+                      ? 'bg-brand-sage text-white border-brand-sage shadow-2xs'
                       : 'border-border bg-surface text-muted hover:text-text hover:bg-surface-subtle'
                   )}
                 >

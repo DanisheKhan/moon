@@ -88,11 +88,11 @@ export function ReportsConsolePage() {
               onClick={() => setActiveTab(tab.id)}
               className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-medium cursor-pointer border-b-2 transition-colors whitespace-nowrap ${
                 isActive
-                  ? 'border-text text-text font-semibold'
+                  ? 'border-brand-sage text-brand-sage font-semibold'
                   : 'border-transparent text-muted hover:text-text hover:border-border'
               }`}
             >
-              <Icon size={14} className={isActive ? 'text-text' : 'text-muted'} />
+              <Icon size={14} className={isActive ? 'text-brand-sage' : 'text-muted'} />
               <span>{tab.label}</span>
               {tab.badge && (
                 <span className="px-1.5 py-0.2 rounded text-[10px] font-mono border border-brand-sage-border bg-brand-sage-subtle text-brand-sage-text font-medium">

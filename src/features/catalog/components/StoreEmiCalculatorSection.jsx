@@ -82,7 +82,7 @@ export function StoreEmiCalculatorSection() {
                       onClick={() => setAmount(preset)}
                       className={`px-2.5 py-1 rounded-md border text-xs font-mono font-medium transition-colors cursor-pointer ${
                         amount === preset
-                          ? 'bg-text text-accent-fg border-text'
+                          ? 'bg-accent text-accent-fg border-accent font-semibold shadow-2xs'
                           : 'bg-surface text-muted border-border hover:text-text'
                       }`}
                     >
@@ -143,7 +143,7 @@ export function StoreEmiCalculatorSection() {
                     href={inquiryUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-lg bg-text text-accent-fg hover:bg-accent text-xs sm:text-sm font-bold transition-colors"
+                    className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-lg bg-accent text-accent-fg hover:bg-brand-sage-hover text-xs sm:text-sm font-bold transition-colors shadow-2xs"
                   >
                     <MessageCircle size={16} /> Pre-Approve This 0% EMI on WhatsApp
                   </a>

@@ -11,12 +11,12 @@ export function EditProductModal({
   storeId,
   isOpen,
   onClose,
-  initialTab = 'details',
+  initialTab = 'stock',
   onOpenAdjustStock,
 }) {
   const updateProductMutation = useUpdateProduct();
 
-  const [activeTab, setActiveTab] = useState(initialTab || 'details');
+  const [activeTab, setActiveTab] = useState(initialTab || 'stock');
   const [name, setName] = useState(product?.name || '');
   const [sku, setSku] = useState(product?.sku || '');
   const [sellingPrice, setSellingPrice] = useState(String(product?.selling_price || ''));
@@ -84,37 +84,44 @@ export function EditProductModal({
       size="xl"
     >
       <div className="space-y-4 text-text min-w-0">
-        {/* Navigation Tabs */}
+        {/* Navigation Tabs - Stock First, then Details & Pricing */}
         <div className="flex border-b border-border text-xs font-medium">
-          <button
-            type="button"
-            onClick={() => setActiveTab('details')}
-            className={cn(
-              'px-4 py-2.5 border-b-2 transition-colors cursor-pointer flex items-center gap-2',
-              activeTab === 'details'
-                ? 'border-brand-sage text-brand-sage font-semibold'
-                : 'border-transparent text-muted hover:text-text'
-            )}
-          >
-            <Pencil size={14} />
-            <span>Product Details & Pricing</span>
-          </button>
           <button
             type="button"
             onClick={() => setActiveTab('stock')}
             className={cn(
-              'px-4 py-2.5 border-b-2 transition-colors cursor-pointer flex items-center gap-2',
+              'px-3.5 py-2 border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 text-xs',
               activeTab === 'stock'
                 ? 'border-brand-sage text-brand-sage font-semibold'
                 : 'border-transparent text-muted hover:text-text'
             )}
           >
-            <Boxes size={14} />
+            <Boxes size={13} />
             <span>Stock & Inventory ({currentQty} on hand)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('details')}
+            className={cn(
+              'px-3.5 py-2 border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 text-xs',
+              activeTab === 'details'
+                ? 'border-brand-sage text-brand-sage font-semibold'
+                : 'border-transparent text-muted hover:text-text'
+            )}
+          >
+            <Pencil size={13} />
+            <span>Product Details & Pricing</span>
           </button>
         </div>
 
-        {activeTab === 'details' ? (
+        {activeTab === 'stock' ? (
+          <StockAdjustmentForm
+            product={product}
+            storeId={storeId || product.store_id}
+            onClose={onClose}
+          />
+        ) : (
           <form onSubmit={handleSubmit} className="space-y-4 text-text min-w-0">
             {error && (
               <div className="rounded-xl border border-danger/30 bg-danger/10 p-3 text-xs text-danger font-medium">
@@ -129,23 +136,23 @@ export function EditProductModal({
             )}
 
             {/* Current Stock Ribbon with 1-click switch to Stock tab */}
-            <div className="flex items-center justify-between p-3.5 rounded-xl border border-border bg-surface-subtle shadow-2xs">
+            <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-surface-subtle shadow-2xs">
               <div>
                 <span className="text-[10px] uppercase font-semibold text-muted block tracking-wider">
                   Warehouse Stock Level
                 </span>
                 <div className="flex items-baseline gap-2 mt-0.5">
-                  <span className="text-base font-bold font-mono text-text">
+                  <span className="text-sm font-bold font-mono text-text">
                     {currentQty} units
                   </span>
-                  <span className="text-[11px] text-muted">
-                    {product.is_serialized ? '(Serialized Unit Tracking)' : '(Standard Batch)'}
+                  <span className="text-[10px] text-muted">
+                    {product.is_serialized ? '(Serialized Tracking)' : '(Standard Batch)'}
                   </span>
                 </div>
               </div>
               <Button
                 type="button"
-                size="sm"
+                size="xs"
                 variant="outline"
                 onClick={() => {
                   if (onOpenAdjustStock) {
@@ -154,14 +161,14 @@ export function EditProductModal({
                     setActiveTab('stock');
                   }
                 }}
-                className="text-xs font-semibold gap-1.5 border-border hover:border-brand-sage text-text cursor-pointer"
+                className="text-xs font-medium gap-1.5 border-border hover:border-brand-sage text-text cursor-pointer"
               >
-                <Boxes size={13} className="text-brand-sage" />
+                <Boxes size={12} className="text-brand-sage" />
                 <span>Adjust Stock & Serials →</span>
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <Input
                 id="edit-prod-name"
                 label="Product Name"
@@ -179,7 +186,7 @@ export function EditProductModal({
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <Input
                 id="edit-prod-sp"
                 type="number"
@@ -198,7 +205,7 @@ export function EditProductModal({
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
               <Input
                 id="edit-prod-min-sp"
                 type="number"
@@ -217,7 +224,7 @@ export function EditProductModal({
                   { value: '12', label: '12% GST (Furniture)' },
                   { value: '5', label: '5% GST (Accessories)' },
                   { value: '28', label: '28% GST (Luxury)' },
-                  { value: '0', label: '0% GST (Nil Rated / Exempt)' },
+                  { value: '0', label: '0% GST (Nil Rated)' },
                 ]}
               />
               <Input
@@ -229,26 +236,22 @@ export function EditProductModal({
               />
             </div>
 
-            <div className="pt-4 border-t border-border flex items-center justify-end gap-3">
-              <Button type="button" variant="outline" onClick={onClose}>
+            <div className="pt-3 border-t border-border flex items-center justify-end gap-2.5">
+              <Button type="button" size="sm" variant="outline" onClick={onClose} className="text-xs">
                 Cancel
               </Button>
               <Button
                 type="submit"
+                size="sm"
                 variant="solid"
                 pending={updateProductMutation.isPending}
-                className="gap-2"
+                className="gap-1.5 text-xs font-medium"
               >
-                <Pencil size={14} /> Save Product
+                <Pencil size={13} />
+                <span>Save Product</span>
               </Button>
             </div>
           </form>
-        ) : (
-          <StockAdjustmentForm
-            product={product}
-            storeId={storeId || product.store_id}
-            onClose={onClose}
-          />
         )}
       </div>
     </Modal>

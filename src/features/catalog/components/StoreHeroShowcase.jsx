@@ -78,7 +78,7 @@ export function StoreHeroShowcase({ onExploreCatalog, onOpenCalculator }) {
                   variant="solid"
                   size="md"
                   onClick={onExploreCatalog}
-                  className="cursor-pointer font-bold px-7 py-3 bg-text text-accent-fg hover:bg-accent text-sm rounded-lg"
+                  className="cursor-pointer font-bold px-7 py-3 text-sm rounded-lg"
                 >
                   Browse Catalog
                 </Button>
@@ -164,7 +164,7 @@ export function StoreHeroShowcase({ onExploreCatalog, onOpenCalculator }) {
                   href="https://maps.google.com/?q=Near+Reliance+Smart+Md+Ali+Road+Bhiwandi"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 px-3.5 py-2 rounded-xl bg-text text-accent-fg hover:bg-accent text-xs font-semibold transition-colors shadow-xs shrink-0"
+                  className="inline-flex items-center gap-1 px-3.5 py-2 rounded-xl bg-accent text-accent-fg hover:bg-brand-sage-hover text-xs font-semibold transition-colors shadow-2xs shrink-0"
                 >
                   <span>Directions</span>
                   <ArrowUpRight size={13} />

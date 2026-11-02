@@ -35,7 +35,7 @@ export function InventoryCardsPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null);
-  const [editInitialTab, setEditInitialTab] = useState('details');
+  const [editInitialTab, setEditInitialTab] = useState('stock');
   const [productToDelete, setProductToDelete] = useState(null);
 
   // Strictly isolate products to selected store
@@ -158,19 +158,19 @@ export function InventoryCardsPage() {
           <button
             type="button"
             onClick={() => setIsAddCategoryModalOpen(true)}
-            className="inline-flex items-center gap-1.5 bg-surface hover:bg-bg border border-border text-text font-medium text-xs sm:text-sm px-3.5 py-2 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs"
+            className="inline-flex items-center gap-1.5 bg-surface hover:bg-surface-subtle border border-border text-text font-medium text-xs px-3.5 py-2 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs"
           >
-            <FolderPlus size={15} />
-            <span>+ Add Category</span>
+            <FolderPlus size={14} className="text-muted" />
+            <span>Add Category</span>
           </button>
 
           <button
             type="button"
             onClick={() => setIsAddModalOpen(true)}
-            className="inline-flex items-center gap-2 bg-text text-bg hover:opacity-90 font-medium text-xs sm:text-sm px-4 py-2 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs"
+            className="inline-flex items-center gap-1.5 bg-accent text-accent-fg hover:bg-brand-sage-hover font-medium text-xs px-3.5 py-2 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs"
           >
-            <Plus size={16} />
-            <span>+ Add new Product</span>
+            <Plus size={14} />
+            <span>Add Product</span>
           </button>
         </div>
       </div>
@@ -214,7 +214,7 @@ export function InventoryCardsPage() {
           className={cn(
             'px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors border shadow-2xs',
             stockFilter === 'all'
-              ? 'bg-text text-bg border-text font-semibold'
+              ? 'bg-brand-sage text-white border-brand-sage font-semibold'
               : 'bg-surface text-muted hover:text-text border-border'
           )}
         >
@@ -373,11 +373,11 @@ export function InventoryCardsPage() {
 
                   {/* Category & Brand tags */}
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-surface-subtle border border-border text-muted">
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-surface-subtle border border-border text-muted">
                       {prod.categories?.name || 'General'}
                     </span>
                     {prod.brands?.name && prod.brands.name !== '-' && (
-                      <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-surface-subtle border border-border text-muted">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-surface-subtle border border-border text-muted">
                         {prod.brands.name}
                       </span>
                     )}
@@ -385,10 +385,10 @@ export function InventoryCardsPage() {
 
                   {/* Title & SKU */}
                   <div>
-                    <h3 className="font-bold text-sm sm:text-base text-text line-clamp-2 min-h-11 leading-snug" title={prod.name}>
+                    <h3 className="font-semibold text-xs sm:text-sm text-text line-clamp-2 min-h-10 leading-snug" title={prod.name}>
                       {prod.name}
                     </h3>
-                    <div className="text-[11px] font-mono text-muted flex items-center gap-2 mt-1">
+                    <div className="text-[10px] font-mono text-muted flex items-center gap-2 mt-1">
                       <span>SKU: {prod.sku}</span>
                       {prod.hsn_code && <span>• HSN {prod.hsn_code}</span>}
                     </div>
@@ -396,19 +396,19 @@ export function InventoryCardsPage() {
                 </div>
 
                 {/* Card Middle: Price & GST info */}
-                <div className="pt-2.5 border-t border-border flex items-baseline justify-between">
+                <div className="pt-2 border-t border-border flex items-baseline justify-between">
                   <div>
-                    <div className="text-lg sm:text-xl font-bold text-text font-mono tracking-tight">
+                    <div className="text-base sm:text-lg font-bold text-text font-mono tracking-tight">
                       {formatCurrency(prod.selling_price)}
                     </div>
-                    <div className="text-[11px] text-muted mt-0.5">
+                    <div className="text-[10px] text-muted mt-0.5">
                       GST {prod.gst_rate}% Included
                     </div>
                   </div>
                   {prod.cost_price > 0 && (
                     <div className="text-right">
-                      <span className="text-[10px] uppercase tracking-wider text-muted font-medium block">Cost</span>
-                      <span className="text-xs font-semibold font-mono text-muted">{formatCurrency(prod.cost_price)}</span>
+                      <span className="text-[9px] uppercase tracking-wider text-muted font-medium block">Cost</span>
+                      <span className="text-[11px] font-medium font-mono text-muted">{formatCurrency(prod.cost_price)}</span>
                     </div>
                   )}
                 </div>
@@ -419,19 +419,19 @@ export function InventoryCardsPage() {
                     type="button"
                     onClick={() => {
                       setProductToEdit(prod);
-                      setEditInitialTab('details');
+                      setEditInitialTab('stock');
                     }}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold bg-surface-subtle hover:bg-surface text-text border border-border hover:border-brand-sage transition-all cursor-pointer shadow-2xs"
-                    title="Edit details, pricing, and stock"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-medium bg-surface hover:bg-surface-subtle text-text border border-border hover:border-brand-sage transition-all cursor-pointer shadow-2xs"
+                    title="Edit stock, serials, and details"
                   >
-                    <Pencil size={12} className="text-brand-sage" />
+                    <Pencil size={12} className="text-muted" />
                     <span>Edit & Stock</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setProductToDelete(prod)}
-                    className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-lg text-xs font-medium border border-danger/30 bg-danger/5 hover:bg-danger/10 text-danger transition-colors cursor-pointer"
+                    className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-border hover:border-danger/40 bg-surface hover:bg-danger/10 text-muted hover:text-danger transition-colors cursor-pointer shadow-2xs"
                     title="Delete Product"
                   >
                     <Trash2 size={12} />

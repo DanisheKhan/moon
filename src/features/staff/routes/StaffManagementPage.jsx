@@ -360,7 +360,7 @@ export function StaffManagementPage() {
                   <TableRow key={emp.id}>
                     <TableCell className="py-3">
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="w-8 h-8 rounded-lg bg-text text-bg font-medium flex items-center justify-center text-xs shrink-0 select-none">
+                        <div className="w-8 h-8 rounded-lg bg-accent text-accent-fg font-medium flex items-center justify-center text-xs shrink-0 select-none shadow-2xs">
                           {emp.full_name?.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase() || 'ST'}
                         </div>
                         <div className="min-w-0">

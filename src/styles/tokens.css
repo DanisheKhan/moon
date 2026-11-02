@@ -15,10 +15,11 @@
   /* Structural 1px Borders */
   --border: #E2E8E5;
   --border-strong: #CBD5E1;
-  --border-focus: #1B382B;
+  --border-focus: #2E7D5B;
 
   /* Brand Accents */
-  --accent: #1B382B;         /* Deep British Racing Pine */
+  --accent: #2E7D5B;         /* Vibrant Star Retail Emerald */
+  --accent-hover: #246549;
   --accent-fg: #FFFFFF;      /* Pure high contrast white */
   --danger: #DC2626;
 
@@ -71,8 +72,8 @@
   --sidebar-text-hover: #111827;
   --sidebar-active: #F1F5F3;
   --sidebar-active-hover: #E8EFEA;
-  --sidebar-active-fg: #1B382B;
-  --sidebar-active-border: #1B382B;
+  --sidebar-active-fg: #2E7D5B;
+  --sidebar-active-border: #2E7D5B;
 
   --pastel-amber: #FFFBEB;
   --pastel-amber-border: #FDE68A;
