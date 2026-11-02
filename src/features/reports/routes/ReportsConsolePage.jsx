@@ -3,7 +3,6 @@ import { useOwnerDashboard } from '../hooks/useReports';
 import { ExecutiveHeader } from '../components/ExecutiveHeader';
 import { ExecutiveKpiGrid } from '../components/ExecutiveKpiGrid';
 import { SalesVelocityTimeline } from '../components/SalesVelocityTimeline';
-import { CashDrawerReconciliation } from '../components/CashDrawerReconciliation';
 import { GstTaxConsole } from '../components/GstTaxConsole';
 import { MerchandiseRankings } from '../components/MerchandiseRankings';
 import { BusinessActionEngine } from '../components/BusinessActionEngine';
@@ -130,9 +129,9 @@ export function ReportsConsolePage() {
         </div>
       )}
 
-      {/* 2. Core 4 Financial Telemetry Cards */}
+      {/* 2. Core 5 Financial Telemetry Cards */}
       {isLoading && !dashboardData ? (
-        <KpiGridSkeleton count={4} />
+        <KpiGridSkeleton count={5} className="grid-cols-2 lg:grid-cols-5" />
       ) : (
         <ExecutiveKpiGrid summary={summary} />
       )}
@@ -175,17 +174,13 @@ export function ReportsConsolePage() {
               periodComparison={summary.periodComparison}
             />
 
-            {/* Cash Drawer & Daily Till Reconciliation */}
-            <CashDrawerReconciliation
-              cashDrawer={cashDrawer}
-              totalSales={summary.totalSales}
-            />
-
-            {/* Channels & Multi-Branch Split */}
+            {/* Cash Till Balancing, Payment Channels & Multi-Branch Split */}
             <PaymentAndBranchSplit
               payments={payments}
               branches={branches}
               recentInvoices={recentInvoices}
+              cashDrawer={cashDrawer}
+              totalSales={summary.totalSales}
             />
           </div>
         )}
