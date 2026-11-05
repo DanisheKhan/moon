@@ -17,6 +17,7 @@ import { InvoicePrintModal } from '../components/InvoicePrintModal';
 import { EditInvoiceModal } from '../components/EditInvoiceModal';
 import { CollectPaymentModal } from '../components/CollectPaymentModal';
 import { ReturnProductModal } from '../components/ReturnProductModal';
+import { downloadBillingHistoryExcel } from '../lib/exportBillingHistory';
 import { formatCurrency, formatDate } from '@/shared/lib/format';
 import { cn } from '@/shared/lib/cn';
 import {
@@ -29,6 +30,7 @@ import {
   Calendar,
   RotateCcw,
   Coins,
+  FileSpreadsheet,
 } from 'lucide-react';
 
 const STATUS_FILTERS = [
@@ -145,6 +147,17 @@ export function InvoicesListPage() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          <Button
+            variant="sage"
+            size="sm"
+            onClick={() => downloadBillingHistoryExcel(invoices)}
+            disabled={isLoading || invoices.length === 0}
+            className="gap-1.5"
+            title="Download the currently filtered billing history as an Excel sheet"
+          >
+            <FileSpreadsheet size={14} />
+            <span>Download Excel</span>
+          </Button>
           <div className="p-2 sm:px-3 sm:py-2 rounded-lg border border-border bg-surface text-xs font-medium text-text flex items-center gap-2 shadow-2xs">
             <Receipt size={14} className="text-brand-sage shrink-0" />
             <span>
@@ -180,10 +193,26 @@ export function InvoicesListPage() {
           </span>
         </div>
 
-        <div className="p-4 rounded-xl border border-border bg-surface shadow-2xs space-y-1 min-w-0">
-          <span className="text-[11px] uppercase font-bold tracking-wider text-muted block truncate">
-            OUTSTANDING DUES (UDHAAR)
-          </span>
+        <div
+          onClick={() => setStatusFilter(statusFilter === 'partial' ? 'all' : 'partial')}
+          className={cn(
+            'p-4 rounded-xl border bg-surface shadow-2xs space-y-1 min-w-0 cursor-pointer transition-colors',
+            statusFilter === 'partial'
+              ? 'border-amber-500 bg-amber-500/5 ring-1 ring-amber-500'
+              : 'border-border hover:border-amber-400'
+          )}
+          title="Click to filter bills with outstanding balance"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] uppercase font-bold tracking-wider text-muted block truncate">
+              OUTSTANDING DUES (UDHAAR)
+            </span>
+            {statusFilter === 'partial' && (
+              <Badge variant="amber" className="text-[9px] py-0 px-1.5 uppercase font-bold">
+                Filtered
+              </Badge>
+            )}
+          </div>
           <div className="text-xl sm:text-2xl font-bold font-mono text-amber-600 dark:text-amber-400 truncate">
             {formatCurrency(metrics.totalBalanceDue)}
           </div>
@@ -294,9 +323,9 @@ export function InvoicesListPage() {
               <TableHeaderCell className="w-[16%]">Date of Purchase</TableHeaderCell>
               <TableHeaderCell className="w-[18%]">Customer Name</TableHeaderCell>
               <TableHeaderCell className="w-[20%]">Item</TableHeaderCell>
-              <TableHeaderCell className="w-[12%]">Grand Total</TableHeaderCell>
-              <TableHeaderCell className="w-[10%] text-center px-1">Status</TableHeaderCell>
-              <TableHeaderCell className="w-[24%] text-right pr-4 pl-3 border-l border-border/60">
+              <TableHeaderCell className="w-[14%]">Grand Total</TableHeaderCell>
+              <TableHeaderCell className="w-[12%] text-center px-1">Status</TableHeaderCell>
+              <TableHeaderCell className="w-[20%] text-right pr-4 pl-3 border-l border-border/60">
                 Actions
               </TableHeaderCell>
             </TableRow>
@@ -362,45 +391,43 @@ export function InvoicesListPage() {
                     <div className="font-bold text-sm sm:text-base text-text">
                       {formatCurrency(inv.grand_total || 0)}
                     </div>
-                    {inv.status === 'partial' && (
-                      <div className="text-xs text-amber-600 font-semibold font-mono truncate">
-                        Paid: {formatCurrency(totalPaid)} • Due: {formatCurrency(balanceDue)}
-                      </div>
-                    )}
-                    {inv.status === 'pending' && (
-                      <div className="text-xs text-danger font-semibold font-mono truncate">
-                        Full {formatCurrency(inv.grand_total || 0)} Due
-                      </div>
-                    )}
-                    {inv.status !== 'partial' && inv.status !== 'pending' && (
-                      <div className="text-xs text-muted truncate">
-                        Tax: {formatCurrency((inv.cgst_amount || 0) + (inv.sgst_amount || 0))}
-                      </div>
-                    )}
+                    <div className="text-xs text-muted truncate mt-0.5 font-sans">
+                      Tax: {formatCurrency((inv.cgst_amount || 0) + (inv.sgst_amount || 0))}
+                    </div>
                   </TableCell>
 
                   {/* 5. Status - Cleanly centered with dedicated visual column */}
                   <TableCell className="align-middle text-center whitespace-nowrap px-1">
-                    <Badge
-                      variant={
-                        inv.status === 'paid'
-                          ? 'success'
-                          : inv.status === 'partial'
-                          ? 'amber'
-                          : inv.status === 'pending'
-                          ? 'danger'
-                          : inv.status === 'void'
-                          ? 'default'
-                          : 'outline'
-                      }
-                      className={cn(
-                        'text-[10px] font-semibold uppercase px-2 py-0.5 inline-flex justify-center',
-                        (inv.status === 'returned' || inv.status === 'partially_returned') &&
-                          'border-purple-300 text-purple-700 bg-purple-50'
+                    <div className="flex flex-col items-center justify-center gap-1">
+                      <Badge
+                        variant={
+                          inv.status === 'paid'
+                            ? 'success'
+                            : inv.status === 'partial'
+                            ? 'amber'
+                            : inv.status === 'pending'
+                            ? 'danger'
+                            : inv.status === 'void'
+                            ? 'default'
+                            : 'outline'
+                        }
+                        className={cn(
+                          'text-[10px] font-semibold uppercase px-2 py-0.5 inline-flex justify-center',
+                          (inv.status === 'returned' || inv.status === 'partially_returned') &&
+                            'border-purple-300 text-purple-700 bg-purple-50'
+                        )}
+                      >
+                        {inv.status === 'partially_returned' ? 'Part Return' : inv.status}
+                      </Badge>
+                      {inv.status === 'partial' && (
+                        <span
+                          className="text-[10px] font-mono font-bold text-brand-crimson bg-brand-crimson-subtle border border-brand-crimson-border rounded px-1.5 py-0.5 whitespace-nowrap shadow-2xs"
+                          title={`Remaining balance to be collected: ${formatCurrency(balanceDue)}`}
+                        >
+                          Due: {formatCurrency(balanceDue)}
+                        </span>
                       )}
-                    >
-                      {inv.status === 'partially_returned' ? 'Part Return' : inv.status}
-                    </Badge>
+                    </div>
                   </TableCell>
 
                   {/* 6. Actions: Distinct column with divider line & uniform button sizing */}

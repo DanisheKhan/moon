@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   Receipt,
   CreditCard,
+  Coins,
   User,
 } from 'lucide-react';
 
@@ -155,6 +156,17 @@ function EditInvoiceForm({ invoiceDetail, invoiceId, onClose }) {
       grandTotal,
     };
   }, [items]);
+
+  const existingPaid = useMemo(() => {
+    return Math.round(
+      (invoiceDetail.payments || []).reduce(
+        (acc, p) => acc + (parseFloat(p.amount) || 0),
+        0
+      )
+    );
+  }, [invoiceDetail.payments]);
+
+  const editBalanceDue = Math.round(Math.max(financialTotals.grandTotal - existingPaid, 0));
 
   // Submit invoice changes
   async function handleSubmit(e) {
@@ -323,6 +335,22 @@ function EditInvoiceForm({ invoiceDetail, invoiceId, onClose }) {
             placeholder={paymentMethod === 'cash' ? 'Optional cash drawer remark' : 'e.g. UPI Ref / Bank Auth'}
           />
         </div>
+
+        {status === 'partial' && (
+          <div className="p-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200">
+              <Coins size={14} className="shrink-0 text-amber-600 dark:text-amber-400" />
+              <span>
+                <strong>Partial Settlement Notice:</strong> Paid so far:{' '}
+                <strong className="font-mono">{formatCurrency(existingPaid)}</strong>. Amount to be collected:{' '}
+                <strong className="font-mono text-amber-700 dark:text-amber-300 font-bold">{formatCurrency(editBalanceDue)}</strong>
+              </span>
+            </div>
+            <Badge variant="amber" className="text-[10px] shrink-0 font-bold uppercase w-fit">
+              Due: {formatCurrency(editBalanceDue)}
+            </Badge>
+          </div>
+        )}
 
         {status === 'void' && (
           <div className="p-3 rounded-lg border border-danger/30 bg-danger/10 text-danger text-xs flex items-center gap-2">

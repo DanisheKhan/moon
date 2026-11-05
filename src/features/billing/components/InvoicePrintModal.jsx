@@ -294,7 +294,7 @@ export function InvoicePrintModal({ isOpen, onClose, invoiceDetail }) {
             <li>Goods once sold will not be exchanged or refunded without original tax invoice.</li>
             <li>Warranty on serialized electronics/mobiles is directly handled by authorized service centres.</li>
             <li>Star Enterprises is not liable for data loss or physical/liquid damage after purchase handover.</li>
-            <li>All disputes subject to Mumbai jurisdiction only.</li>
+            <li>All disputes subject to Bhusawal jurisdiction only.</li>
           </ol>
         </div>
         <div className="flex flex-col justify-between items-end pl-3 text-right">
