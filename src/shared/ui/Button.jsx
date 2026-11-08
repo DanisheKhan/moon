@@ -7,11 +7,12 @@ const base =
   'disabled:opacity-50 disabled:pointer-events-none cursor-pointer whitespace-nowrap shrink-0 select-none';
 
 const variants = {
-  solid: 'bg-accent text-accent-fg hover:opacity-95 active:scale-[0.99] shadow-2xs',
-  outline: 'border border-border text-text bg-surface hover:bg-surface-subtle hover:border-border-strong active:scale-[0.99] shadow-2xs',
-  danger: 'bg-danger text-white hover:opacity-95 active:scale-[0.99]',
-  subtle: 'bg-surface-subtle text-text border border-border hover:bg-surface-hover active:scale-[0.99]',
-  sage: 'bg-brand-sage text-white hover:bg-brand-sage-hover active:scale-[0.99] shadow-2xs',
+  solid: 'bg-accent text-accent-fg hover:opacity-95 active:scale-[0.99] shadow-2xs font-semibold',
+  primary: 'bg-brand-sage text-white hover:bg-brand-sage-hover active:scale-[0.99] shadow-xs font-semibold',
+  outline: 'border border-border text-text bg-surface hover:bg-surface-subtle hover:border-border-strong active:scale-[0.99] shadow-2xs font-medium',
+  danger: 'bg-danger text-white hover:opacity-95 active:scale-[0.99] font-semibold',
+  subtle: 'bg-surface-subtle text-text border border-border hover:bg-surface-hover active:scale-[0.99] font-medium',
+  sage: 'bg-brand-sage text-white hover:bg-brand-sage-hover active:scale-[0.99] shadow-2xs font-semibold',
 };
 
 const sizes = {
@@ -42,7 +43,7 @@ export function Button({
   const isButton = Tag === 'button';
   return (
     <Tag
-      className={cn(base, variants[variant], sizes[size], className)}
+      className={cn(base, variants[variant] || variants.solid, sizes[size], className)}
       {...(isButton ? { type: rest.type ?? 'button', disabled: pending || rest.disabled } : {})}
       aria-busy={pending || undefined}
       {...rest}

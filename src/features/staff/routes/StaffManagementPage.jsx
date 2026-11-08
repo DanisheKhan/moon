@@ -130,7 +130,7 @@ export function StaffManagementPage() {
     <div className="w-full space-y-6 min-w-0">
       <Seo
         title="Staff Management System & Payroll | Star Enterprises"
-        description="Comprehensive HRMS for staff directory, leave approvals, and monthly salary disbursement."
+        description="Comprehensive portal for staff directory, leave approvals, and monthly salary disbursement."
         path="/admin/staff"
         noindex
       />
@@ -142,7 +142,7 @@ export function StaffManagementPage() {
             HUMAN RESOURCES & PAYROLL
           </span>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
-            Staff Management System (HRMS)
+            Staff Management System
           </h1>
           <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
             Manage employee directory, review leave requests, and disburse store payroll across branches.

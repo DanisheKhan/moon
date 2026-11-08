@@ -316,21 +316,25 @@ export function BillTimelineModal({ isOpen, onClose, billId, onOpenRecordPayment
           </div>
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-between pt-3 border-t border-border">
-            <Button type="button" variant="outline" onClick={onClose}>
+          <div className="flex items-center justify-between pt-4 border-t border-border">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-xs font-semibold rounded-lg border border-border bg-surface text-text hover:bg-surface-subtle transition-all cursor-pointer"
+            >
               Close
-            </Button>
+            </button>
             {Number(bill.balance_amount) > 0 && onOpenRecordPayment && (
-              <Button
+              <button
                 type="button"
-                variant="primary"
                 onClick={() => {
                   onClose();
                   onOpenRecordPayment(bill.dealer, bill);
                 }}
+                className="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-700 text-white hover:bg-emerald-800 active:scale-[0.99] shadow-xs transition-all cursor-pointer"
               >
                 Pay Pending Balance ({formatCurrency(bill.balance_amount)})
-              </Button>
+              </button>
             )}
           </div>
         </div>

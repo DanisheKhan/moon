@@ -226,15 +226,15 @@ export function BillsRegisterTable({
                     </td>
 
                     {/* Actions */}
-                    <td className="py-3.5 px-4 text-right min-w-[130px]">
+                    <td className="py-3.5 px-4 text-right min-w-[170px]">
                       <div className="flex items-center justify-end gap-1.5">
                         {balance > 0 && onOpenRecordPayment && (
                           <button
                             onClick={() => onOpenRecordPayment(b.dealer, b)}
                             title="Record Payment against this bill"
-                            className="px-2 py-1 text-[11px] font-semibold rounded bg-brand-sage-subtle border border-brand-sage-border text-brand-sage hover:bg-brand-sage hover:text-white flex items-center gap-1 transition-colors"
+                            className="px-2.5 py-1 text-xs font-semibold rounded-md bg-brand-sage text-white hover:bg-brand-sage-hover flex items-center gap-1 shadow-2xs transition-all cursor-pointer"
                           >
-                            <CreditCard size={11} />
+                            <CreditCard size={12} className="stroke-[2.5]" />
                             <span>Pay</span>
                           </button>
                         )}
@@ -243,9 +243,10 @@ export function BillsRegisterTable({
                           <button
                             onClick={() => onOpenTimeline(b.id)}
                             title="View Payment Timeline & Aging"
-                            className="p-1 rounded text-muted hover:text-text hover:bg-surface-subtle transition-colors"
+                            className="px-2.5 py-1 text-xs font-semibold rounded-md border border-border bg-surface hover:bg-surface-subtle text-text flex items-center gap-1 shadow-2xs transition-all cursor-pointer"
                           >
-                            <Clock size={14} />
+                            <Clock size={12} />
+                            <span>Timeline</span>
                           </button>
                         )}
                       </div>

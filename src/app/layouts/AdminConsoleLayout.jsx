@@ -184,7 +184,7 @@ export function AdminConsoleLayout() {
                 )}
               >
                 <Users size={15} className="shrink-0" />
-                <span>Staff Management (HRMS)</span>
+                <span>Staff Management</span>
               </Link>
 
               <Link
@@ -212,7 +212,7 @@ export function AdminConsoleLayout() {
                 )}
               >
                 <Receipt size={15} className="shrink-0" />
-                <span>All Bills (Editable)</span>
+                <span>All Bills</span>
               </Link>
             </div>
 
@@ -238,7 +238,7 @@ export function AdminConsoleLayout() {
                   <span>Dashboard</span>
                 </Link>
 
-                {/* 2. Billing (POS) */}
+                {/* 2. Billing */}
                 <Link
                   to={`${basePath}/billing`}
                   onMouseEnter={() => import('@/features/billing').catch(() => {})}
@@ -250,10 +250,10 @@ export function AdminConsoleLayout() {
                   )}
                 >
                   <CreditCard size={15} className="shrink-0" />
-                  <span>Billing (POS)</span>
+                  <span>Billing</span>
                 </Link>
 
-                {/* 3. Bills & Invoices (Editable) */}
+                {/* 3. Bills & Invoices */}
                 <Link
                   to={`${basePath}/invoices`}
                   onMouseEnter={() => import('@/features/billing').catch(() => {})}

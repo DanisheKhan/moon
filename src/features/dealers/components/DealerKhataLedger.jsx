@@ -108,50 +108,42 @@ Thank you for your ongoing partnership!`;
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
               type="button"
-              variant="outline"
-              size="sm"
               onClick={handleShareWhatsApp}
-              className="gap-1.5 text-emerald-700 border-emerald-200 hover:bg-emerald-50"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 active:scale-[0.99] shadow-xs transition-all cursor-pointer"
             >
-              <Share2 size={14} />
+              <Share2 size={14} className="stroke-[2.5]" />
               <span>Share WhatsApp</span>
-            </Button>
+            </button>
 
-            <Button
+            <button
               type="button"
-              variant="outline"
-              size="sm"
               onClick={handlePrint}
-              className="gap-1.5"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg border border-border bg-surface text-text hover:bg-surface-subtle active:scale-[0.99] shadow-2xs transition-all cursor-pointer"
             >
               <Printer size={14} />
               <span>Print Ledger</span>
-            </Button>
+            </button>
 
-            <Button
+            <button
               type="button"
-              variant="outline"
-              size="sm"
               onClick={() => onOpenAddBill(dealer)}
-              className="gap-1.5"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-xs transition-all cursor-pointer"
             >
-              <Plus size={14} />
+              <Plus size={14} className="stroke-[2.5]" />
               <span>Add Bill</span>
-            </Button>
+            </button>
 
-            <Button
+            <button
               type="button"
-              variant="primary"
-              size="sm"
               onClick={() => onOpenRecordPayment(dealer)}
-              className="gap-1.5"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-brand-sage text-white hover:bg-brand-sage-hover active:scale-[0.99] shadow-xs transition-all cursor-pointer"
             >
-              <CreditCard size={14} />
+              <CreditCard size={14} className="stroke-[2.5]" />
               <span>Record Payment</span>
-            </Button>
+            </button>
           </div>
         </div>
 

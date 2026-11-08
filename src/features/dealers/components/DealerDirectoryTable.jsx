@@ -259,32 +259,33 @@ export function DealerDirectoryTable({
                     </td>
 
                     {/* 6. Quick Action Buttons */}
-                    <td className="py-3.5 px-4 text-right min-w-[170px]">
+                    <td className="py-3.5 px-4 text-right min-w-[200px]">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => onOpenAddBill(d)}
                           title="Add New Purchase Bill"
-                          className="px-2 py-1 text-[11px] font-semibold rounded bg-surface border border-border hover:bg-surface-hover text-text flex items-center gap-1 transition-colors"
+                          className="px-2.5 py-1 text-xs font-semibold rounded-md bg-[#1B382B] text-white hover:bg-[#142d22] flex items-center gap-1 shadow-2xs transition-all cursor-pointer"
                         >
-                          <Plus size={12} />
+                          <Plus size={12} className="stroke-[2.5]" />
                           <span>Bill</span>
                         </button>
 
                         <button
                           onClick={() => onOpenRecordPayment(d)}
                           title="Record Partial or Full Payment"
-                          className="px-2 py-1 text-[11px] font-semibold rounded bg-brand-sage-subtle border border-brand-sage-border text-brand-sage hover:bg-brand-sage hover:text-white flex items-center gap-1 transition-colors"
+                          className="px-2.5 py-1 text-xs font-semibold rounded-md bg-brand-sage text-white hover:bg-brand-sage-hover flex items-center gap-1 shadow-2xs transition-all cursor-pointer"
                         >
-                          <CreditCard size={12} />
+                          <CreditCard size={12} className="stroke-[2.5]" />
                           <span>Pay</span>
                         </button>
 
                         <Link
                           to={`${basePath}/${d.id}`}
                           title="Open Complete Khata Passbook"
-                          className="p-1 rounded text-muted hover:text-text hover:bg-surface-subtle transition-colors"
+                          className="px-2.5 py-1 text-xs font-semibold rounded-md border border-border bg-surface hover:bg-surface-subtle text-text flex items-center gap-1 shadow-2xs transition-all cursor-pointer"
                         >
-                          <ArrowRight size={14} />
+                          <span>Khata</span>
+                          <ArrowRight size={12} />
                         </Link>
                       </div>
                     </td>

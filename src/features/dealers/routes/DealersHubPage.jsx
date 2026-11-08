@@ -98,50 +98,42 @@ export function DealersHubPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <Button
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          <button
             type="button"
-            variant="outline"
-            size="sm"
             onClick={() => handleOpenAddBill()}
-            className="gap-1.5"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-xs transition-all cursor-pointer"
           >
-            <Plus size={14} />
+            <Plus size={14} className="stroke-[2.5]" />
             <span>Add Bill</span>
-          </Button>
+          </button>
 
-          <Button
+          <button
             type="button"
-            variant="outline"
-            size="sm"
             onClick={() => handleOpenDebitNote()}
-            className="gap-1.5 text-purple-700 border-purple-200 hover:bg-purple-50"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-purple-700 text-white hover:bg-purple-800 active:scale-[0.99] shadow-xs transition-all cursor-pointer"
           >
-            <TrendingDown size={14} />
+            <TrendingDown size={14} className="stroke-[2.5]" />
             <span>Debit Note</span>
-          </Button>
+          </button>
 
-          <Button
+          <button
             type="button"
-            variant="outline"
-            size="sm"
             onClick={() => handleOpenRecordPayment()}
-            className="gap-1.5 text-emerald-700 border-emerald-200 hover:bg-emerald-50"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-emerald-700 text-white hover:bg-emerald-800 active:scale-[0.99] shadow-xs transition-all cursor-pointer"
           >
-            <CreditCard size={14} />
+            <CreditCard size={14} className="stroke-[2.5]" />
             <span>Record Payment</span>
-          </Button>
+          </button>
 
-          <Button
+          <button
             type="button"
-            variant="primary"
-            size="sm"
             onClick={() => setIsAddDealerOpen(true)}
-            className="gap-1.5"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-brand-sage text-white hover:bg-brand-sage-hover active:scale-[0.99] shadow-xs transition-all cursor-pointer"
           >
-            <Building2 size={14} />
+            <Building2 size={14} className="stroke-[2.5]" />
             <span>Add Dealer</span>
-          </Button>
+          </button>
         </div>
       </div>
 
