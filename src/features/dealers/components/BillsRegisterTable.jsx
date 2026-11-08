@@ -10,11 +10,15 @@ import {
   CheckCircle2,
   Filter,
   Search,
+  Plus,
+  TrendingDown,
 } from 'lucide-react';
 
 export function BillsRegisterTable({
   bills = [],
   isLoading,
+  onOpenAddBill,
+  onOpenDebitNote,
   onOpenRecordPayment,
   onOpenTimeline,
 }) {
@@ -80,6 +84,31 @@ export function BillsRegisterTable({
               <option value="partially_paid">Partially Paid</option>
               <option value="paid">Fully Cleared / Paid</option>
             </select>
+
+            {/* Section Actions */}
+            <div className="flex items-center gap-2 shrink-0">
+              {onOpenDebitNote && (
+                <button
+                  type="button"
+                  onClick={onOpenDebitNote}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border bg-surface text-text hover:bg-surface-subtle active:scale-[0.99] shadow-2xs transition-all cursor-pointer"
+                >
+                  <TrendingDown size={13} />
+                  <span>Debit Note</span>
+                </button>
+              )}
+
+              {onOpenAddBill && (
+                <button
+                  type="button"
+                  onClick={onOpenAddBill}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all cursor-pointer"
+                >
+                  <Plus size={13} className="stroke-[2.5]" />
+                  <span>Add Bill</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -129,15 +158,22 @@ export function BillsRegisterTable({
                         <div className="font-bold font-mono text-text text-xs truncate" title={b.bill_number}>
                           {b.bill_number}
                         </div>
-                        <span
-                          className={`inline-block text-[9px] font-bold uppercase px-1.5 py-0.2 rounded border ${
-                            b.bill_type === 'gst'
-                              ? 'bg-brand-sage-subtle text-brand-sage border-brand-sage-border'
-                              : 'bg-amber-50 text-amber-800 border-amber-300'
-                          }`}
-                        >
-                          {b.bill_type === 'gst' ? 'GST Invoice' : 'Kaccha Slip'}
-                        </span>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span
+                            className={`inline-block text-[9px] font-bold uppercase px-1.5 py-0.2 rounded border ${
+                              b.bill_type === 'gst'
+                                ? 'bg-brand-sage-subtle text-brand-sage border-brand-sage-border'
+                                : 'bg-amber-50 text-amber-800 border-amber-300'
+                            }`}
+                          >
+                            {b.bill_type === 'gst' ? 'GST Invoice' : 'Kaccha Slip'}
+                          </span>
+                          {b.items?.length > 0 && (
+                            <span className="text-[9px] text-muted font-medium">
+                              • {b.items.length} {b.items.length === 1 ? 'item' : 'items'}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </td>
 

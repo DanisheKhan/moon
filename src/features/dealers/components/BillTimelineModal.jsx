@@ -13,6 +13,7 @@ import {
   Layers,
   TrendingDown,
   Building2,
+  Package,
 } from 'lucide-react';
 
 export function BillTimelineModal({ isOpen, onClose, billId, onOpenRecordPayment }) {
@@ -195,6 +196,55 @@ export function BillTimelineModal({ isOpen, onClose, billId, onOpenRecordPayment
                 </span>
               </div>
             </div>
+
+            {/* Billed Line Items (if present) */}
+            {bill.items && Array.isArray(bill.items) && bill.items.length > 0 && (
+              <div className="pt-3 border-t border-border/70 space-y-2">
+                <div className="flex items-center justify-between text-[11px] font-bold text-muted uppercase tracking-wider">
+                  <span className="flex items-center gap-1.5 text-text">
+                    <Package size={13} className="text-brand-sage" />
+                    <span>Consignment Items ({bill.items.length})</span>
+                  </span>
+                  <span className="font-mono text-text">
+                    {bill.items.reduce((sum, it) => sum + (Number(it.quantity) || 1), 0)} Total Units
+                  </span>
+                </div>
+
+                <div className="rounded-lg border border-border bg-surface overflow-hidden">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-surface-subtle text-[10px] uppercase font-bold text-muted border-b border-border">
+                      <tr>
+                        <th className="py-2 px-3">Item Description</th>
+                        <th className="py-2 px-2 text-center w-16">Qty</th>
+                        <th className="py-2 px-3 text-right w-24">Rate</th>
+                        <th className="py-2 px-3 text-right w-28">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border/60 font-mono text-[11px]">
+                      {bill.items.map((it, idx) => (
+                        <tr key={idx} className="hover:bg-surface-subtle/50 transition-colors">
+                          <td className="py-2 px-3 font-sans font-medium text-text">
+                            {it.name || it.description}
+                          </td>
+                          <td className="py-2 px-2 text-center text-text font-bold">
+                            {it.quantity}
+                          </td>
+                          <td className="py-2 px-3 text-right text-muted">
+                            {formatCurrency(it.unit_price || it.price || 0)}
+                          </td>
+                          <td className="py-2 px-3 text-right font-bold text-text">
+                            {formatCurrency(
+                              it.total ||
+                                Number(it.quantity || 1) * Number(it.unit_price || it.price || 0)
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Timeline of Events */}

@@ -206,10 +206,10 @@ export function RecordPaymentModal({
             onChange={(e) => setBillId(e.target.value)}
             className="w-full px-3 py-2 text-xs rounded-lg border border-border bg-surface text-text font-mono focus:outline-none focus:ring-1 focus:ring-brand-sage"
           >
-            <option value="">-- On-Account / General Lump-Sum Payment --</option>
+            <option value="">-- General Lump-Sum / On-Account Payment --</option>
             {unpaidBills.map((b) => (
               <option key={b.id} value={b.id}>
-                [{b.bill_type.toUpperCase()}] {b.bill_number} (Total: {formatCurrency(b.total_amount)} | Balance Due: {formatCurrency(b.balance_amount)}) - Due: {formatDate(b.due_date, false)}
+                [{b.bill_type.toUpperCase()}] {b.bill_number} • Due: {formatCurrency(b.balance_amount)} (Total: {formatCurrency(b.total_amount)})
               </option>
             ))}
           </select>

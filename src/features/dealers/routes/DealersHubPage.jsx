@@ -83,58 +83,17 @@ export function DealersHubPage() {
 
   return (
     <div className="w-full space-y-6 min-w-0 pb-12">
-      {/* 1. Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border min-w-0">
-        <div>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-muted block mb-1">
-            ACCOUNTS PAYABLE & PROCUREMENT
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
-            Dealer & Supplier Khata
-          </h1>
-          <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
-            Multi-dealer central ledgers (Godrej, Samsung, Onida), partial payments, aging timeline, and strict GST vs. Kaccha separation.
-          </p>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-          <button
-            type="button"
-            onClick={() => handleOpenAddBill()}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all cursor-pointer"
-          >
-            <Plus size={14} className="stroke-[2.5]" />
-            <span>Add Bill</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleOpenDebitNote()}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all cursor-pointer"
-          >
-            <TrendingDown size={14} className="stroke-[2.5]" />
-            <span>Debit Note</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleOpenRecordPayment()}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all cursor-pointer"
-          >
-            <CreditCard size={14} className="stroke-[2.5]" />
-            <span>Record Payment</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsAddDealerOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all cursor-pointer"
-          >
-            <Building2 size={14} className="stroke-[2.5]" />
-            <span>Add Dealer</span>
-          </button>
-        </div>
+      {/* 1. Page Header */}
+      <div className="pb-4 border-b border-border min-w-0">
+        <span className="text-[11px] font-bold uppercase tracking-wider text-muted block mb-1">
+          ACCOUNTS PAYABLE & PROCUREMENT
+        </span>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+          Dealer & Supplier Khata
+        </h1>
+        <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed max-w-3xl">
+          Multi-dealer central ledgers (Godrej, Samsung, Onida), partial payments, aging timeline, and strict GST vs. Kaccha separation.
+        </p>
       </div>
 
       {/* 2. Executive Analytics & Aging Header */}
@@ -186,6 +145,7 @@ export function DealersHubPage() {
         <DealerDirectoryTable
           dealers={dealers}
           isLoading={isLoadingDealers}
+          onOpenAddDealer={() => setIsAddDealerOpen(true)}
           onOpenAddBill={handleOpenAddBill}
           onOpenRecordPayment={handleOpenRecordPayment}
           basePath={basePath}
@@ -196,6 +156,8 @@ export function DealersHubPage() {
         <BillsRegisterTable
           bills={bills}
           isLoading={isLoadingBills}
+          onOpenAddBill={handleOpenAddBill}
+          onOpenDebitNote={handleOpenDebitNote}
           onOpenRecordPayment={handleOpenRecordPayment}
           onOpenTimeline={handleOpenTimeline}
         />
@@ -203,10 +165,23 @@ export function DealersHubPage() {
 
       {activeTab === 'payments' && (
         <div className="bg-surface border border-border rounded-xl shadow-2xs overflow-hidden">
-          <div className="p-3.5 border-b border-border">
-            <h3 className="text-xs font-bold text-text uppercase tracking-wide">
-              Recent Supplier Payments & Bank Settlements
-            </h3>
+          <div className="p-3.5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="text-xs font-bold text-text uppercase tracking-wide">
+                Recent Supplier Payments & Bank Settlements
+              </h3>
+              <p className="text-[11px] text-muted mt-0.5">
+                Vouchers, bank NEFT/RTGS payouts, cheques & cash disbursements
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => handleOpenRecordPayment()}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all cursor-pointer shrink-0 self-start sm:self-auto"
+            >
+              <CreditCard size={13} className="stroke-[2.5]" />
+              <span>Record Payment</span>
+            </button>
           </div>
           <div className="w-full overflow-hidden min-w-0">
             <table className="w-full table-fixed text-left text-xs border-collapse">

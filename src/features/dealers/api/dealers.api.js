@@ -273,6 +273,23 @@ export async function createDealerBill(payload) {
   const sgst = Number(payload.sgst_amount || 0);
   const igst = Number(payload.igst_amount || 0);
 
+  // Clean and validate items payload
+  const items = Array.isArray(payload.items)
+    ? payload.items
+        .filter((it) => it && (it.name?.trim() || it.description?.trim()))
+        .map((it) => ({
+          name: (it.name || it.description || '').trim(),
+          quantity: Math.max(1, Number(it.quantity) || 1),
+          unit_price: Math.max(0, Number(it.unit_price ?? it.price) || 0),
+          total: Math.max(
+            0,
+            Number(it.total) ||
+              Math.max(1, Number(it.quantity) || 1) * Math.max(0, Number(it.unit_price ?? it.price) || 0)
+          ),
+          notes: it.notes?.trim() || null,
+        }))
+    : [];
+
   const { data, error } = await supabase
     .from('dealer_bills')
     .insert([
@@ -288,7 +305,9 @@ export async function createDealerBill(payload) {
         cgst_amount: cgst,
         sgst_amount: sgst,
         igst_amount: igst,
+        total_tax_amount: cgst + sgst + igst,
         total_amount: totalAmount,
+        items,
         notes: payload.notes?.trim() || null,
         attachment_url: payload.attachment_url || null,
       },

@@ -19,6 +19,7 @@ import {
 export function DealerDirectoryTable({
   dealers = [],
   isLoading,
+  onOpenAddDealer,
   onOpenAddBill,
   onOpenRecordPayment,
   basePath = '/admin/dealers',
@@ -96,6 +97,17 @@ export function DealerDirectoryTable({
               <option value="has_balance">With Outstanding Balance</option>
               <option value="overdue">Overdue Only</option>
             </select>
+
+            {onOpenAddDealer && (
+              <button
+                type="button"
+                onClick={onOpenAddDealer}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all cursor-pointer shrink-0"
+              >
+                <Plus size={13} className="stroke-[2.5]" />
+                <span>Add Dealer</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
