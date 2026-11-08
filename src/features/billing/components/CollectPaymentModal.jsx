@@ -47,6 +47,70 @@ function CollectPaymentForm({ invoice, onClose }) {
   const parsedCollect = Math.round(parseFloat(collectAmount) || 0);
   const newBalance = Math.round(Math.max(balanceDue - parsedCollect, 0));
 
+  if (balanceDue <= 0) {
+    return (
+      <Modal
+        isOpen={true}
+        onClose={onClose}
+        title={
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={16} className="text-brand-sage" />
+            <span>Bill Settled — {invoice.invoice_number}</span>
+          </div>
+        }
+        size="md"
+      >
+        <div className="space-y-4 py-2">
+          {/* Customer & Bill Overview Box */}
+          <div className="p-3.5 rounded-xl border border-border bg-surface-subtle text-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="font-semibold text-text">{invoice.customer_name || 'Walk-in Customer'}</span>
+                {invoice.customer_phone && (
+                  <span className="text-muted ml-1.5 font-mono">({invoice.customer_phone})</span>
+                )}
+              </div>
+              <span className="text-[10px] font-mono text-muted uppercase">
+                {invoice.stores?.name || 'Star Store'}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-border/60 text-center">
+              <div>
+                <span className="text-[10px] uppercase font-semibold tracking-wider text-muted block mb-0.5">Bill Total</span>
+                <span className="font-mono text-sm sm:text-base font-bold text-text">{formatCurrency(grandTotal)}</span>
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-semibold tracking-wider text-muted block mb-0.5">Paid So Far</span>
+                <span className="font-mono text-sm sm:text-base font-bold text-brand-sage">{formatCurrency(totalPaid)}</span>
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-semibold tracking-wider text-muted block mb-0.5">Outstanding Balance</span>
+                <span className="font-mono text-base sm:text-lg font-extrabold text-brand-sage">₹0 (Settled)</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl border border-brand-sage/20 bg-brand-sage/5 text-center space-y-2">
+            <div className="w-10 h-10 rounded-full bg-brand-sage/10 text-brand-sage flex items-center justify-center mx-auto">
+              <CheckCircle2 size={22} />
+            </div>
+            <div className="font-semibold text-sm text-text">This Invoice is Fully Settled</div>
+            <p className="text-xs text-muted leading-relaxed max-w-sm mx-auto">
+              All {formatCurrency(grandTotal)} has already been received. No additional balance remains to collect for this invoice.
+            </p>
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <Button variant="solid" onClick={onClose} className="px-6">
+              Close
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    );
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setErrorMessage('');
@@ -198,7 +262,7 @@ function CollectPaymentForm({ invoice, onClose }) {
                   className={cn(
                     'p-2.5 rounded-lg border text-xs font-medium flex items-center gap-2 transition-all cursor-pointer',
                     isSelected
-                      ? 'bg-text text-bg border-text font-semibold shadow-2xs'
+                      ? 'bg-accent text-accent-fg border-accent font-semibold shadow-2xs'
                       : 'border-border bg-surface text-muted hover:text-text hover:bg-surface-subtle'
                   )}
                 >

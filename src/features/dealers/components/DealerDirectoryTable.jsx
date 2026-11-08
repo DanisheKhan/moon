@@ -100,17 +100,17 @@ export function DealerDirectoryTable({
         </div>
       </div>
 
-      {/* Table Content */}
-      <div className="overflow-x-auto min-w-0">
-        <table className="w-full text-left text-xs border-collapse">
+      {/* Table Content - 100% fluid, strictly zero horizontal overflow */}
+      <div className="w-full overflow-hidden min-w-0">
+        <table className="w-full table-fixed text-left text-xs border-collapse">
           <thead>
             <tr className="bg-surface-subtle/70 border-b border-border text-[11px] font-bold text-muted uppercase tracking-wider">
-              <th className="py-3 px-4">Dealer / Brand</th>
-              <th className="py-3 px-4">Contact & Location</th>
-              <th className="py-3 px-4">Billing & Credit Terms</th>
-              <th className="py-3 px-4 text-right">Outstanding Khata</th>
-              <th className="py-3 px-4 text-center">Avg Payment Speed</th>
-              <th className="py-3 px-4 text-right">Quick Actions</th>
+              <th className="py-3 px-3 w-[24%]">Dealer / Brand</th>
+              <th className="py-3 px-3 w-[18%]">Contact & Location</th>
+              <th className="py-3 px-3 w-[20%]">Billing & Credit Terms</th>
+              <th className="py-3 px-3 text-right w-[16%]">Outstanding Khata</th>
+              <th className="py-3 px-3 text-center w-[11%]">Avg Speed</th>
+              <th className="py-3 px-3 text-right w-[11%]">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -144,23 +144,23 @@ export function DealerDirectoryTable({
                     className="hover:bg-surface-subtle/50 transition-colors group"
                   >
                     {/* 1. Dealer / Brand */}
-                    <td className="py-3.5 px-4 min-w-[200px]">
-                      <div className="flex items-start gap-2.5">
-                        <div className="w-9 h-9 rounded-lg bg-brand-sage-subtle border border-brand-sage-border/50 text-brand-sage flex items-center justify-center font-bold text-sm shrink-0">
+                    <td className="py-2.5 px-3 min-w-0">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-8 h-8 rounded-lg bg-brand-sage-subtle border border-brand-sage-border/50 text-brand-sage flex items-center justify-center font-bold text-xs shrink-0">
                           {d.brand_name?.slice(0, 2).toUpperCase() || 'DL'}
                         </div>
-                        <div>
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="font-bold text-text text-sm hover:text-brand-sage transition-colors">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="font-bold text-text text-xs hover:text-brand-sage transition-colors truncate">
                               <Link to={`${basePath}/${d.id}`}>{d.brand_name || d.name}</Link>
                             </span>
                             {d.dealer_type === 'brand_direct' && (
-                              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
-                                OEM Brand
+                              <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
+                                OEM
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-muted truncate max-w-[220px]">
+                          <div className="text-[10px] text-muted truncate">
                             {d.name}
                           </div>
                         </div>
@@ -168,123 +168,123 @@ export function DealerDirectoryTable({
                     </td>
 
                     {/* 2. Contact & City */}
-                    <td className="py-3.5 px-4 min-w-[150px]">
-                      <div className="space-y-0.5">
-                        <div className="font-medium text-text">
+                    <td className="py-2.5 px-3 min-w-0">
+                      <div className="space-y-0.5 text-[10px]">
+                        <div className="font-medium text-text truncate">
                           {d.contact_person || 'Distributor Desk'}
                         </div>
-                        <div className="text-[11px] text-muted font-mono flex items-center gap-1">
-                          <Phone size={10} /> {formatPhone(d.phone)}
+                        <div className="text-muted font-mono flex items-center gap-1 truncate">
+                          <Phone size={9} /> {formatPhone(d.phone)}
                         </div>
                         {d.city && (
-                          <div className="text-[10px] text-muted">{d.city}</div>
+                          <div className="text-muted truncate">{d.city}</div>
                         )}
                       </div>
                     </td>
 
                     {/* 3. Billing & Credit Terms */}
-                    <td className="py-3.5 px-4 min-w-[160px]">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-1.5">
+                    <td className="py-2.5 px-3 min-w-0">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-1 flex-wrap">
                           {d.billing_mode === 'both' ? (
-                            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">
+                            <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-purple-50 text-purple-700 border border-purple-200">
                               GST & Kaccha
                             </span>
                           ) : d.billing_mode === 'gst' ? (
-                            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                              GST Only
+                            <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              GST
                             </span>
                           ) : (
-                            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">
-                              Kaccha Only
+                            <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-amber-50 text-amber-700 border border-amber-200">
+                              Kaccha
                             </span>
                           )}
-                          <span className="text-[11px] text-muted font-medium">
-                            {d.default_credit_days || 30}d Credit
+                          <span className="text-[10px] text-muted font-medium">
+                            {d.default_credit_days || 30}d
                           </span>
                         </div>
                         {d.gstin ? (
-                          <div className="text-[10px] font-mono text-muted truncate">
-                            GSTIN: {d.gstin}
+                          <div className="text-[9px] font-mono text-muted truncate">
+                            GST: {d.gstin}
                           </div>
                         ) : (
-                          <div className="text-[10px] text-muted italic">No GSTIN registered</div>
+                          <div className="text-[9px] text-muted italic">Non-GST</div>
                         )}
                       </div>
                     </td>
 
                     {/* 4. Balance & Khata */}
-                    <td className="py-3.5 px-4 text-right min-w-[160px]">
+                    <td className="py-2.5 px-3 text-right min-w-0">
                       <div className="space-y-0.5">
                         <div
-                          className={`text-sm font-bold font-mono ${
+                          className={`text-xs font-bold font-mono ${
                             totalBalance > 0 ? 'text-text' : 'text-emerald-600'
                           }`}
                         >
                           {totalBalance > 0 ? formatCurrency(totalBalance) : '₹0 (Settled)'}
                         </div>
                         {totalBalance > 0 && (
-                          <div className="text-[10px] text-muted flex items-center justify-end gap-1.5">
+                          <div className="text-[9px] text-muted flex items-center justify-end gap-1">
                             {gstBalance > 0 && (
                               <span className="text-brand-sage font-medium">
-                                GST: {formatCurrency(gstBalance)}
+                                GST {formatCurrency(gstBalance)}
                               </span>
                             )}
                             {kacchaBalance > 0 && (
                               <span className="text-amber-700 font-medium">
-                                Kaccha: {formatCurrency(kacchaBalance)}
+                                K {formatCurrency(kacchaBalance)}
                               </span>
                             )}
                           </div>
                         )}
                         {overdueAmount > 0 && (
-                          <div className="text-[10px] font-semibold text-brand-crimson flex items-center justify-end gap-1">
-                            <AlertCircle size={10} />
-                            {formatCurrency(overdueAmount)} Overdue
+                          <div className="text-[9px] font-semibold text-brand-crimson flex items-center justify-end gap-0.5">
+                            <AlertCircle size={9} />
+                            {formatCurrency(overdueAmount)}
                           </div>
                         )}
                       </div>
                     </td>
 
                     {/* 5. Avg Payment Speed */}
-                    <td className="py-3.5 px-4 text-center min-w-[120px]">
+                    <td className="py-2.5 px-3 text-center min-w-0">
                       {avgSpeed != null ? (
-                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-subtle border border-border text-[11px] font-semibold text-text">
-                          <Clock size={11} className="text-muted" />
-                          <span>{avgSpeed} Days</span>
+                        <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-surface-subtle border border-border text-[10px] font-semibold text-text">
+                          <Clock size={10} className="text-muted" />
+                          <span>{avgSpeed}d</span>
                         </div>
                       ) : (
-                        <span className="text-muted text-[11px]">-</span>
+                        <span className="text-muted text-[10px]">-</span>
                       )}
                     </td>
 
                     {/* 6. Quick Action Buttons */}
-                    <td className="py-3.5 px-4 text-right min-w-[200px]">
-                      <div className="flex items-center justify-end gap-1.5">
+                    <td className="py-2.5 px-3 text-right min-w-0">
+                      <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => onOpenAddBill(d)}
-                          title="Add New Purchase Bill"
-                          className="px-2.5 py-1 text-xs font-semibold rounded-md bg-[#1B382B] text-white hover:bg-[#142d22] flex items-center gap-1 shadow-2xs transition-all cursor-pointer"
+                          title="Add Purchase Bill"
+                          className="w-7 h-7 rounded-lg bg-accent text-accent-fg hover:opacity-90 flex items-center justify-center shadow-2xs transition-all cursor-pointer shrink-0"
+                          aria-label="Add Bill"
                         >
                           <Plus size={12} className="stroke-[2.5]" />
-                          <span>Bill</span>
                         </button>
 
                         <button
                           onClick={() => onOpenRecordPayment(d)}
-                          title="Record Partial or Full Payment"
-                          className="px-2.5 py-1 text-xs font-semibold rounded-md bg-brand-sage text-white hover:bg-brand-sage-hover flex items-center gap-1 shadow-2xs transition-all cursor-pointer"
+                          title="Record Payment"
+                          className="w-7 h-7 rounded-lg bg-emerald-700 text-white hover:bg-emerald-800 flex items-center justify-center shadow-2xs transition-all cursor-pointer shrink-0"
+                          aria-label="Record Payment"
                         >
                           <CreditCard size={12} className="stroke-[2.5]" />
-                          <span>Pay</span>
                         </button>
 
                         <Link
                           to={`${basePath}/${d.id}`}
                           title="Open Complete Khata Passbook"
-                          className="px-2.5 py-1 text-xs font-semibold rounded-md border border-border bg-surface hover:bg-surface-subtle text-text flex items-center gap-1 shadow-2xs transition-all cursor-pointer"
+                          className="w-7 h-7 rounded-lg border border-border bg-surface hover:bg-surface-subtle text-muted hover:text-text flex items-center justify-center shadow-2xs transition-all cursor-pointer shrink-0"
+                          aria-label="Open Ledger"
                         >
-                          <span>Khata</span>
                           <ArrowRight size={12} />
                         </Link>
                       </div>

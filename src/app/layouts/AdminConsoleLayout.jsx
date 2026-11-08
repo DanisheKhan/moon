@@ -87,16 +87,17 @@ export function AdminConsoleLayout() {
   const { data: currentStore } = useStore(currentStoreCode);
 
   const basePath = `/admin/${currentStoreCode}`;
-  const isDashboardActive = isStoreRoute && (path === basePath || path === `${basePath}/` || path === `${basePath}/dashboard`);
-  const isBillingActive = isStoreRoute && path === `${basePath}/billing`;
-  const isInvoicesActive = (isStoreRoute && path.startsWith(`${basePath}/invoices`)) || path === '/admin/invoices';
-  const isInventoryActive = isStoreRoute && path.startsWith(`${basePath}/inventory`);
-  const isDealersActive = (isStoreRoute && path.startsWith(`${basePath}/dealers`)) || path.startsWith('/admin/dealers');
-  const isReportsActive = isStoreRoute && path.startsWith(`${basePath}/reports`);
+  const isDashboardActive = path === basePath || path === `${basePath}/` || path === `${basePath}/dashboard`;
+  const isBillingActive = path === `${basePath}/billing`;
+  const isInvoicesActive = path.startsWith(`${basePath}/invoices`) || path === '/admin/invoices';
+  const isInventoryActive = path.startsWith(`${basePath}/inventory`);
+  const isDealersActive = path.startsWith(`${basePath}/dealers`) || path.startsWith('/admin/dealers');
+  const isReportsActive = path.startsWith(`${basePath}/reports`);
 
-  const activeStoreName = isStoreRoute
-    ? (currentStore?.name || stores.find((s) => s.code === currentStoreCode)?.name || 'Store Workspace')
-    : 'All Stores';
+  const activeStoreName =
+    currentStore?.name ||
+    stores.find((s) => s.code === currentStoreCode)?.name ||
+    'Star Furniture & Electronics';
 
   const userName = user?.user_metadata?.full_name || 'Store Owner';
   const userInitials = userName
@@ -216,114 +217,94 @@ export function AdminConsoleLayout() {
               </Link>
             </div>
 
-            {/* Store-Specific Workspace Navigation */}
-            {isStoreRoute && (
-              <div className="pt-3 mt-3 border-t border-sidebar-border space-y-1">
-                <div className="px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-muted truncate">
-                  {activeStoreName}
-                </div>
-
-                {/* 1. Dashboard */}
-                <Link
-                  to={basePath}
-                  onMouseEnter={() => import('@/features/launcher').catch(() => {})}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
-                    isDashboardActive
-                      ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
-                      : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
-                  )}
-                >
-                  <LayoutGrid size={15} className="shrink-0" />
-                  <span>Dashboard</span>
-                </Link>
-
-                {/* 2. Billing */}
-                <Link
-                  to={`${basePath}/billing`}
-                  onMouseEnter={() => import('@/features/billing').catch(() => {})}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
-                    isBillingActive
-                      ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
-                      : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
-                  )}
-                >
-                  <CreditCard size={15} className="shrink-0" />
-                  <span>Billing</span>
-                </Link>
-
-                {/* 3. Bills & Invoices */}
-                <Link
-                  to={`${basePath}/invoices`}
-                  onMouseEnter={() => import('@/features/billing').catch(() => {})}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
-                    isInvoicesActive && isStoreRoute
-                      ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
-                      : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
-                  )}
-                >
-                  <Receipt size={15} className="shrink-0" />
-                  <span>Bills & Invoices</span>
-                </Link>
-
-                {/* 4. Inventory */}
-                <Link
-                  to={`${basePath}/inventory`}
-                  onMouseEnter={() => import('@/features/inventory').catch(() => {})}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
-                    isInventoryActive
-                      ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
-                      : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
-                  )}
-                >
-                  <Package size={15} className="shrink-0" />
-                  <span>Inventory & Stock</span>
-                </Link>
-
-                {/* 5. Dealers & Khata */}
-                <Link
-                  to={`${basePath}/dealers`}
-                  onMouseEnter={() => import('@/features/dealers').catch(() => {})}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
-                    isDealersActive && isStoreRoute
-                      ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
-                      : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
-                  )}
-                >
-                  <Building2 size={15} className="shrink-0" />
-                  <span>Dealer Khata</span>
-                </Link>
-
-                {/* 5. Reports */}
-                <Link
-                  to={`${basePath}/reports`}
-                  onMouseEnter={() => import('@/features/reports').catch(() => {})}
-                  onClick={handleNavClick}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
-                    isReportsActive
-                      ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
-                      : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
-                  )}
-                >
-                  <BarChart3 size={15} className="shrink-0" />
-                  <span>Reports & Tax</span>
-                </Link>
+            {/* Store-Specific Workspace Navigation - Always visible for 100% consistent sidebar */}
+            <div className="pt-3 mt-3 border-t border-sidebar-border space-y-1">
+              <div className="px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-muted truncate">
+                {activeStoreName}
               </div>
-            )}
+
+              {/* 1. Dashboard */}
+              <Link
+                to={basePath}
+                onMouseEnter={() => import('@/features/launcher').catch(() => {})}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
+                  isDashboardActive
+                    ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
+                    : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
+                )}
+              >
+                <LayoutGrid size={15} className="shrink-0" />
+                <span>Dashboard</span>
+              </Link>
+
+              {/* 2. Billing */}
+              <Link
+                to={`${basePath}/billing`}
+                onMouseEnter={() => import('@/features/billing').catch(() => {})}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
+                  isBillingActive
+                    ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
+                    : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
+                )}
+              >
+                <CreditCard size={15} className="shrink-0" />
+                <span>Billing</span>
+              </Link>
+
+              {/* 3. Stock & Inventory */}
+              <Link
+                to={`${basePath}/inventory`}
+                onMouseEnter={() => import('@/features/inventory').catch(() => {})}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
+                  isInventoryActive
+                    ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
+                    : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
+                )}
+              >
+                <Package size={15} className="shrink-0" />
+                <span>Stock & Inventory</span>
+              </Link>
+
+              {/* 4. Dealers & Khata */}
+              <Link
+                to={`${basePath}/dealers`}
+                onMouseEnter={() => import('@/features/dealers').catch(() => {})}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
+                  isDealersActive && isStoreRoute
+                    ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
+                    : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
+                )}
+              >
+                <Building2 size={15} className="shrink-0" />
+                <span>Dealer Khata</span>
+              </Link>
+
+              {/* 5. Reports */}
+              <Link
+                to={`${basePath}/reports`}
+                onMouseEnter={() => import('@/features/reports').catch(() => {})}
+                onClick={handleNavClick}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
+                  isReportsActive
+                    ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
+                    : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
+                )}
+              >
+                <BarChart3 size={15} className="shrink-0" />
+                <span>Reports & Tax</span>
+              </Link>
+            </div>
           </nav>
         </div>
 
         {/* Bottom Status Indicator */}
-        <div className="p-3 border-t border-sidebar-border shrink-0">
-          <div className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-muted">
-            <span className="w-2 h-2 rounded-full bg-brand-sage shrink-0" />
-            <span className="truncate text-[11px] font-medium">Console v2.0 • Active</span>
-          </div>
+        <div className="p-3 border-t border-sidebar-border shrink-0 text-center">
+          <span className="text-[11px] text-muted font-medium">Star Enterprises Console v2.0</span>
         </div>
       </aside>
 
@@ -463,7 +444,6 @@ export function AdminConsoleLayout() {
                 <div className="w-6 h-6 rounded-md bg-accent text-accent-fg font-semibold text-[11px] flex items-center justify-center shrink-0">
                   {userInitials}
                 </div>
-                <span className="hidden sm:inline-block text-xs font-medium">Owner / Admin</span>
                 <ChevronDown
                   size={13}
                   className={cn(

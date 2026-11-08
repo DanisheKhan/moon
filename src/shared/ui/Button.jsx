@@ -8,11 +8,11 @@ const base =
 
 const variants = {
   solid: 'bg-accent text-accent-fg hover:opacity-95 active:scale-[0.99] shadow-2xs font-semibold',
-  primary: 'bg-brand-sage text-white hover:bg-brand-sage-hover active:scale-[0.99] shadow-xs font-semibold',
+  primary: 'bg-accent text-accent-fg hover:opacity-95 active:scale-[0.99] shadow-xs font-semibold',
   outline: 'border border-border text-text bg-surface hover:bg-surface-subtle hover:border-border-strong active:scale-[0.99] shadow-2xs font-medium',
   danger: 'bg-danger text-white hover:opacity-95 active:scale-[0.99] font-semibold',
   subtle: 'bg-surface-subtle text-text border border-border hover:bg-surface-hover active:scale-[0.99] font-medium',
-  sage: 'bg-brand-sage text-white hover:bg-brand-sage-hover active:scale-[0.99] shadow-2xs font-semibold',
+  sage: 'bg-accent text-accent-fg hover:opacity-95 active:scale-[0.99] shadow-2xs font-semibold',
 };
 
 const sizes = {

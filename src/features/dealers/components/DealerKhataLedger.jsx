@@ -237,19 +237,19 @@ Thank you for your ongoing partnership!`;
           </div>
         </div>
 
-        {/* Ledger Passbook Table */}
-        <div className="overflow-x-auto min-w-0">
-          <table className="w-full text-left text-xs border-collapse">
+        {/* Ledger Passbook Table - 100% fluid, strictly zero horizontal overflow */}
+        <div className="w-full overflow-hidden min-w-0">
+          <table className="w-full table-fixed text-left text-xs border-collapse">
             <thead>
               <tr className="bg-surface-subtle/80 border-b border-border text-[11px] font-bold text-muted uppercase tracking-wider">
-                <th className="py-3 px-4">Date</th>
-                <th className="py-3 px-4">Type</th>
-                <th className="py-3 px-4">Voucher / Ref No</th>
-                <th className="py-3 px-4">Description</th>
-                <th className="py-3 px-4 text-right">Debit (+) Payable</th>
-                <th className="py-3 px-4 text-right">Credit (-) Paid</th>
-                <th className="py-3 px-4 text-right">Running Balance</th>
-                <th className="py-3 px-4 text-center">Timeline</th>
+                <th className="py-3 px-3 w-[11%]">Date</th>
+                <th className="py-3 px-3 w-[12%]">Type</th>
+                <th className="py-3 px-3 w-[15%]">Voucher / Ref</th>
+                <th className="py-3 px-3 w-[24%]">Description</th>
+                <th className="py-3 px-3 text-right w-[11%]">Debit (+)</th>
+                <th className="py-3 px-3 text-right w-[11%]">Credit (-)</th>
+                <th className="py-3 px-3 text-right w-[11%]">Balance</th>
+                <th className="py-3 px-3 text-center w-[5%]">Time</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -277,67 +277,67 @@ Thank you for your ongoing partnership!`;
                       className="hover:bg-surface-subtle/50 transition-colors"
                     >
                       {/* Date */}
-                      <td className="py-3 px-4 font-mono text-[11px] text-text whitespace-nowrap">
+                      <td className="py-2.5 px-3 font-mono text-[11px] text-text whitespace-nowrap min-w-0 truncate">
                         {formatDate(row.date, false)}
                       </td>
 
                       {/* Entry Type */}
-                      <td className="py-3 px-4 whitespace-nowrap">
+                      <td className="py-2.5 px-3 whitespace-nowrap min-w-0">
                         {isBill ? (
                           <span
-                            className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded border ${
+                            className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border inline-block ${
                               row.billType === 'gst'
                                 ? 'bg-brand-sage-subtle text-brand-sage border-brand-sage-border'
                                 : 'bg-amber-50 text-amber-800 border-amber-300'
                             }`}
                           >
-                            {row.billType === 'gst' ? 'GST Bill' : 'Kaccha Bill'}
+                            {row.billType === 'gst' ? 'GST Bill' : 'Kaccha'}
                           </span>
                         ) : isPayment ? (
-                          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
+                          <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 inline-block">
                             Payment
                           </span>
                         ) : (
-                          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-purple-100 text-purple-800 border border-purple-300">
+                          <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 border border-purple-300 inline-block">
                             Debit Note
                           </span>
                         )}
                       </td>
 
                       {/* Reference Number */}
-                      <td className="py-3 px-4 font-mono font-semibold text-text whitespace-nowrap">
+                      <td className="py-2.5 px-3 font-mono font-semibold text-text whitespace-nowrap min-w-0 truncate">
                         {row.refNumber}
                       </td>
 
                       {/* Description */}
-                      <td className="py-3 px-4 text-muted max-w-[240px] truncate">
+                      <td className="py-2.5 px-3 text-muted min-w-0 truncate" title={row.description}>
                         {row.description}
                       </td>
 
                       {/* Debit (+) */}
-                      <td className="py-3 px-4 text-right font-mono font-bold text-text whitespace-nowrap">
+                      <td className="py-2.5 px-3 text-right font-mono font-bold text-text whitespace-nowrap min-w-0">
                         {row.debit > 0 ? formatCurrency(row.debit) : '-'}
                       </td>
 
                       {/* Credit (-) */}
-                      <td className="py-3 px-4 text-right font-mono font-bold text-brand-sage whitespace-nowrap">
+                      <td className="py-2.5 px-3 text-right font-mono font-bold text-brand-sage whitespace-nowrap min-w-0">
                         {row.credit > 0 ? formatCurrency(row.credit) : '-'}
                       </td>
 
                       {/* Running Balance */}
-                      <td className="py-3 px-4 text-right font-mono font-bold text-amber-950 whitespace-nowrap">
+                      <td className="py-2.5 px-3 text-right font-mono font-bold text-amber-950 whitespace-nowrap min-w-0">
                         {formatCurrency(row.runningBalance)}
                       </td>
 
                       {/* Timeline audit action */}
-                      <td className="py-3 px-4 text-center whitespace-nowrap">
+                      <td className="py-2.5 px-3 text-center whitespace-nowrap min-w-0">
                         {isBill && onOpenTimeline && (
                           <button
                             onClick={() => onOpenTimeline(row.id)}
                             title="Inspect Payment Speed & Timeline"
-                            className="p-1 rounded text-muted hover:text-brand-sage hover:bg-brand-sage-subtle transition-colors"
+                            className="p-1 rounded text-muted hover:text-accent hover:bg-surface-subtle transition-colors cursor-pointer"
                           >
-                            <Clock size={14} />
+                            <Clock size={13} />
                           </button>
                         )}
                       </td>

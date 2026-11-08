@@ -158,19 +158,19 @@ export function InventoryCardsPage() {
           <button
             type="button"
             onClick={() => setIsAddCategoryModalOpen(true)}
-            className="inline-flex items-center gap-1.5 bg-surface hover:bg-bg border border-border text-text font-medium text-xs sm:text-sm px-3.5 py-2 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs"
+            className="inline-flex items-center gap-1.5 bg-surface hover:bg-surface-subtle border border-border text-text font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs"
           >
             <FolderPlus size={15} />
-            <span>+ Add Category</span>
+            <span>Add Category</span>
           </button>
 
           <button
             type="button"
             onClick={() => setIsAddModalOpen(true)}
-            className="inline-flex items-center gap-2 bg-text text-bg hover:opacity-90 font-medium text-xs sm:text-sm px-4 py-2 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs"
+            className="inline-flex items-center gap-1.5 bg-accent text-accent-fg hover:opacity-95 active:scale-[0.99] font-semibold text-xs sm:text-sm px-4 py-2 rounded-lg transition-all cursor-pointer shrink-0 shadow-xs"
           >
-            <Plus size={16} />
-            <span>+ Add new Product</span>
+            <Plus size={15} className="stroke-[2.5]" />
+            <span>Add New Product</span>
           </button>
         </div>
       </div>
@@ -212,9 +212,9 @@ export function InventoryCardsPage() {
           type="button"
           onClick={() => setStockFilter('all')}
           className={cn(
-            'px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors border shadow-2xs',
+            'px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors border shadow-2xs',
             stockFilter === 'all'
-              ? 'bg-text text-bg border-text font-semibold'
+              ? 'bg-accent text-accent-fg border-accent'
               : 'bg-surface text-muted hover:text-text border-border'
           )}
         >
@@ -224,9 +224,9 @@ export function InventoryCardsPage() {
           type="button"
           onClick={() => setStockFilter('in_stock')}
           className={cn(
-            'px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors border shadow-2xs',
+            'px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors border shadow-2xs',
             stockFilter === 'in_stock'
-              ? 'bg-brand-sage text-white border-brand-sage font-semibold'
+              ? 'bg-accent text-accent-fg border-accent'
               : 'bg-surface text-muted hover:text-text border-border'
           )}
         >

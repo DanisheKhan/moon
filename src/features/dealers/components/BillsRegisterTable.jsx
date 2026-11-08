@@ -84,19 +84,19 @@ export function BillsRegisterTable({
         </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto min-w-0">
-        <table className="w-full text-left text-xs border-collapse">
+      {/* Table - 100% fluid, strictly zero horizontal overflow */}
+      <div className="w-full overflow-hidden min-w-0">
+        <table className="w-full table-fixed text-left text-xs border-collapse">
           <thead>
             <tr className="bg-surface-subtle/80 border-b border-border text-[11px] font-bold text-muted uppercase tracking-wider">
-              <th className="py-3 px-4">Bill # & Type</th>
-              <th className="py-3 px-4">Brand / Dealer</th>
-              <th className="py-3 px-4">Dates & Credit</th>
-              <th className="py-3 px-4 text-right">Bill Value</th>
-              <th className="py-3 px-4 text-right">Paid</th>
-              <th className="py-3 px-4 text-right">Balance Due</th>
-              <th className="py-3 px-4 text-center">Status / Aging Velocity</th>
-              <th className="py-3 px-4 text-right">Actions</th>
+              <th className="py-3 px-3 w-[15%]">Bill # & Type</th>
+              <th className="py-3 px-3 w-[18%]">Brand / Dealer</th>
+              <th className="py-3 px-3 w-[15%]">Dates & Credit</th>
+              <th className="py-3 px-3 text-right w-[11%]">Bill Value</th>
+              <th className="py-3 px-3 text-right w-[10%]">Paid</th>
+              <th className="py-3 px-3 text-right w-[11%]">Balance Due</th>
+              <th className="py-3 px-3 text-center w-[12%]">Status / Aging</th>
+              <th className="py-3 px-3 text-right w-[8%]">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -124,13 +124,13 @@ export function BillsRegisterTable({
                     className="hover:bg-surface-subtle/50 transition-colors"
                   >
                     {/* Bill # & Type */}
-                    <td className="py-3.5 px-4 min-w-[150px]">
+                    <td className="py-2.5 px-3 min-w-0">
                       <div className="space-y-0.5">
-                        <div className="font-bold font-mono text-text text-sm">
+                        <div className="font-bold font-mono text-text text-xs truncate" title={b.bill_number}>
                           {b.bill_number}
                         </div>
                         <span
-                          className={`inline-block text-[10px] font-bold uppercase px-1.5 py-0.2 rounded border ${
+                          className={`inline-block text-[9px] font-bold uppercase px-1.5 py-0.2 rounded border ${
                             b.bill_type === 'gst'
                               ? 'bg-brand-sage-subtle text-brand-sage border-brand-sage-border'
                               : 'bg-amber-50 text-amber-800 border-amber-300'
@@ -142,24 +142,24 @@ export function BillsRegisterTable({
                     </td>
 
                     {/* Dealer / Brand */}
-                    <td className="py-3.5 px-4 min-w-[160px]">
+                    <td className="py-2.5 px-3 min-w-0">
                       <div className="space-y-0.5">
-                        <div className="font-bold text-text">
+                        <div className="font-bold text-text text-xs truncate" title={b.dealer?.brand_name || b.dealer?.name}>
                           {b.dealer?.brand_name || b.dealer?.name}
                         </div>
-                        <div className="text-[11px] text-muted truncate max-w-[180px]">
+                        <div className="text-[10px] text-muted truncate" title={b.dealer?.name}>
                           {b.dealer?.name}
                         </div>
                       </div>
                     </td>
 
                     {/* Dates & Terms */}
-                    <td className="py-3.5 px-4 min-w-[150px]">
-                      <div className="space-y-0.5 text-[11px]">
-                        <div>
+                    <td className="py-2.5 px-3 min-w-0">
+                      <div className="space-y-0.5 text-[10px]">
+                        <div className="truncate">
                           Date: <span className="text-text font-medium">{formatDate(b.bill_date, false)}</span>
                         </div>
-                        <div className="text-muted">
+                        <div className="text-muted truncate">
                           Terms: <span className="font-mono text-text">{b.credit_days}d</span> | Due:{' '}
                           <span className="font-medium text-text">{formatDate(b.due_date, false)}</span>
                         </div>
@@ -167,20 +167,20 @@ export function BillsRegisterTable({
                     </td>
 
                     {/* Total Bill Value */}
-                    <td className="py-3.5 px-4 text-right font-mono font-bold text-text whitespace-nowrap min-w-[110px]">
+                    <td className="py-2.5 px-3 text-right font-mono font-bold text-text text-xs whitespace-nowrap min-w-0">
                       {formatCurrency(total)}
                     </td>
 
                     {/* Paid Amount */}
-                    <td className="py-3.5 px-4 text-right font-mono font-bold text-brand-sage whitespace-nowrap min-w-[100px]">
+                    <td className="py-2.5 px-3 text-right font-mono font-bold text-brand-sage text-xs whitespace-nowrap min-w-0">
                       {formatCurrency(paid)}
                     </td>
 
                     {/* Remaining Balance */}
-                    <td className="py-3.5 px-4 text-right font-mono font-bold whitespace-nowrap min-w-[120px]">
+                    <td className="py-2.5 px-3 text-right font-mono font-bold whitespace-nowrap min-w-0">
                       <span
                         className={
-                          balance > 0 ? 'text-amber-950 text-sm' : 'text-emerald-600'
+                          balance > 0 ? 'text-amber-950 text-xs' : 'text-emerald-600 text-xs'
                         }
                       >
                         {formatCurrency(balance)}
@@ -188,11 +188,11 @@ export function BillsRegisterTable({
                     </td>
 
                     {/* Status & Aging Velocity */}
-                    <td className="py-3.5 px-4 text-center min-w-[170px]">
-                      <div className="space-y-1">
+                    <td className="py-2.5 px-3 text-center min-w-0">
+                      <div className="space-y-0.5">
                         <div>
                           <span
-                            className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
+                            className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${
                               b.status === 'paid'
                                 ? 'bg-emerald-100 text-emerald-800'
                                 : b.status === 'partially_paid'
@@ -210,32 +210,32 @@ export function BillsRegisterTable({
 
                         {/* Velocity Badge */}
                         {b.status === 'paid' ? (
-                          <div className="text-[10px] text-emerald-700 font-semibold flex items-center justify-center gap-1">
-                            <Clock size={10} /> Cleared in {b.payment_days_taken || 0}d
+                          <div className="text-[9px] text-emerald-700 font-semibold flex items-center justify-center gap-0.5">
+                            <Clock size={9} /> {b.payment_days_taken || 0}d
                           </div>
                         ) : b.isOverdue ? (
-                          <div className="text-[10px] text-brand-crimson font-bold flex items-center justify-center gap-1">
-                            <AlertCircle size={10} /> {b.daysOverdue}d Overdue
+                          <div className="text-[9px] text-brand-crimson font-bold flex items-center justify-center gap-0.5">
+                            <AlertCircle size={9} /> {b.daysOverdue}d Overdue
                           </div>
                         ) : (
-                          <div className="text-[10px] text-muted font-medium">
-                            {b.daysUntilDue}d remaining
+                          <div className="text-[9px] text-muted font-medium">
+                            {b.daysUntilDue}d left
                           </div>
                         )}
                       </div>
                     </td>
 
                     {/* Actions */}
-                    <td className="py-3.5 px-4 text-right min-w-[170px]">
-                      <div className="flex items-center justify-end gap-1.5">
+                    <td className="py-2.5 px-3 text-right min-w-0">
+                      <div className="flex items-center justify-end gap-1">
                         {balance > 0 && onOpenRecordPayment && (
                           <button
                             onClick={() => onOpenRecordPayment(b.dealer, b)}
                             title="Record Payment against this bill"
-                            className="px-2.5 py-1 text-xs font-semibold rounded-md bg-brand-sage text-white hover:bg-brand-sage-hover flex items-center gap-1 shadow-2xs transition-all cursor-pointer"
+                            className="w-7 h-7 rounded-lg bg-accent text-accent-fg hover:opacity-90 flex items-center justify-center shadow-2xs transition-all cursor-pointer shrink-0"
+                            aria-label="Pay Bill"
                           >
                             <CreditCard size={12} className="stroke-[2.5]" />
-                            <span>Pay</span>
                           </button>
                         )}
 
@@ -243,10 +243,10 @@ export function BillsRegisterTable({
                           <button
                             onClick={() => onOpenTimeline(b.id)}
                             title="View Payment Timeline & Aging"
-                            className="px-2.5 py-1 text-xs font-semibold rounded-md border border-border bg-surface hover:bg-surface-subtle text-text flex items-center gap-1 shadow-2xs transition-all cursor-pointer"
+                            className="w-7 h-7 rounded-lg border border-border bg-surface hover:bg-surface-subtle text-muted hover:text-text flex items-center justify-center shadow-2xs transition-all cursor-pointer shrink-0"
+                            aria-label="View Timeline"
                           >
                             <Clock size={12} />
-                            <span>Timeline</span>
                           </button>
                         )}
                       </div>

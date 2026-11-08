@@ -152,7 +152,7 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
               className="text-xs font-medium text-text hover:text-accent cursor-pointer flex items-center gap-1.5 transition-colors"
             >
               <FolderPlus size={13} />
-              <span>{showNewCatInput ? 'Hide Custom Category' : '+ Add Custom Category'}</span>
+              <span>{showNewCatInput ? 'Hide Custom Category' : 'Add Custom Category'}</span>
             </button>
           </div>
 

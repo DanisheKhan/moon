@@ -11,12 +11,12 @@ export function EditProductModal({
   storeId,
   isOpen,
   onClose,
-  initialTab = 'details',
+  initialTab = 'stock',
   onOpenAdjustStock,
 }) {
   const updateProductMutation = useUpdateProduct();
 
-  const [activeTab, setActiveTab] = useState(initialTab || 'details');
+  const [activeTab, setActiveTab] = useState(initialTab || 'stock');
   const [name, setName] = useState(product?.name || '');
   const [sku, setSku] = useState(product?.sku || '');
   const [sellingPrice, setSellingPrice] = useState(String(product?.selling_price || ''));
@@ -88,29 +88,29 @@ export function EditProductModal({
         <div className="flex border-b border-border text-xs font-medium">
           <button
             type="button"
-            onClick={() => setActiveTab('details')}
-            className={cn(
-              'px-4 py-2.5 border-b-2 transition-colors cursor-pointer flex items-center gap-2',
-              activeTab === 'details'
-                ? 'border-brand-sage text-brand-sage font-semibold'
-                : 'border-transparent text-muted hover:text-text'
-            )}
-          >
-            <Pencil size={14} />
-            <span>Product Details & Pricing</span>
-          </button>
-          <button
-            type="button"
             onClick={() => setActiveTab('stock')}
             className={cn(
               'px-4 py-2.5 border-b-2 transition-colors cursor-pointer flex items-center gap-2',
               activeTab === 'stock'
-                ? 'border-brand-sage text-brand-sage font-semibold'
+                ? 'border-accent text-accent font-semibold'
                 : 'border-transparent text-muted hover:text-text'
             )}
           >
             <Boxes size={14} />
             <span>Stock & Inventory ({currentQty} on hand)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('details')}
+            className={cn(
+              'px-4 py-2.5 border-b-2 transition-colors cursor-pointer flex items-center gap-2',
+              activeTab === 'details'
+                ? 'border-accent text-accent font-semibold'
+                : 'border-transparent text-muted hover:text-text'
+            )}
+          >
+            <Pencil size={14} />
+            <span>Product Details & Pricing</span>
           </button>
         </div>
 

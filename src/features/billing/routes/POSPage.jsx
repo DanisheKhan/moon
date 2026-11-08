@@ -528,7 +528,7 @@ export function POSPage() {
                 }}
                 className={cn(
                   'flex items-center justify-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-medium transition-all text-left select-none',
-                  isCurrent && 'bg-text text-bg font-semibold shadow-2xs',
+                  isCurrent && 'bg-accent text-accent-fg font-semibold shadow-2xs',
                   isCompleted && 'bg-surface-subtle text-text hover:bg-surface-hover cursor-pointer border border-border',
                   !isCurrent && !isCompleted && 'text-muted opacity-60 cursor-not-allowed'
                 )}
@@ -536,8 +536,8 @@ export function POSPage() {
                 <div
                   className={cn(
                     'w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0',
-                    isCurrent && 'bg-bg text-text',
-                    isCompleted && 'bg-brand-sage text-white',
+                    isCurrent && 'bg-white/20 text-white',
+                    isCompleted && 'bg-accent text-accent-fg',
                     !isCurrent && !isCompleted && 'border border-border text-muted'
                   )}
                 >
@@ -601,10 +601,10 @@ export function POSPage() {
                   type="button"
                   onClick={() => setSelectedCategory('all')}
                   className={cn(
-                    'px-3 py-1.5 rounded-lg font-medium whitespace-nowrap cursor-pointer transition-colors',
+                    'px-3 py-1.5 rounded-lg font-semibold whitespace-nowrap cursor-pointer transition-colors border shadow-2xs',
                     selectedCategory === 'all'
-                      ? 'bg-text text-bg font-semibold'
-                      : 'bg-surface-subtle text-muted hover:text-text border border-border'
+                      ? 'bg-accent text-accent-fg border-accent'
+                      : 'bg-surface text-muted hover:text-text border-border'
                   )}
                 >
                   All ({products.length})
@@ -615,10 +615,10 @@ export function POSPage() {
                     type="button"
                     onClick={() => setSelectedCategory(cat.id)}
                     className={cn(
-                      'px-3 py-1.5 rounded-lg font-medium whitespace-nowrap cursor-pointer transition-colors',
+                      'px-3 py-1.5 rounded-lg font-semibold whitespace-nowrap cursor-pointer transition-colors border shadow-2xs',
                       selectedCategory === cat.id
-                        ? 'bg-text text-bg font-semibold'
-                        : 'bg-surface-subtle text-muted hover:text-text border border-border'
+                        ? 'bg-accent text-accent-fg border-accent'
+                        : 'bg-surface text-muted hover:text-text border-border'
                     )}
                   >
                     {cat.name} ({cat.count})
@@ -894,9 +894,9 @@ export function POSPage() {
                     setCustomerGstin('');
                   }}
                   className={cn(
-                    'px-3 py-1.5 rounded-md font-medium cursor-pointer transition-colors text-xs flex items-center gap-1.5',
+                    'px-3 py-1.5 rounded-md font-semibold cursor-pointer transition-colors text-xs flex items-center gap-1.5',
                     customerType === 'walkin'
-                      ? 'bg-text text-bg font-semibold shadow-2xs'
+                      ? 'bg-accent text-accent-fg shadow-2xs'
                       : 'text-muted hover:text-text'
                   )}
                 >
@@ -910,9 +910,9 @@ export function POSPage() {
                     if (customerName === 'Walk-in Customer') setCustomerName('');
                   }}
                   className={cn(
-                    'px-3 py-1.5 rounded-md font-medium cursor-pointer transition-colors text-xs flex items-center gap-1.5',
+                    'px-3 py-1.5 rounded-md font-semibold cursor-pointer transition-colors text-xs flex items-center gap-1.5',
                     customerType === 'registered'
-                      ? 'bg-text text-bg font-semibold shadow-2xs'
+                      ? 'bg-accent text-accent-fg shadow-2xs'
                       : 'text-muted hover:text-text'
                   )}
                 >
@@ -1088,9 +1088,9 @@ export function POSPage() {
                       setPartialCollectedAmount('');
                     }}
                     className={cn(
-                      'p-2 rounded-lg border text-xs font-medium transition-all text-center cursor-pointer',
+                      'p-2 rounded-lg border text-xs font-semibold transition-all text-center cursor-pointer',
                       settlementType === 'full'
-                        ? 'bg-text text-bg border-text font-bold shadow-2xs'
+                        ? 'bg-accent text-accent-fg border-accent font-bold shadow-2xs'
                         : 'border-border bg-surface text-muted hover:text-text'
                     )}
                   >
@@ -1106,9 +1106,9 @@ export function POSPage() {
                       }
                     }}
                     className={cn(
-                      'p-2 rounded-lg border text-xs font-medium transition-all text-center cursor-pointer',
+                      'p-2 rounded-lg border text-xs font-semibold transition-all text-center cursor-pointer',
                       settlementType === 'partial'
-                        ? 'bg-text text-bg border-text font-bold shadow-2xs'
+                        ? 'bg-amber-600 text-white border-amber-600 font-bold shadow-2xs'
                         : 'border-border bg-surface text-muted hover:text-text'
                     )}
                   >
@@ -1122,9 +1122,9 @@ export function POSPage() {
                       setPartialCollectedAmount('0');
                     }}
                     className={cn(
-                      'p-2 rounded-lg border text-xs font-medium transition-all text-center cursor-pointer',
+                      'p-2 rounded-lg border text-xs font-semibold transition-all text-center cursor-pointer',
                       settlementType === 'pending'
-                        ? 'bg-text text-bg border-text font-bold shadow-2xs'
+                        ? 'bg-brand-crimson text-white border-brand-crimson font-bold shadow-2xs'
                         : 'border-border bg-surface text-muted hover:text-text'
                     )}
                   >
@@ -1182,9 +1182,9 @@ export function POSPage() {
                       type="button"
                       onClick={() => setPaymentMode('cash')}
                       className={cn(
-                        'p-3 rounded-xl border text-xs font-medium flex flex-col items-center justify-center gap-2 cursor-pointer transition-all',
+                        'p-3 rounded-xl border text-xs font-semibold flex flex-col items-center justify-center gap-2 cursor-pointer transition-all',
                         paymentMode === 'cash'
-                          ? 'border-text bg-text text-bg font-semibold shadow-2xs'
+                          ? 'border-accent bg-accent text-accent-fg shadow-2xs'
                           : 'border-border bg-surface text-muted hover:text-text hover:bg-surface-subtle'
                       )}
                     >
@@ -1196,9 +1196,9 @@ export function POSPage() {
                       type="button"
                       onClick={() => setPaymentMode('upi')}
                       className={cn(
-                        'p-3 rounded-xl border text-xs font-medium flex flex-col items-center justify-center gap-2 cursor-pointer transition-all',
+                        'p-3 rounded-xl border text-xs font-semibold flex flex-col items-center justify-center gap-2 cursor-pointer transition-all',
                         paymentMode === 'upi'
-                          ? 'border-text bg-text text-bg font-semibold shadow-2xs'
+                          ? 'border-accent bg-accent text-accent-fg shadow-2xs'
                           : 'border-border bg-surface text-muted hover:text-text hover:bg-surface-subtle'
                       )}
                     >
@@ -1210,9 +1210,9 @@ export function POSPage() {
                       type="button"
                       onClick={() => setPaymentMode('card')}
                       className={cn(
-                        'p-3 rounded-xl border text-xs font-medium flex flex-col items-center justify-center gap-2 cursor-pointer transition-all',
+                        'p-3 rounded-xl border text-xs font-semibold flex flex-col items-center justify-center gap-2 cursor-pointer transition-all',
                         paymentMode === 'card'
-                          ? 'border-text bg-text text-bg font-semibold shadow-2xs'
+                          ? 'border-accent bg-accent text-accent-fg shadow-2xs'
                           : 'border-border bg-surface text-muted hover:text-text hover:bg-surface-subtle'
                       )}
                     >
@@ -1224,9 +1224,9 @@ export function POSPage() {
                       type="button"
                       onClick={() => setPaymentMode('emi')}
                       className={cn(
-                        'p-3 rounded-xl border text-xs font-medium flex flex-col items-center justify-center gap-2 cursor-pointer transition-all',
+                        'p-3 rounded-xl border text-xs font-semibold flex flex-col items-center justify-center gap-2 cursor-pointer transition-all',
                         paymentMode === 'emi'
-                          ? 'border-text bg-text text-bg font-semibold shadow-2xs'
+                          ? 'border-accent bg-accent text-accent-fg shadow-2xs'
                           : 'border-border bg-surface text-muted hover:text-text hover:bg-surface-subtle'
                       )}
                     >
@@ -1468,8 +1468,8 @@ export function POSPage() {
                       type="button"
                       onClick={() => setBillDiscountType('flat')}
                       className={cn(
-                        'px-2.5 py-1 rounded-md cursor-pointer font-medium transition-colors text-xs',
-                        billDiscountType === 'flat' ? 'bg-text text-bg font-bold' : 'text-muted'
+                        'px-2.5 py-1 rounded-md cursor-pointer font-semibold transition-colors text-xs',
+                        billDiscountType === 'flat' ? 'bg-accent text-accent-fg' : 'text-muted hover:text-text'
                       )}
                     >
                       Flat ₹
@@ -1478,8 +1478,8 @@ export function POSPage() {
                       type="button"
                       onClick={() => setBillDiscountType('percent')}
                       className={cn(
-                        'px-2.5 py-1 rounded-md cursor-pointer font-medium transition-colors text-xs',
-                        billDiscountType === 'percent' ? 'bg-text text-bg font-bold' : 'text-muted'
+                        'px-2.5 py-1 rounded-md cursor-pointer font-semibold transition-colors text-xs',
+                        billDiscountType === 'percent' ? 'bg-accent text-accent-fg' : 'text-muted hover:text-text'
                       )}
                     >
                       %
@@ -1505,9 +1505,9 @@ export function POSPage() {
                       type="button"
                       onClick={() => setBillDiscountValue(val.toString())}
                       className={cn(
-                        'text-[10px] px-2 py-0.5 rounded border border-border hover:bg-surface transition-colors cursor-pointer font-mono',
+                        'text-[10px] px-2 py-0.5 rounded border border-border hover:bg-surface transition-colors cursor-pointer font-mono font-medium',
                         billDiscountValue === val.toString()
-                          ? 'bg-text text-bg font-bold border-text'
+                          ? 'bg-accent text-accent-fg font-bold border-accent'
                           : 'bg-surface text-muted hover:text-text'
                       )}
                     >

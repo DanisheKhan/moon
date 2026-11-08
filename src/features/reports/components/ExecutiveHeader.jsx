@@ -59,9 +59,9 @@ export function ExecutiveHeader({
               key={r.id}
               type="button"
               onClick={() => setDateRange(r.id)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer transition-colors whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold cursor-pointer transition-colors whitespace-nowrap ${
                 dateRange === r.id
-                  ? 'bg-text text-bg'
+                  ? 'bg-accent text-accent-fg shadow-2xs'
                   : 'text-muted hover:text-text'
               }`}
             >

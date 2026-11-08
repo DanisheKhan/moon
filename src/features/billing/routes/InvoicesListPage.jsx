@@ -98,17 +98,38 @@ export function InvoicesListPage() {
   const metrics = useMemo(() => {
     const validInvoices = invoices.filter((i) => i.status !== 'void');
     const totalSales = validInvoices.reduce((acc, i) => acc + (parseFloat(i.grand_total) || 0), 0);
-    const paidCount = invoices.filter((i) => i.status === 'paid').length;
-    const partialCount = invoices.filter((i) => i.status === 'partial').length;
-    const pendingCount = invoices.filter((i) => i.status === 'pending').length;
-    const returnedCount = invoices.filter((i) => i.status === 'returned' || i.status === 'partially_returned').length;
-    const voidCount = invoices.filter((i) => i.status === 'void').length;
 
-    const totalBalanceDue = validInvoices.reduce((acc, inv) => {
+    let paidCount = 0;
+    let partialCount = 0;
+    let pendingCount = 0;
+    let returnedCount = 0;
+    let voidCount = 0;
+    let totalBalanceDue = 0;
+
+    validInvoices.forEach((inv) => {
       const paid = (inv.payments || []).reduce((pAcc, p) => pAcc + (parseFloat(p.amount) || 0), 0);
-      const due = Math.max((parseFloat(inv.grand_total) || 0) - paid, 0);
-      return acc + due;
-    }, 0);
+      const grandTotal = parseFloat(inv.grand_total) || 0;
+      const due = Math.max(grandTotal - paid, 0);
+      totalBalanceDue += due;
+
+      let effStatus = inv.status;
+      if (inv.status !== 'returned' && inv.status !== 'partially_returned') {
+        if (due <= 0.01) {
+          effStatus = 'paid';
+        } else if (paid > 0) {
+          effStatus = 'partial';
+        } else {
+          effStatus = 'pending';
+        }
+      }
+
+      if (effStatus === 'paid') paidCount++;
+      else if (effStatus === 'partial') partialCount++;
+      else if (effStatus === 'pending') pendingCount++;
+      else if (effStatus === 'returned' || effStatus === 'partially_returned') returnedCount++;
+    });
+
+    voidCount = invoices.filter((i) => i.status === 'void').length;
 
     return {
       count: invoices.length,
@@ -132,11 +153,6 @@ export function InvoicesListPage() {
             <span className="text-[11px] font-bold uppercase tracking-wider text-muted">
               SALES & GST REGISTERS
             </span>
-            <span className="text-xs text-muted">•</span>
-            <span className="inline-flex items-center gap-1.5 text-xs text-brand-sage font-semibold">
-              <span className="w-2 h-2 rounded-full bg-brand-sage animate-pulse shrink-0" />
-              Live Database Synced
-            </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
             All Bills & Invoices
@@ -148,7 +164,7 @@ export function InvoicesListPage() {
 
         <div className="flex items-center gap-2 shrink-0">
           <Button
-            variant="sage"
+            variant="solid"
             size="sm"
             onClick={() => downloadBillingHistoryExcel(invoices)}
             disabled={isLoading || invoices.length === 0}
@@ -320,12 +336,12 @@ export function InvoicesListPage() {
         <Table className="w-full min-w-180 table-fixed">
           <TableHead>
             <TableRow className="bg-surface-subtle">
-              <TableHeaderCell className="w-[16%]">Date of Purchase</TableHeaderCell>
+              <TableHeaderCell className="w-[17%]">Date of Purchase</TableHeaderCell>
               <TableHeaderCell className="w-[18%]">Customer Name</TableHeaderCell>
-              <TableHeaderCell className="w-[20%]">Item</TableHeaderCell>
+              <TableHeaderCell className="w-[28%]">Item</TableHeaderCell>
               <TableHeaderCell className="w-[14%]">Grand Total</TableHeaderCell>
-              <TableHeaderCell className="w-[12%] text-center px-1">Status</TableHeaderCell>
-              <TableHeaderCell className="w-[20%] text-right pr-4 pl-3 border-l border-border/60">
+              <TableHeaderCell className="w-[10%] text-center px-1">Status</TableHeaderCell>
+              <TableHeaderCell className="w-[13%] text-right pr-4">
                 Actions
               </TableHeaderCell>
             </TableRow>
@@ -342,7 +358,20 @@ export function InvoicesListPage() {
                 (acc, p) => acc + (parseFloat(p.amount) || 0),
                 0
               );
-              const balanceDue = Math.max((parseFloat(inv.grand_total) || 0) - totalPaid, 0);
+              const grandTotal = parseFloat(inv.grand_total) || 0;
+              const balanceDue = Math.max(grandTotal - totalPaid, 0);
+
+              // Mathematically accurate effective status
+              let effectiveStatus = inv.status;
+              if (inv.status !== 'void' && inv.status !== 'returned' && inv.status !== 'partially_returned') {
+                if (balanceDue <= 0.01) {
+                  effectiveStatus = 'paid';
+                } else if (totalPaid > 0) {
+                  effectiveStatus = 'partial';
+                } else {
+                  effectiveStatus = 'pending';
+                }
+              }
 
               return (
                 <TableRow key={inv.id} className="hover:bg-surface-subtle/50 transition-colors">
@@ -389,7 +418,7 @@ export function InvoicesListPage() {
                   {/* 4. Grand Total */}
                   <TableCell className="align-middle whitespace-nowrap font-mono">
                     <div className="font-bold text-sm sm:text-base text-text">
-                      {formatCurrency(inv.grand_total || 0)}
+                      {formatCurrency(grandTotal)}
                     </div>
                     <div className="text-xs text-muted truncate mt-0.5 font-sans">
                       Tax: {formatCurrency((inv.cgst_amount || 0) + (inv.sgst_amount || 0))}
@@ -398,30 +427,30 @@ export function InvoicesListPage() {
 
                   {/* 5. Status - Cleanly centered with dedicated visual column */}
                   <TableCell className="align-middle text-center whitespace-nowrap px-1">
-                    <div className="flex flex-col items-center justify-center gap-1">
+                    <div className="flex flex-col items-center justify-center gap-0.5">
                       <Badge
                         variant={
-                          inv.status === 'paid'
+                          effectiveStatus === 'paid'
                             ? 'success'
-                            : inv.status === 'partial'
+                            : effectiveStatus === 'partial'
                             ? 'amber'
-                            : inv.status === 'pending'
+                            : effectiveStatus === 'pending'
                             ? 'danger'
-                            : inv.status === 'void'
+                            : effectiveStatus === 'void'
                             ? 'default'
                             : 'outline'
                         }
                         className={cn(
                           'text-[10px] font-semibold uppercase px-2 py-0.5 inline-flex justify-center',
-                          (inv.status === 'returned' || inv.status === 'partially_returned') &&
+                          (effectiveStatus === 'returned' || effectiveStatus === 'partially_returned') &&
                             'border-purple-300 text-purple-700 bg-purple-50'
                         )}
                       >
-                        {inv.status === 'partially_returned' ? 'Part Return' : inv.status}
+                        {effectiveStatus === 'partially_returned' ? 'Part Return' : effectiveStatus}
                       </Badge>
-                      {inv.status === 'partial' && (
+                      {effectiveStatus === 'partial' && balanceDue > 0.01 && (
                         <span
-                          className="text-[10px] font-mono font-bold text-brand-crimson bg-brand-crimson-subtle border border-brand-crimson-border rounded px-1.5 py-0.5 whitespace-nowrap shadow-2xs"
+                          className="text-[9px] font-mono font-bold text-brand-crimson bg-brand-crimson-subtle border border-brand-crimson-border rounded px-1 py-0.2 whitespace-nowrap shadow-2xs"
                           title={`Remaining balance to be collected: ${formatCurrency(balanceDue)}`}
                         >
                           Due: {formatCurrency(balanceDue)}
@@ -430,60 +459,55 @@ export function InvoicesListPage() {
                     </div>
                   </TableCell>
 
-                  {/* 6. Actions: Distinct column with divider line & uniform button sizing */}
-                  <TableCell className="align-middle text-right whitespace-nowrap pr-4 pl-3 border-l border-border/60">
-                    <div className="flex items-center justify-end gap-1.5 sm:gap-2">
-                      {/* Collect Payment (ONLY for Partial or Pending) */}
-                      {(inv.status === 'partial' || inv.status === 'pending') && (
-                        <Button
-                          size="sm"
-                          variant="outline"
+                  {/* 6. Actions: Fixed 3-slot column for 100% vertical grid alignment */}
+                  <TableCell className="align-middle text-right whitespace-nowrap pr-4">
+                    <div className="flex items-center justify-end gap-1.5">
+                      {/* Slot 1: Collect (if due > 0) OR Return (if settled) OR Empty Spacer */}
+                      {(effectiveStatus === 'partial' || effectiveStatus === 'pending') && balanceDue > 0.01 ? (
+                        <button
+                          type="button"
                           onClick={() => setCollectingInvoice(inv)}
-                          className="h-7 px-2 text-xs font-medium rounded-lg gap-1 border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 cursor-pointer shadow-2xs"
+                          className="w-8 h-8 flex items-center justify-center rounded-lg border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 cursor-pointer shadow-2xs transition-colors shrink-0"
                           title="Collect Pending / Partial Payment"
+                          aria-label="Collect Payment"
                         >
-                          <Coins size={12} className="shrink-0" />
-                          <span>Collect</span>
-                        </Button>
-                      )}
-
-                      {/* Process Return (ONLY for fully Paid bills) */}
-                      {inv.status === 'paid' && (
-                        <Button
-                          size="sm"
-                          variant="outline"
+                          <Coins size={14} className="shrink-0" />
+                        </button>
+                      ) : effectiveStatus === 'paid' ? (
+                        <button
+                          type="button"
                           onClick={() => setReturningInvoice(inv)}
-                          className="h-7 px-2 text-xs font-medium rounded-lg gap-1 text-muted hover:text-danger hover:border-danger/30 hover:bg-danger/5 cursor-pointer shadow-2xs"
+                          className="w-8 h-8 flex items-center justify-center rounded-lg border border-border bg-surface text-muted hover:text-danger hover:border-danger/40 hover:bg-danger/5 cursor-pointer shadow-2xs transition-colors shrink-0"
                           title="Process Item Return & Refund"
+                          aria-label="Process Return"
                         >
-                          <RotateCcw size={12} className="shrink-0" />
-                          <span>Return</span>
-                        </Button>
+                          <RotateCcw size={14} className="shrink-0" />
+                        </button>
+                      ) : (
+                        <div className="w-8 h-8 shrink-0" aria-hidden="true" />
                       )}
 
-                      {/* Edit Button */}
-                      <Button
-                        size="sm"
-                        variant="outline"
+                      {/* Slot 2: Edit Button (Strictly in Column 2) */}
+                      <button
+                        type="button"
                         onClick={() => setEditingInvoiceId(inv.id)}
-                        className="h-7 px-2 text-xs font-medium rounded-lg gap-1 hover:border-brand-sage hover:text-brand-sage hover:bg-brand-sage/5 cursor-pointer shadow-2xs"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-border bg-surface text-muted hover:border-brand-sage hover:text-brand-sage hover:bg-brand-sage-subtle cursor-pointer shadow-2xs transition-colors shrink-0"
                         title="Edit Customer, Line Items, & Payment Status"
+                        aria-label="Edit Invoice"
                       >
-                        <Pencil size={12} className="shrink-0" />
-                        <span>Edit</span>
-                      </Button>
+                        <Pencil size={14} className="shrink-0" />
+                      </button>
 
-                      {/* View / Print Button */}
-                      <Button
-                        size="sm"
-                        variant="outline"
+                      {/* Slot 3: Print Button (Strictly in Column 3) */}
+                      <button
+                        type="button"
                         onClick={() => setViewingInvoiceId(inv.id)}
-                        className="h-7 px-2 text-xs font-medium rounded-lg gap-1 text-muted hover:text-text hover:bg-surface-subtle cursor-pointer shadow-2xs"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-border bg-surface text-muted hover:text-text hover:bg-surface-subtle cursor-pointer shadow-2xs transition-colors shrink-0"
                         title="View / Print Tax Invoice"
+                        aria-label="Print Invoice"
                       >
-                        <Printer size={12} className="shrink-0" />
-                        <span>Print</span>
-                      </Button>
+                        <Printer size={14} className="shrink-0" />
+                      </button>
                     </div>
                   </TableCell>
                 </TableRow>

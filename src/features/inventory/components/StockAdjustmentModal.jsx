@@ -307,7 +307,7 @@ export function StockAdjustmentForm({ product, storeId, onClose }) {
               <div className="flex items-center gap-2">
                 <PackageCheck size={16} className="text-brand-sage" />
                 <span className="text-xs font-semibold text-text uppercase tracking-wider">
-                  + Add New Serial Number / IMEI (+1 Stock)
+                  Add New Serial Number / IMEI (+1 Stock)
                 </span>
               </div>
               <span className="text-[11px] text-muted">

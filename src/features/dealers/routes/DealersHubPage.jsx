@@ -129,7 +129,7 @@ export function DealersHubPage() {
           <button
             type="button"
             onClick={() => setIsAddDealerOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-brand-sage text-white hover:bg-brand-sage-hover active:scale-[0.99] shadow-xs transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-xs transition-all cursor-pointer"
           >
             <Building2 size={14} className="stroke-[2.5]" />
             <span>Add Dealer</span>
@@ -141,13 +141,13 @@ export function DealersHubPage() {
       <DealerStatsHeader analytics={analytics} isLoading={isLoadingAnalytics} />
 
       {/* 3. Navigation Tabs */}
-      <div className="flex items-center justify-between gap-4 border-b border-border pb-px overflow-x-auto">
+      <div className="flex items-center justify-between gap-4 border-b border-border pb-px overflow-x-hidden">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setActiveTab('directory')}
             className={`pb-3 px-2 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'directory'
-                ? 'border-brand-sage text-brand-sage'
+                ? 'border-accent text-accent'
                 : 'border-transparent text-muted hover:text-text'
             }`}
           >
@@ -159,7 +159,7 @@ export function DealersHubPage() {
             onClick={() => setActiveTab('bills')}
             className={`pb-3 px-2 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'bills'
-                ? 'border-brand-sage text-brand-sage'
+                ? 'border-accent text-accent'
                 : 'border-transparent text-muted hover:text-text'
             }`}
           >
@@ -171,7 +171,7 @@ export function DealersHubPage() {
             onClick={() => setActiveTab('payments')}
             className={`pb-3 px-2 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'payments'
-                ? 'border-brand-sage text-brand-sage'
+                ? 'border-accent text-accent'
                 : 'border-transparent text-muted hover:text-text'
             }`}
           >
@@ -208,17 +208,17 @@ export function DealersHubPage() {
               Recent Supplier Payments & Bank Settlements
             </h3>
           </div>
-          <div className="overflow-x-auto min-w-0">
-            <table className="w-full text-left text-xs border-collapse">
+          <div className="w-full overflow-hidden min-w-0">
+            <table className="w-full table-fixed text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-surface-subtle/80 border-b border-border text-[11px] font-bold text-muted uppercase tracking-wider">
-                  <th className="py-3 px-4">Date</th>
-                  <th className="py-3 px-4">Voucher No</th>
-                  <th className="py-3 px-4">Supplier / Brand</th>
-                  <th className="py-3 px-4">Bill Settled</th>
-                  <th className="py-3 px-4">Payment Mode & Ref</th>
-                  <th className="py-3 px-4">Channel</th>
-                  <th className="py-3 px-4 text-right">Amount Paid</th>
+                  <th className="py-3 px-3 w-[12%]">Date</th>
+                  <th className="py-3 px-3 w-[15%]">Voucher No</th>
+                  <th className="py-3 px-3 w-[20%]">Supplier / Brand</th>
+                  <th className="py-3 px-3 w-[18%]">Bill Settled</th>
+                  <th className="py-3 px-3 w-[16%]">Payment Mode & Ref</th>
+                  <th className="py-3 px-3 w-[8%]">Channel</th>
+                  <th className="py-3 px-3 text-right w-[11%]">Amount Paid</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -237,16 +237,16 @@ export function DealersHubPage() {
                 ) : (
                   payments.map((p) => (
                     <tr key={p.id} className="hover:bg-surface-subtle/50 transition-colors">
-                      <td className="py-3 px-4 font-mono text-[11px] text-text whitespace-nowrap">
+                      <td className="py-2.5 px-3 font-mono text-[11px] text-text whitespace-nowrap min-w-0 truncate">
                         {formatDate(p.payment_date, false)}
                       </td>
-                      <td className="py-3 px-4 font-mono font-semibold text-text whitespace-nowrap">
+                      <td className="py-2.5 px-3 font-mono font-semibold text-text whitespace-nowrap min-w-0 truncate">
                         {p.payment_number}
                       </td>
-                      <td className="py-3 px-4 font-semibold text-text">
+                      <td className="py-2.5 px-3 font-semibold text-text min-w-0 truncate">
                         {p.dealer?.brand_name || p.dealer?.name}
                       </td>
-                      <td className="py-3 px-4 font-mono text-[11px]">
+                      <td className="py-2.5 px-3 font-mono text-[11px] min-w-0 truncate">
                         {p.bill ? (
                           <span className="text-text font-medium">
                             {p.bill.bill_number} ({p.bill.bill_type.toUpperCase()})
@@ -255,30 +255,30 @@ export function DealersHubPage() {
                           <span className="text-muted italic">On-Account</span>
                         )}
                       </td>
-                      <td className="py-3 px-4">
-                        <div className="font-semibold text-text uppercase text-[11px]">
+                      <td className="py-2.5 px-3 min-w-0">
+                        <div className="font-semibold text-text uppercase text-[11px] truncate">
                           {p.payment_mode}
                         </div>
                         {p.transaction_ref && (
-                          <div className="text-[10px] font-mono text-muted">
+                          <div className="text-[10px] font-mono text-muted truncate">
                             Ref: {p.transaction_ref}
                           </div>
                         )}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-2.5 px-3 min-w-0">
                         <span
-                          className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
+                          className={`text-[9px] font-semibold px-1.5 py-0.5 rounded truncate inline-block ${
                             p.payment_channel === 'official_bank'
                               ? 'bg-blue-50 text-blue-700 border border-blue-200'
                               : 'bg-amber-50 text-amber-700 border border-amber-200'
                           }`}
                         >
                           {p.payment_channel === 'official_bank'
-                            ? 'Official Bank'
-                            : 'Cash / Secondary'}
+                            ? 'Bank'
+                            : 'Cash'}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-right font-mono font-bold text-brand-sage whitespace-nowrap">
+                      <td className="py-2.5 px-3 text-right font-mono font-bold text-brand-sage whitespace-nowrap min-w-0">
                         {formatCurrency(p.amount)}
                       </td>
                     </tr>

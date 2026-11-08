@@ -95,6 +95,23 @@ export async function listAllInvoices({
 
     let results = data || [];
 
+    // Mathematically normalize status against payment sums
+    results = results.map((inv) => {
+      if (inv.status !== 'void' && inv.status !== 'returned' && inv.status !== 'partially_returned') {
+        const paid = (inv.payments || []).reduce((acc, p) => acc + (parseFloat(p.amount) || 0), 0);
+        const grandTotal = parseFloat(inv.grand_total) || 0;
+        const due = grandTotal - paid;
+        if (due <= 0.5) {
+          return { ...inv, status: 'paid' };
+        } else if (paid > 0) {
+          return { ...inv, status: 'partial' };
+        } else {
+          return { ...inv, status: 'pending' };
+        }
+      }
+      return inv;
+    });
+
     // Filter in memory by storeCode or store_id if not 'all'
     if (storeId && storeId !== 'all') {
       results = results.filter((inv) => inv.store_id === storeId || inv.stores?.code === storeId);
