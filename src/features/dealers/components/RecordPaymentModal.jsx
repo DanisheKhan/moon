@@ -397,7 +397,7 @@ export function RecordPaymentModal({
           <button
             type="submit"
             disabled={recordPaymentMutation.isPending}
-            className="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-700 text-white hover:bg-emerald-800 active:scale-[0.99] shadow-xs transition-all cursor-pointer disabled:opacity-50"
+            className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all cursor-pointer disabled:opacity-50"
           >
             {recordPaymentMutation.isPending ? 'Recording...' : 'Record Payment'}
           </button>

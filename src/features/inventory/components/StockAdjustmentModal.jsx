@@ -12,6 +12,7 @@ import { cn } from '@/shared/lib/cn';
 import {
   Boxes,
   Plus,
+  Minus,
   CheckCircle2,
   AlertCircle,
   Barcode,
@@ -19,6 +20,9 @@ import {
   PackageCheck,
   PackageX,
   Sliders,
+  TrendingUp,
+  TrendingDown,
+  ArrowRight,
 } from 'lucide-react';
 
 export function StockAdjustmentModal({ product, storeId, isOpen, onClose }) {
@@ -48,9 +52,10 @@ export function StockAdjustmentForm({ product, storeId, onClose }) {
   // Active tab for serialized items: 'serial_units' | 'quantity_override'
   const [activeTab, setActiveTab] = useState(isSerialized ? 'serial_units' : 'quantity');
 
-  // Quantity adjustment state
-  const [newQty, setNewQty] = useState(String(currentQty));
-  const [addedQty, setAddedQty] = useState('0');
+  // Adjustment state:
+  // Mode: 'add' (Restock) | 'deduct' (Write-Off) | 'exact' (Physical Audit)
+  const [adjustMode, setAdjustMode] = useState('add');
+  const [adjustmentValue, setAdjustmentValue] = useState('0');
   const [reason, setReason] = useState('restock');
   const [notes, setNotes] = useState('');
   const [error, setError] = useState('');
@@ -75,63 +80,92 @@ export function StockAdjustmentForm({ product, storeId, onClose }) {
     { enabled: isSerialized }
   );
 
-  const parsedQty = parseInt(newQty, 10);
-  const qtyDelta = isNaN(parsedQty) ? 0 : parsedQty - currentQty;
+  // Computed values based on mode
+  const parsedValue = parseInt(adjustmentValue, 10);
+  const safeValue = isNaN(parsedValue) ? 0 : parsedValue;
 
-  // Handle typing directly in "Items to Add (Pieces / Units)"
-  function handleAddedQtyChange(val) {
-    setAddedQty(val);
-    if (val === '' || val === '-') {
-      setNewQty(String(currentQty));
-      setError('');
-      return;
-    }
-    const parsedAdd = parseInt(val, 10);
-    if (!isNaN(parsedAdd)) {
-      const target = Math.max(0, currentQty + parsedAdd);
-      setNewQty(String(target));
-      setError('');
+  let calculatedDelta = 0;
+  let projectedQty = currentQty;
+
+  if (adjustMode === 'add') {
+    calculatedDelta = Math.max(0, safeValue);
+    projectedQty = currentQty + calculatedDelta;
+  } else if (adjustMode === 'deduct') {
+    const deductAmount = Math.min(currentQty, Math.max(0, safeValue));
+    calculatedDelta = -deductAmount;
+    projectedQty = Math.max(0, currentQty - deductAmount);
+  } else if (adjustMode === 'exact') {
+    const exactTotal = isNaN(parsedValue) ? currentQty : Math.max(0, parsedValue);
+    calculatedDelta = exactTotal - currentQty;
+    projectedQty = exactTotal;
+  }
+
+  function handleModeChange(mode) {
+    setAdjustMode(mode);
+    setError('');
+    if (mode === 'add') {
+      setAdjustmentValue('0');
+      setReason('restock');
+    } else if (mode === 'deduct') {
+      setAdjustmentValue(currentQty > 0 ? '1' : '0');
+      setReason('damage');
+    } else if (mode === 'exact') {
+      setAdjustmentValue(String(currentQty));
+      setReason('audit_reconcile');
     }
   }
 
-  // Handle typing directly in "Resulting Total Stock on Hand"
-  function handleNewQtyChange(val) {
-    setNewQty(val);
+  function handleDirectInputChange(val) {
+    setError('');
     if (val === '') {
-      setAddedQty('');
-      setError('');
+      setAdjustmentValue('');
       return;
     }
-    const parsedTotal = parseInt(val, 10);
-    if (!isNaN(parsedTotal)) {
-      const delta = parsedTotal - currentQty;
-      setAddedQty(String(delta));
-      setError('');
+    const clean = parseInt(val, 10);
+    if (!isNaN(clean)) {
+      if (adjustMode === 'deduct') {
+        setAdjustmentValue(String(Math.min(currentQty, Math.max(0, clean))));
+      } else {
+        setAdjustmentValue(String(Math.max(0, clean)));
+      }
     }
   }
 
-  // Quick increment helper (+1, +2, +5, +10, -1, etc.)
-  function handleDeltaAdd(delta) {
-    const currentAdded = parseInt(addedQty, 10) || 0;
-    const nextAdded = currentAdded + delta;
-    const targetTotal = Math.max(0, currentQty + nextAdded);
-    const actualDelta = targetTotal - currentQty;
-    setAddedQty(String(actualDelta));
-    setNewQty(String(targetTotal));
+  function stepDelta(delta) {
     setError('');
+    const cur = parseInt(adjustmentValue, 10) || 0;
+    if (adjustMode === 'deduct') {
+      setAdjustmentValue(String(Math.min(currentQty, Math.max(0, cur + delta))));
+    } else {
+      setAdjustmentValue(String(Math.max(0, cur + delta)));
+    }
   }
 
-  // Reset to initial stock
-  function handleReset() {
-    setAddedQty('0');
-    setNewQty(String(currentQty));
+  function handleQuickAdd(amount) {
     setError('');
+    const cur = parseInt(adjustmentValue, 10) || 0;
+    setAdjustmentValue(String(cur + amount));
+  }
+
+  function handleQuickDeduct(amount) {
+    setError('');
+    const cur = parseInt(adjustmentValue, 10) || 0;
+    setAdjustmentValue(String(Math.min(currentQty, cur + amount)));
+  }
+
+  function handleReset() {
+    setError('');
+    if (adjustMode === 'exact') {
+      setAdjustmentValue(String(currentQty));
+    } else {
+      setAdjustmentValue('0');
+    }
   }
 
   // Handle direct quantity update
   async function handleQuantitySubmit(e) {
     e.preventDefault();
-    if (isNaN(parsedQty) || parsedQty < 0) {
+    if (isNaN(projectedQty) || projectedQty < 0) {
       setError('Please provide a valid non-negative stock quantity.');
       return;
     }
@@ -142,11 +176,11 @@ export function StockAdjustmentForm({ product, storeId, onClose }) {
         storeId,
         productId: product.id,
         previousQuantity: currentQty,
-        newQuantity: parsedQty,
+        newQuantity: projectedQty,
         reason,
-        notes: notes.trim() || `Stock adjusted from ${currentQty} to ${parsedQty}`,
+        notes: notes.trim() || `Stock adjusted from ${currentQty} to ${projectedQty} via ${adjustMode} mode`,
       });
-      setSuccessMsg(`Stock updated successfully! New on-hand quantity is ${parsedQty} units.`);
+      setSuccessMsg(`Stock updated successfully! New on-hand quantity is ${projectedQty} units.`);
       setTimeout(() => {
         onClose();
       }, 700);
@@ -371,15 +405,14 @@ export function StockAdjustmentForm({ product, storeId, onClose }) {
                 />
               </div>
 
-              <Button
+              <button
                 type="submit"
-                variant="solid"
-                pending={addUnitMutation.isPending}
-                className="gap-2 px-5 text-xs font-semibold self-end h-10 cursor-pointer"
+                disabled={addUnitMutation.isPending}
+                className="inline-flex items-center gap-2 px-5 text-xs font-semibold self-end h-10 rounded-lg cursor-pointer bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all disabled:opacity-50"
               >
-                <Plus size={14} />
-                <span>Add Unit to Stock (+1)</span>
-              </Button>
+                <Plus size={14} className="stroke-[2.5]" />
+                <span>{addUnitMutation.isPending ? 'Adding Unit...' : 'Add Unit to Stock (+1)'}</span>
+              </button>
             </div>
           </form>
 
@@ -447,130 +480,231 @@ export function StockAdjustmentForm({ product, storeId, onClose }) {
         </div>
       )}
 
-      {/* 3B. Standard Quantity Adjustment Flow */}
+      {/* 3B. Refined Standard Quantity Adjustment Flow */}
       {(!isSerialized || activeTab === 'quantity') && (
         <form onSubmit={handleQuantitySubmit} className="space-y-4">
-          <div className="p-4 rounded-xl border border-border bg-surface space-y-4 shadow-2xs">
-            {/* Quick Increment Buttons Ribbon */}
-            <div className="space-y-2">
-              <span className="text-xs font-semibold text-text uppercase tracking-wider block">
-                Quick Restock Additions
-              </span>
-              <div className="flex items-center gap-2 flex-wrap text-xs">
-                <span className="text-[11px] text-muted mr-1">Add:</span>
-                {[1, 2, 5, 10, 20, 50].map((inc) => (
-                  <button
-                    key={inc}
-                    type="button"
-                    onClick={() => handleDeltaAdd(inc)}
-                    className="px-3 py-1.5 rounded-lg border border-border bg-surface-subtle hover:bg-surface hover:border-brand-sage font-mono text-xs font-semibold text-text transition-all cursor-pointer shadow-2xs"
-                  >
-                    +{inc}
-                  </button>
-                ))}
-                <span className="text-muted mx-1">|</span>
-                <span className="text-[11px] text-muted mr-1">Deduct:</span>
-                {[-1, -5].map((dec) => (
-                  <button
-                    key={dec}
-                    type="button"
-                    onClick={() => handleDeltaAdd(dec)}
-                    className="px-2.5 py-1.5 rounded-lg border border-border bg-surface-subtle hover:bg-danger/10 hover:border-danger/30 font-mono text-xs font-medium text-muted hover:text-danger transition-all cursor-pointer shadow-2xs"
-                  >
-                    {dec}
-                  </button>
-                ))}
+          {/* Action Mode Segmented Switch */}
+          <div className="bg-surface-subtle p-1 rounded-xl border border-border flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => handleModeChange('add')}
+              className={cn(
+                'flex-1 py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer select-none',
+                adjustMode === 'add'
+                  ? 'bg-surface text-text shadow-2xs border border-border'
+                  : 'text-muted hover:text-text hover:bg-surface/50 border border-transparent'
+              )}
+            >
+              <TrendingUp size={14} className={adjustMode === 'add' ? 'text-brand-sage' : ''} />
+              <span>Add Stock / Restock</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleModeChange('deduct')}
+              className={cn(
+                'flex-1 py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer select-none',
+                adjustMode === 'deduct'
+                  ? 'bg-surface text-text shadow-2xs border border-border'
+                  : 'text-muted hover:text-text hover:bg-surface/50 border border-transparent'
+              )}
+            >
+              <TrendingDown size={14} className={adjustMode === 'deduct' ? 'text-danger' : ''} />
+              <span>Deduct / Write-Off</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleModeChange('exact')}
+              className={cn(
+                'flex-1 py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer select-none',
+                adjustMode === 'exact'
+                  ? 'bg-surface text-text shadow-2xs border border-border'
+                  : 'text-muted hover:text-text hover:bg-surface/50 border border-transparent'
+              )}
+            >
+              <Sliders size={14} className={adjustMode === 'exact' ? 'text-accent' : ''} />
+              <span>Physical Audit Count</span>
+            </button>
+          </div>
+
+          <div className="p-4 sm:p-5 rounded-xl border border-border bg-surface space-y-4 shadow-2xs">
+            {/* Interactive Quantity Stepper & Quick Presets */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-text uppercase tracking-wider">
+                  {adjustMode === 'add' && 'Quantity to Add / Restock (Pieces)'}
+                  {adjustMode === 'deduct' && 'Quantity to Deduct / Write-Off (Pieces)'}
+                  {adjustMode === 'exact' && 'Verified Physical Stock on Hand (Count)'}
+                </label>
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="px-2.5 py-1.5 rounded-lg text-xs text-muted hover:text-text cursor-pointer ml-auto flex items-center gap-1 transition-colors"
+                  className="text-[11px] font-medium text-muted hover:text-text flex items-center gap-1 cursor-pointer transition-colors"
                 >
-                  <RotateCcw size={12} />
+                  <RotateCcw size={11} />
                   <span>Reset</span>
                 </button>
               </div>
+
+              {/* Stepper + Input */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => stepDelta(-1)}
+                  className="w-10 h-10 rounded-lg border border-border bg-surface-subtle hover:bg-surface flex items-center justify-center text-text font-bold text-base cursor-pointer active:scale-95 transition-all shadow-2xs shrink-0"
+                  title="Decrease by 1"
+                >
+                  <Minus size={16} />
+                </button>
+
+                <div className="relative flex-1">
+                  <input
+                    type="number"
+                    min="0"
+                    max={adjustMode === 'deduct' ? currentQty : undefined}
+                    value={adjustmentValue}
+                    onChange={(e) => handleDirectInputChange(e.target.value)}
+                    className="w-full h-10 text-center font-mono text-lg font-bold rounded-lg border border-border bg-surface text-text focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
+                    placeholder="0"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted font-medium pointer-events-none">
+                    units
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => stepDelta(1)}
+                  className="w-10 h-10 rounded-lg border border-border bg-surface-subtle hover:bg-surface flex items-center justify-center text-text font-bold text-base cursor-pointer active:scale-95 transition-all shadow-2xs shrink-0"
+                  title="Increase by 1"
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
+
+              {/* Quick Presets */}
+              {adjustMode === 'add' && (
+                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                  <span className="text-[10px] uppercase font-bold text-muted mr-1">Quick Add:</span>
+                  {[1, 2, 5, 10, 20, 50, 100].map((num) => (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => handleQuickAdd(num)}
+                      className="px-2.5 py-1 rounded-md border border-border bg-surface-subtle hover:bg-surface hover:border-brand-sage font-mono text-[11px] font-semibold text-text transition-all cursor-pointer shadow-2xs active:scale-95"
+                    >
+                      +{num}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {adjustMode === 'deduct' && (
+                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                  <span className="text-[10px] uppercase font-bold text-muted mr-1">Quick Deduct:</span>
+                  {[1, 2, 5, 10, 20].map((num) => (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => handleQuickDeduct(num)}
+                      className="px-2.5 py-1 rounded-md border border-border bg-surface-subtle hover:bg-danger/10 hover:border-danger/30 font-mono text-[11px] font-semibold text-text hover:text-danger transition-all cursor-pointer shadow-2xs active:scale-95"
+                    >
+                      -{num}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Input & Live Delta Calculation */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start pt-2 border-t border-border">
-              {/* Field 1: Quantity to Add / Pieces */}
-              <div>
-                <Input
-                  id="items-to-add-qty"
-                  type="number"
-                  label="Quantity to Add / Restock (Pieces)"
-                  placeholder="e.g. 5"
-                  value={addedQty}
-                  onChange={(e) => handleAddedQtyChange(e.target.value)}
-                  className="text-lg font-mono font-bold text-brand-sage"
-                />
-                <span className="text-[11px] text-muted mt-1 block">
-                  Items to add (e.g. 1, 2, 5, or 10 pieces)
-                </span>
+            {/* Live Stock Balance Flow Preview */}
+            <div className="p-3.5 rounded-xl border border-border bg-surface-subtle/70 space-y-2.5">
+              <div className="flex items-center justify-between text-[10px] uppercase font-bold text-muted tracking-wider">
+                <span>Current Available</span>
+                <span>Stock Adjustment</span>
+                <span>New Total Balance</span>
               </div>
 
-              {/* Field 2: Resulting Total Stock on Hand */}
-              <div>
-                <Input
-                  id="new-stock-qty"
-                  type="number"
-                  min="0"
-                  label="Resulting Total Stock on Hand"
-                  value={newQty}
-                  onChange={(e) => handleNewQtyChange(e.target.value)}
-                  required
-                  className="text-lg font-mono font-bold"
-                />
-                <span className="text-[11px] text-muted mt-1 block">
-                  Calculated total ({currentQty} on hand + added)
-                </span>
+              <div className="flex items-center justify-between gap-2 text-center">
+                {/* Current */}
+                <div className="flex-1 p-2 rounded-lg bg-surface border border-border shadow-2xs">
+                  <span className="text-base sm:text-lg font-mono font-bold text-muted block">
+                    {currentQty}
+                  </span>
+                  <span className="text-[10px] text-muted">on hand</span>
+                </div>
+
+                <div className="text-muted text-xs font-bold px-1">
+                  <ArrowRight size={14} className="mx-auto" />
+                </div>
+
+                {/* Delta */}
+                <div className="flex-1 p-2 rounded-lg bg-surface border border-border shadow-2xs">
+                  <span
+                    className={cn(
+                      'text-base sm:text-lg font-mono font-bold block',
+                      calculatedDelta > 0
+                        ? 'text-brand-sage'
+                        : calculatedDelta < 0
+                        ? 'text-danger'
+                        : 'text-muted'
+                    )}
+                  >
+                    {calculatedDelta > 0
+                      ? `+${calculatedDelta}`
+                      : calculatedDelta < 0
+                      ? calculatedDelta
+                      : '0'}
+                  </span>
+                  <span className="text-[10px] text-muted">
+                    {calculatedDelta > 0 ? 'adding' : calculatedDelta < 0 ? 'deducting' : 'no change'}
+                  </span>
+                </div>
+
+                <div className="text-muted text-xs font-bold px-1">
+                  <ArrowRight size={14} className="mx-auto" />
+                </div>
+
+                {/* Resulting */}
+                <div className="flex-1 p-2 rounded-lg bg-surface border border-border shadow-2xs">
+                  <span className="text-base sm:text-lg font-mono font-bold text-text block">
+                    {projectedQty}
+                  </span>
+                  <span className="text-[10px] font-medium text-brand-sage">new balance</span>
+                </div>
               </div>
 
-              {/* Field 3: Live Delta Calculation Box */}
-              <div className="sm:col-span-2 lg:col-span-1 p-3 rounded-lg border border-border bg-surface-subtle space-y-1.5 self-stretch flex flex-col justify-center">
-                <span className="text-[10px] uppercase font-semibold text-muted block tracking-wider">
-                  Net Stock Calculation
-                </span>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs text-muted font-mono">{currentQty} on hand</span>
-                  <span className="text-xs text-muted">+</span>
-                  <span className="text-xs font-semibold text-brand-sage font-mono">
-                    {qtyDelta > 0 ? `${qtyDelta} added` : qtyDelta < 0 ? `${Math.abs(qtyDelta)} deducted` : '0 added'}
+              {/* Dynamic Status Pill */}
+              <div className="pt-1 flex items-center justify-between text-xs">
+                {calculatedDelta > 0 && (
+                  <span className="inline-flex items-center gap-1.5 text-brand-sage font-medium text-[11px]">
+                    <CheckCircle2 size={13} className="shrink-0" />
+                    Warehouse inventory will increase from {currentQty} to {projectedQty} units (+{calculatedDelta}).
                   </span>
-                  <span className="text-xs text-muted">=</span>
-                  <span className="text-sm font-bold font-mono text-text">
-                    {isNaN(parsedQty) ? '0' : parsedQty} total
+                )}
+                {calculatedDelta < 0 && (
+                  <span className="inline-flex items-center gap-1.5 text-danger font-medium text-[11px]">
+                    <AlertCircle size={13} className="shrink-0" />
+                    Warehouse inventory will decrease from {currentQty} to {projectedQty} units ({calculatedDelta}).
                   </span>
-                </div>
-                <div>
-                  {qtyDelta > 0 && (
-                    <Badge variant="success" className="text-[10px] font-mono">
-                      +{qtyDelta} new pieces added
-                    </Badge>
-                  )}
-                  {qtyDelta < 0 && (
-                    <Badge variant="danger" className="text-[10px] font-mono">
-                      {qtyDelta} pieces deducted
-                    </Badge>
-                  )}
-                  {qtyDelta === 0 && (
-                    <Badge variant="outline" className="text-[10px] text-muted">
-                      No change ({currentQty} on hand)
-                    </Badge>
-                  )}
-                </div>
+                )}
+                {calculatedDelta === 0 && (
+                  <span className="inline-flex items-center gap-1.5 text-muted font-medium text-[11px]">
+                    No change in stock. Current inventory remains {currentQty} units.
+                  </span>
+                )}
               </div>
             </div>
 
             {/* Reason & Notes */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-border">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2 border-t border-border">
               <Select
                 id="adjust-reason"
                 label="Reason for Adjustment"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 options={[
-                  { value: 'restock', label: 'New Stock Restock / Shipment Received' },
+                  { value: 'restock', label: 'Shipment Received / Restock' },
                   { value: 'audit_reconcile', label: 'Physical Store Inventory Audit Count' },
                   { value: 'damage', label: 'Damaged / Defective Stock Write-Off' },
                   { value: 'theft', label: 'Missing / Lost Stock Write-Off' },
@@ -581,7 +715,7 @@ export function StockAdjustmentForm({ product, storeId, onClose }) {
               <Input
                 id="adjust-notes"
                 label="Adjustment Note / PO Ref (Optional)"
-                placeholder="e.g. Supplier PO #4928 received"
+                placeholder="e.g. Supplier PO #4928, Batch #102..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
               />
@@ -589,30 +723,30 @@ export function StockAdjustmentForm({ product, storeId, onClose }) {
           </div>
 
           {/* Form Actions */}
-          <div className="pt-3 border-t border-border flex items-center justify-end gap-3">
-            <Button
+          <div className="pt-3 border-t border-border flex items-center justify-end gap-2.5">
+            <button
               type="button"
-              variant="outline"
               onClick={onClose}
-              className="px-5 text-xs font-medium cursor-pointer"
+              className="px-4 py-2 text-xs font-semibold rounded-lg border border-border bg-surface text-text hover:bg-surface-subtle transition-all cursor-pointer"
             >
               Cancel
-            </Button>
-            <Button
+            </button>
+            <button
               type="submit"
-              variant="solid"
-              pending={adjustMutation.isPending}
-              className="gap-2 px-6 text-xs font-semibold cursor-pointer"
+              disabled={adjustMutation.isPending || (calculatedDelta === 0 && adjustMode !== 'exact')}
+              className="inline-flex items-center gap-1.5 px-5 py-2 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all cursor-pointer disabled:opacity-50"
             >
-              <Boxes size={15} />
+              <Boxes size={14} className="stroke-[2.5]" />
               <span>
-                {qtyDelta > 0
-                  ? `Confirm Stock Update (Add +${qtyDelta} pieces → ${isNaN(parsedQty) ? currentQty : parsedQty} total)`
-                  : qtyDelta < 0
-                  ? `Confirm Stock Update (Deduct ${Math.abs(qtyDelta)} pieces → ${isNaN(parsedQty) ? currentQty : parsedQty} total)`
-                  : `Confirm Stock Update (${isNaN(parsedQty) ? currentQty : parsedQty} units on hand)`}
+                {adjustMutation.isPending
+                  ? 'Updating Stock...'
+                  : calculatedDelta > 0
+                  ? `Confirm Restock (+${calculatedDelta} → ${projectedQty} units)`
+                  : calculatedDelta < 0
+                  ? `Confirm Write-Off (${calculatedDelta} → ${projectedQty} units)`
+                  : `Confirm Stock (${projectedQty} units)`}
               </span>
-            </Button>
+            </button>
           </div>
         </form>
       )}

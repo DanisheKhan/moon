@@ -331,7 +331,7 @@ export function BillTimelineModal({ isOpen, onClose, billId, onOpenRecordPayment
                   onClose();
                   onOpenRecordPayment(bill.dealer, bill);
                 }}
-                className="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-700 text-white hover:bg-emerald-800 active:scale-[0.99] shadow-xs transition-all cursor-pointer"
+                className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all cursor-pointer"
               >
                 Pay Pending Balance ({formatCurrency(bill.balance_amount)})
               </button>

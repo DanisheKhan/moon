@@ -273,7 +273,7 @@ export function DealerDirectoryTable({
                         <button
                           onClick={() => onOpenRecordPayment(d)}
                           title="Record Payment"
-                          className="w-7 h-7 rounded-lg bg-emerald-700 text-white hover:bg-emerald-800 flex items-center justify-center shadow-2xs transition-all cursor-pointer shrink-0"
+                          className="w-7 h-7 rounded-lg bg-accent text-accent-fg hover:opacity-90 flex items-center justify-center shadow-2xs transition-all cursor-pointer shrink-0"
                           aria-label="Record Payment"
                         >
                           <CreditCard size={12} className="stroke-[2.5]" />
