@@ -33,6 +33,21 @@ import {
   FileSpreadsheet,
 } from 'lucide-react';
 
+function WhatsAppIcon({ size = 14, className }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  );
+}
+
 const STATUS_FILTERS = [
   { id: 'all', label: 'All Statuses' },
   { id: 'paid', label: 'Paid' },
@@ -143,6 +158,84 @@ export function InvoicesListPage() {
       totalBalanceDue,
     };
   }, [invoices]);
+
+  // WhatsApp invoice / payment reminder dispatcher
+  function handleSendWhatsApp(inv) {
+    const totalPaid = (inv.payments || []).reduce(
+      (acc, p) => acc + (parseFloat(p.amount) || 0),
+      0
+    );
+    const grandTotal = parseFloat(inv.grand_total) || 0;
+    const balanceDue = Math.max(grandTotal - totalPaid, 0);
+    const isDue = balanceDue > 0.01;
+
+    const matchedStore = stores.find((s) => s.id === inv.store_id);
+    const storeName = matchedStore?.name || 'Star Enterprises';
+    const storePhone = matchedStore?.phone || '+91 93700 11653';
+    const customerName = inv.customer_name?.trim() || 'Valued Customer';
+    const purchaseDate = inv.created_at ? formatDate(inv.created_at, false) : 'Recent Purchase';
+
+    const itemsList =
+      Array.isArray(inv.order_items) && inv.order_items.length > 0
+        ? inv.order_items
+            .slice(0, 3)
+            .map((it) => `• ${it.item_name || 'Product'} (Qty: ${it.quantity || 1})`)
+            .join('\n')
+        : '• Purchased Store Goods';
+
+    let message = '';
+    if (isDue) {
+      message = `*PAYMENT REMINDER - ${storeName.toUpperCase()}*
+----------------------------------------
+*Dear ${customerName},*
+This is a gentle reminder regarding the outstanding balance for your purchase invoice:
+
+📄 *Invoice No:* #${inv.invoice_number}
+📅 *Date of Purchase:* ${purchaseDate}
+📦 *Items Purchased:*
+${itemsList}
+
+💰 *Total Bill Amount:* ${formatCurrency(grandTotal)}
+✅ *Amount Received:* ${formatCurrency(totalPaid)}
+----------------------------------------
+🔴 *REMAINING AMOUNT DUE:* ${formatCurrency(balanceDue)}
+----------------------------------------
+Kindly arrange the payment clearance of the remaining amount to ${storeName} at your earliest convenience.
+
+*Pay To:* ${storeName}
+📞 *Store Contact:* ${storePhone}
+
+Thank you for your business!`;
+    } else {
+      message = `*TAX INVOICE RECEIPT - ${storeName.toUpperCase()}*
+----------------------------------------
+*Dear ${customerName},*
+Thank you for your purchase with ${storeName}!
+
+📄 *Invoice No:* #${inv.invoice_number}
+📅 *Date of Purchase:* ${purchaseDate}
+📦 *Items Purchased:*
+${itemsList}
+
+💰 *Total Bill Amount:* ${formatCurrency(grandTotal)}
+✅ *Amount Paid:* ${formatCurrency(totalPaid)}
+✨ *Payment Status:* Fully Settled / Paid
+----------------------------------------
+🏢 *Store:* ${storeName}
+📞 *Store Contact:* ${storePhone}
+
+We appreciate your business and look forward to serving you again!`;
+    }
+
+    const cleanPhone = (inv.customer_phone || '').replace(/\D/g, '');
+    const phoneWithCountry = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+    const encoded = encodeURIComponent(message);
+    const url = phoneWithCountry
+      ? `https://wa.me/${phoneWithCountry}?text=${encoded}`
+      : `https://wa.me/?text=${encoded}`;
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
 
   return (
     <div className="space-y-6 min-w-0 pb-12">
@@ -333,15 +426,15 @@ export function InvoicesListPage() {
           </p>
         </Card>
       ) : (
-        <Table className="w-full min-w-180 table-fixed">
+        <Table className="w-full min-w-190 table-fixed">
           <TableHead>
             <TableRow className="bg-surface-subtle">
-              <TableHeaderCell className="w-[17%]">Date of Purchase</TableHeaderCell>
+              <TableHeaderCell className="w-[14%]">Date of Purchase</TableHeaderCell>
               <TableHeaderCell className="w-[18%]">Customer Name</TableHeaderCell>
               <TableHeaderCell className="w-[28%]">Item</TableHeaderCell>
-              <TableHeaderCell className="w-[14%]">Grand Total</TableHeaderCell>
-              <TableHeaderCell className="w-[10%] text-center px-1">Status</TableHeaderCell>
-              <TableHeaderCell className="w-[13%] text-right pr-4">
+              <TableHeaderCell className="w-[13%]">Grand Total</TableHeaderCell>
+              <TableHeaderCell className="w-[11%] text-center px-1">Status</TableHeaderCell>
+              <TableHeaderCell className="w-[16%] text-center px-2">
                 Actions
               </TableHeaderCell>
             </TableRow>
@@ -379,7 +472,7 @@ export function InvoicesListPage() {
                   <TableCell className="align-middle min-w-0">
                     <div className="text-xs font-semibold text-text flex items-center gap-1.5 truncate">
                       <Calendar size={12} className="text-muted shrink-0" />
-                      <span className="truncate">{inv.created_at ? formatDate(inv.created_at) : '—'}</span>
+                      <span className="truncate">{inv.created_at ? formatDate(inv.created_at, false) : '—'}</span>
                     </div>
                     <div className="font-mono text-[10px] text-muted truncate mt-0.5">
                       #{inv.invoice_number}
@@ -459,10 +552,10 @@ export function InvoicesListPage() {
                     </div>
                   </TableCell>
 
-                  {/* 6. Actions: Fixed 3-slot column for 100% vertical grid alignment */}
-                  <TableCell className="align-middle text-right whitespace-nowrap pr-4">
-                    <div className="flex items-center justify-end gap-1.5">
-                      {/* Slot 1: Collect (if due > 0) OR Return (if settled) OR Empty Spacer */}
+                  {/* 6. Actions: Consistent 4-slot column aligned symmetrically */}
+                  <TableCell className="align-middle text-center whitespace-nowrap px-2">
+                    <div className="flex items-center justify-center gap-1.5">
+                      {/* Slot 1: Collect (if due > 0) OR Return (if settled) OR Disabled Return (if already returned/void) */}
                       {(effectiveStatus === 'partial' || effectiveStatus === 'pending') && balanceDue > 0.01 ? (
                         <button
                           type="button"
@@ -484,10 +577,48 @@ export function InvoicesListPage() {
                           <RotateCcw size={14} className="shrink-0" />
                         </button>
                       ) : (
-                        <div className="w-8 h-8 shrink-0" aria-hidden="true" />
+                        <button
+                          type="button"
+                          disabled
+                          className="w-8 h-8 flex items-center justify-center rounded-lg border border-border/40 bg-surface text-muted/30 cursor-not-allowed shadow-none shrink-0"
+                          title={
+                            effectiveStatus === 'returned'
+                              ? 'All items on this invoice have already been returned'
+                              : 'Invoice is void / non-refundable'
+                          }
+                          aria-label="Non-refundable"
+                        >
+                          <RotateCcw size={14} className="shrink-0" />
+                        </button>
                       )}
 
-                      {/* Slot 2: Edit Button (Strictly in Column 2) */}
+                      {/* Slot 2: Official WhatsApp Reminder & Share (Highlight in Emerald when balance is due) */}
+                      <button
+                        type="button"
+                        onClick={() => handleSendWhatsApp(inv)}
+                        className={cn(
+                          'w-8 h-8 flex items-center justify-center rounded-lg cursor-pointer shadow-2xs transition-all shrink-0',
+                          balanceDue > 0.01
+                            ? 'border border-emerald-500/80 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-600'
+                            : 'border border-border bg-surface text-muted hover:border-emerald-400 hover:text-emerald-700 hover:bg-emerald-50/60'
+                        )}
+                        title={
+                          balanceDue > 0.01
+                            ? `Send WhatsApp Payment Reminder to ${inv.customer_name || 'Client'} (Due: ${formatCurrency(balanceDue)})`
+                            : `Send Invoice Receipt via WhatsApp to ${inv.customer_name || 'Client'}`
+                        }
+                        aria-label="WhatsApp Payment Reminder"
+                      >
+                        <WhatsAppIcon
+                          size={14}
+                          className={cn(
+                            'shrink-0',
+                            balanceDue > 0.01 ? 'text-emerald-700' : 'text-current'
+                          )}
+                        />
+                      </button>
+
+                      {/* Slot 3: Edit Button */}
                       <button
                         type="button"
                         onClick={() => setEditingInvoiceId(inv.id)}
@@ -498,7 +629,7 @@ export function InvoicesListPage() {
                         <Pencil size={14} className="shrink-0" />
                       </button>
 
-                      {/* Slot 3: Print Button (Strictly in Column 3) */}
+                      {/* Slot 4: Print Button */}
                       <button
                         type="button"
                         onClick={() => setViewingInvoiceId(inv.id)}
