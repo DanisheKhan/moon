@@ -19,6 +19,7 @@ import {
   Check,
   Smartphone,
   Armchair,
+  Building2,
 } from 'lucide-react';
 
 export function AdminConsoleLayout() {
@@ -90,6 +91,7 @@ export function AdminConsoleLayout() {
   const isBillingActive = isStoreRoute && path === `${basePath}/billing`;
   const isInvoicesActive = (isStoreRoute && path.startsWith(`${basePath}/invoices`)) || path === '/admin/invoices';
   const isInventoryActive = isStoreRoute && path.startsWith(`${basePath}/inventory`);
+  const isDealersActive = (isStoreRoute && path.startsWith(`${basePath}/dealers`)) || path.startsWith('/admin/dealers');
   const isReportsActive = isStoreRoute && path.startsWith(`${basePath}/reports`);
 
   const activeStoreName = isStoreRoute
@@ -186,6 +188,20 @@ export function AdminConsoleLayout() {
               </Link>
 
               <Link
+                to="/admin/dealers"
+                onMouseEnter={() => import('@/features/dealers').catch(() => {})}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
+                  isDealersActive && !isStoreRoute
+                    ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
+                    : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
+                )}
+              >
+                <Building2 size={15} className="shrink-0" />
+                <span>Dealers & Khata</span>
+              </Link>
+
+              <Link
                 to="/admin/invoices"
                 onMouseEnter={() => import('@/features/billing').catch(() => {})}
                 className={cn(
@@ -265,6 +281,21 @@ export function AdminConsoleLayout() {
                 >
                   <Package size={15} className="shrink-0" />
                   <span>Inventory & Stock</span>
+                </Link>
+
+                {/* 5. Dealers & Khata */}
+                <Link
+                  to={`${basePath}/dealers`}
+                  onMouseEnter={() => import('@/features/dealers').catch(() => {})}
+                  className={cn(
+                    'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
+                    isDealersActive && isStoreRoute
+                      ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
+                      : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
+                  )}
+                >
+                  <Building2 size={15} className="shrink-0" />
+                  <span>Dealer Khata</span>
                 </Link>
 
                 {/* 5. Reports */}

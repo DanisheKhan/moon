@@ -14,6 +14,8 @@ const POSPage = lazyWithRetry(() => import('@/features/billing').then((m) => ({ 
 const InvoicesListPage = lazyWithRetry(() => import('@/features/billing').then((m) => ({ default: m.InvoicesListPage })));
 const InventoryCardsPage = lazyWithRetry(() => import('@/features/inventory').then((m) => ({ default: m.InventoryCardsPage })));
 const SecondHandIntakePage = lazyWithRetry(() => import('@/features/second-hand').then((m) => ({ default: m.SecondHandIntakePage })));
+const DealersHubPage = lazyWithRetry(() => import('@/features/dealers').then((m) => ({ default: m.DealersHubPage })));
+const DealerKhataPage = lazyWithRetry(() => import('@/features/dealers').then((m) => ({ default: m.DealerKhataPage })));
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +47,14 @@ export const router = createBrowserRouter([
         element: <StaffManagementPage />,
       },
       {
+        path: 'dealers',
+        element: <DealersHubPage />,
+      },
+      {
+        path: 'dealers/:dealerId',
+        element: <DealerKhataPage />,
+      },
+      {
         path: 'invoices',
         element: <InvoicesListPage />,
       },
@@ -67,6 +77,14 @@ export const router = createBrowserRouter([
       {
         path: ':storeCode/inventory',
         element: <InventoryCardsPage />,
+      },
+      {
+        path: ':storeCode/dealers',
+        element: <DealersHubPage />,
+      },
+      {
+        path: ':storeCode/dealers/:dealerId',
+        element: <DealerKhataPage />,
       },
       {
         path: ':storeCode/second-hand',

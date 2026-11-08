@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Card } from '@/shared/ui';
 import { useStores } from '@/features/stores';
 import { useOwnerDashboard } from '@/features/reports';
@@ -51,6 +51,14 @@ export function LauncherPage() {
         </div>
 
         <div className="flex items-center gap-2.5 shrink-0">
+          <Link
+            to="/admin/dealers"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface-hover text-xs font-semibold text-text shadow-2xs transition-colors"
+          >
+            <Building2 size={14} className="text-brand-sage" />
+            <span>Dealers & Khata</span>
+          </Link>
+
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface text-xs font-semibold text-text shadow-2xs">
             <Store size={14} className="text-brand-sage" />
             <span>
