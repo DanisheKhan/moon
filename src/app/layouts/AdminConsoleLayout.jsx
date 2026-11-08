@@ -193,13 +193,13 @@ export function AdminConsoleLayout() {
                 onMouseEnter={() => import('@/features/dealers').catch(() => {})}
                 className={cn(
                   'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
-                  isDealersActive && !isStoreRoute
+                  isDealersActive
                     ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
                     : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
                 )}
               >
                 <Building2 size={15} className="shrink-0" />
-                <span>Dealers & Khata</span>
+                <span>Dealer</span>
               </Link>
 
               <Link
@@ -268,22 +268,7 @@ export function AdminConsoleLayout() {
                 <span>Stock & Inventory</span>
               </Link>
 
-              {/* 4. Dealers & Khata */}
-              <Link
-                to={`${basePath}/dealers`}
-                onMouseEnter={() => import('@/features/dealers').catch(() => {})}
-                className={cn(
-                  'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
-                  isDealersActive && isStoreRoute
-                    ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
-                    : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
-                )}
-              >
-                <Building2 size={15} className="shrink-0" />
-                <span>Dealer Khata</span>
-              </Link>
-
-              {/* 5. Reports */}
+              {/* 4. Reports */}
               <Link
                 to={`${basePath}/reports`}
                 onMouseEnter={() => import('@/features/reports').catch(() => {})}

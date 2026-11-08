@@ -1,10 +1,8 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Button } from '@/shared/ui';
+import { useParams } from 'react-router-dom';
 import {
   useDealers,
   useDealerBills,
-  useDealerPayments,
   useDealerAnalytics,
 } from '../hooks/useDealers';
 import { useStores } from '@/features/stores';
@@ -16,17 +14,9 @@ import { AddBillModal } from '../components/AddBillModal';
 import { RecordPaymentModal } from '../components/RecordPaymentModal';
 import { DebitNoteModal } from '../components/DebitNoteModal';
 import { BillTimelineModal } from '../components/BillTimelineModal';
-import { formatCurrency, formatDate } from '@/shared/lib/format';
 import {
   Building2,
-  Receipt,
-  Plus,
-  CreditCard,
   FileText,
-  Clock,
-  TrendingDown,
-  Layers,
-  ArrowRight,
 } from 'lucide-react';
 
 export function DealersHubPage() {
@@ -36,7 +26,7 @@ export function DealersHubPage() {
   const currentStore = stores.find((s) => s.code === storeCode);
   const storeId = currentStore?.id || null;
 
-  const [activeTab, setActiveTab] = useState('directory'); // directory | bills | payments
+  const [activeTab, setActiveTab] = useState('bills'); // bills | directory
 
   // Modals state
   const [isAddDealerOpen, setIsAddDealerOpen] = useState(false);
@@ -56,7 +46,6 @@ export function DealersHubPage() {
   const { data: bills = [], isLoading: isLoadingBills } = useDealerBills({
     storeId,
   });
-  const { data: payments = [], isLoading: isLoadingPayments } = useDealerPayments();
   const { data: analytics, isLoading: isLoadingAnalytics } = useDealerAnalytics(storeId);
 
   const basePath = storeCode ? `/admin/${storeCode}/dealers` : '/admin/dealers';
@@ -103,20 +92,8 @@ export function DealersHubPage() {
       <div className="flex items-center justify-between gap-4 border-b border-border pb-px overflow-x-hidden">
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setActiveTab('directory')}
-            className={`pb-3 px-2 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap ${
-              activeTab === 'directory'
-                ? 'border-accent text-accent'
-                : 'border-transparent text-muted hover:text-text'
-            }`}
-          >
-            <Building2 size={14} />
-            <span>Dealer Directory ({dealers.length})</span>
-          </button>
-
-          <button
             onClick={() => setActiveTab('bills')}
-            className={`pb-3 px-2 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap ${
+            className={`pb-3 px-2 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap focus:outline-none ${
               activeTab === 'bills'
                 ? 'border-accent text-accent'
                 : 'border-transparent text-muted hover:text-text'
@@ -127,20 +104,32 @@ export function DealersHubPage() {
           </button>
 
           <button
-            onClick={() => setActiveTab('payments')}
-            className={`pb-3 px-2 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap ${
-              activeTab === 'payments'
+            onClick={() => setActiveTab('directory')}
+            className={`pb-3 px-2 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap focus:outline-none ${
+              activeTab === 'directory'
                 ? 'border-accent text-accent'
                 : 'border-transparent text-muted hover:text-text'
             }`}
           >
-            <CreditCard size={14} />
-            <span>Payment Vouchers ({payments.length})</span>
+            <Building2 size={14} />
+            <span>Dealer Directory ({dealers.length})</span>
           </button>
         </div>
       </div>
 
       {/* 4. Tab Content */}
+      {activeTab === 'bills' && (
+        <BillsRegisterTable
+          bills={bills}
+          dealers={dealers}
+          currentStore={currentStore}
+          isLoading={isLoadingBills}
+          onOpenAddBill={handleOpenAddBill}
+          onOpenRecordPayment={handleOpenRecordPayment}
+          onOpenTimeline={handleOpenTimeline}
+        />
+      )}
+
       {activeTab === 'directory' && (
         <DealerDirectoryTable
           dealers={dealers}
@@ -150,119 +139,6 @@ export function DealersHubPage() {
           onOpenRecordPayment={handleOpenRecordPayment}
           basePath={basePath}
         />
-      )}
-
-      {activeTab === 'bills' && (
-        <BillsRegisterTable
-          bills={bills}
-          isLoading={isLoadingBills}
-          onOpenAddBill={handleOpenAddBill}
-          onOpenDebitNote={handleOpenDebitNote}
-          onOpenRecordPayment={handleOpenRecordPayment}
-          onOpenTimeline={handleOpenTimeline}
-        />
-      )}
-
-      {activeTab === 'payments' && (
-        <div className="bg-surface border border-border rounded-xl shadow-2xs overflow-hidden">
-          <div className="p-3.5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h3 className="text-xs font-bold text-text uppercase tracking-wide">
-                Recent Supplier Payments & Bank Settlements
-              </h3>
-              <p className="text-[11px] text-muted mt-0.5">
-                Vouchers, bank NEFT/RTGS payouts, cheques & cash disbursements
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => handleOpenRecordPayment()}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all cursor-pointer shrink-0 self-start sm:self-auto"
-            >
-              <CreditCard size={13} className="stroke-[2.5]" />
-              <span>Record Payment</span>
-            </button>
-          </div>
-          <div className="w-full overflow-hidden min-w-0">
-            <table className="w-full table-fixed text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-surface-subtle/80 border-b border-border text-[11px] font-bold text-muted uppercase tracking-wider">
-                  <th className="py-3 px-3 w-[12%]">Date</th>
-                  <th className="py-3 px-3 w-[15%]">Voucher No</th>
-                  <th className="py-3 px-3 w-[20%]">Supplier / Brand</th>
-                  <th className="py-3 px-3 w-[18%]">Bill Settled</th>
-                  <th className="py-3 px-3 w-[16%]">Payment Mode & Ref</th>
-                  <th className="py-3 px-3 w-[8%]">Channel</th>
-                  <th className="py-3 px-3 text-right w-[11%]">Amount Paid</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {isLoadingPayments ? (
-                  <tr>
-                    <td colSpan={7} className="py-12 text-center text-muted">
-                      Loading payment vouchers...
-                    </td>
-                  </tr>
-                ) : payments.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="py-12 text-center text-muted">
-                      No payments recorded yet.
-                    </td>
-                  </tr>
-                ) : (
-                  payments.map((p) => (
-                    <tr key={p.id} className="hover:bg-surface-subtle/50 transition-colors">
-                      <td className="py-2.5 px-3 font-mono text-[11px] text-text whitespace-nowrap min-w-0 truncate">
-                        {formatDate(p.payment_date, false)}
-                      </td>
-                      <td className="py-2.5 px-3 font-mono font-semibold text-text whitespace-nowrap min-w-0 truncate">
-                        {p.payment_number}
-                      </td>
-                      <td className="py-2.5 px-3 font-semibold text-text min-w-0 truncate">
-                        {p.dealer?.brand_name || p.dealer?.name}
-                      </td>
-                      <td className="py-2.5 px-3 font-mono text-[11px] min-w-0 truncate">
-                        {p.bill ? (
-                          <span className="text-text font-medium">
-                            {p.bill.bill_number} ({p.bill.bill_type.toUpperCase()})
-                          </span>
-                        ) : (
-                          <span className="text-muted italic">On-Account</span>
-                        )}
-                      </td>
-                      <td className="py-2.5 px-3 min-w-0">
-                        <div className="font-semibold text-text uppercase text-[11px] truncate">
-                          {p.payment_mode}
-                        </div>
-                        {p.transaction_ref && (
-                          <div className="text-[10px] font-mono text-muted truncate">
-                            Ref: {p.transaction_ref}
-                          </div>
-                        )}
-                      </td>
-                      <td className="py-2.5 px-3 min-w-0">
-                        <span
-                          className={`text-[9px] font-semibold px-1.5 py-0.5 rounded truncate inline-block ${
-                            p.payment_channel === 'official_bank'
-                              ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                              : 'bg-amber-50 text-amber-700 border border-amber-200'
-                          }`}
-                        >
-                          {p.payment_channel === 'official_bank'
-                            ? 'Bank'
-                            : 'Cash'}
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-3 text-right font-mono font-bold text-brand-sage whitespace-nowrap min-w-0">
-                        {formatCurrency(p.amount)}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
       )}
 
       {/* Modals */}

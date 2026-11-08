@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Modal, Button, Badge } from '@/shared/ui';
 import { useDealerBillDetail } from '../hooks/useDealers';
 import { formatCurrency, formatDate } from '@/shared/lib/format';
+import { DealerBillPrintModal } from './DealerBillPrintModal';
 import {
   Clock,
   CheckCircle2,
@@ -14,10 +15,12 @@ import {
   TrendingDown,
   Building2,
   Package,
+  Printer,
 } from 'lucide-react';
 
 export function BillTimelineModal({ isOpen, onClose, billId, onOpenRecordPayment }) {
   const { data: bill, isLoading } = useDealerBillDetail(billId);
+  const [isPrintOpen, setIsPrintOpen] = useState(false);
 
   // Compute timeline and velocity metrics
   const velocity = useMemo(() => {
@@ -91,7 +94,7 @@ export function BillTimelineModal({ isOpen, onClose, billId, onOpenRecordPayment
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Bill Payment Timeline & Aging Audit"
+      title="Payment History & Bill Timeline"
       className="max-w-2xl"
     >
       {isLoading ? (
@@ -367,13 +370,25 @@ export function BillTimelineModal({ isOpen, onClose, billId, onOpenRecordPayment
 
           {/* Footer Actions */}
           <div className="flex items-center justify-between pt-4 border-t border-border">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold rounded-lg border border-border bg-surface text-text hover:bg-surface-subtle transition-all cursor-pointer"
-            >
-              Close
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-xs font-semibold rounded-lg border border-border bg-surface text-text hover:bg-surface-subtle transition-all cursor-pointer"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsPrintOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg border border-border bg-surface text-muted hover:text-text hover:bg-surface-subtle transition-all cursor-pointer shadow-2xs"
+                title="Print this purchase bill voucher"
+              >
+                <Printer size={13} />
+                <span>Print Bill</span>
+              </button>
+            </div>
+
             {Number(bill.balance_amount) > 0 && onOpenRecordPayment && (
               <button
                 type="button"
@@ -388,6 +403,15 @@ export function BillTimelineModal({ isOpen, onClose, billId, onOpenRecordPayment
             )}
           </div>
         </div>
+      )}
+
+      {/* Printable Modal Dialog */}
+      {isPrintOpen && bill && (
+        <DealerBillPrintModal
+          isOpen={isPrintOpen}
+          onClose={() => setIsPrintOpen(false)}
+          bill={bill}
+        />
       )}
     </Modal>
   );

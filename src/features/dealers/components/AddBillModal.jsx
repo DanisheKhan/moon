@@ -1,18 +1,18 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Modal, Button, Input } from '@/shared/ui';
+import { Modal } from '@/shared/ui';
 import { useCreateDealerBill } from '../hooks/useDealers';
 import { useProducts } from '@/features/inventory';
 import { formatCurrency, formatDate } from '@/shared/lib/format';
 import { cn } from '@/shared/lib/cn';
-import { FileText, Layers, Calendar, Receipt, Info, Package, Plus, Trash2, Calculator, Percent } from 'lucide-react';
+import { FileText, Layers, Package, Plus, Trash2 } from 'lucide-react';
 
-const GST_PRESETS = [
-  { value: 18, label: '18% GST', desc: 'Electronics / Standard' },
-  { value: 12, label: '12% GST', desc: 'Furniture & Decor' },
-  { value: 5, label: '5% GST', desc: 'Hardware & Parts' },
-  { value: 28, label: '28% GST', desc: 'ACs & Luxury' },
-  { value: 0, label: '0% (Exempt)', desc: 'Nil-Rated' },
-];
+const createInitialItem = () => ({
+  id: Date.now() + Math.random(),
+  name: '',
+  quantity: 1,
+  gstRate: 18,
+  unitPrice: '',
+});
 
 export function AddBillModal({
   isOpen,
@@ -32,30 +32,30 @@ export function AddBillModal({
   const [billDate, setBillDate] = useState(new Date().toISOString().split('T')[0]);
   const [creditDays, setCreditDays] = useState(30);
   const [totalAmount, setTotalAmount] = useState('');
-  const [gstRate, setGstRate] = useState(18); // default 18%
-  const [isCustomGst, setIsCustomGst] = useState(false);
-  const [customGstRate, setCustomGstRate] = useState('');
   const [taxJurisdiction, setTaxJurisdiction] = useState('intra'); // 'intra' (CGST+SGST) | 'inter' (IGST)
   const [notes, setNotes] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Line items state
-  const [items, setItems] = useState([]);
+  // Line items state - ON by default with at least 1 row ready
+  const [items, setItems] = useState([createInitialItem()]);
 
   // Reset or initialize when modal opens or preselectedDealer changes
   useEffect(() => {
-    if (preselectedDealer) {
-      setDealerId(preselectedDealer.id);
-      if (preselectedDealer.billing_mode === 'kaccha') {
-        setBillType('kaccha');
-      } else {
-        setBillType('gst');
+    if (isOpen) {
+      setItems((prev) => (prev.length > 0 ? prev : [createInitialItem()]));
+      if (preselectedDealer) {
+        setDealerId(preselectedDealer.id);
+        if (preselectedDealer.billing_mode === 'kaccha') {
+          setBillType('kaccha');
+        } else {
+          setBillType('gst');
+        }
+        setCreditDays(preselectedDealer.default_credit_days || 30);
+      } else if (dealers.length > 0 && !dealerId) {
+        setDealerId(dealers[0].id);
       }
-      setCreditDays(preselectedDealer.default_credit_days || 30);
-    } else if (dealers.length > 0 && !dealerId) {
-      setDealerId(dealers[0].id);
     }
-  }, [preselectedDealer, dealers, isOpen]);
+  }, [isOpen, preselectedDealer, dealers]);
 
   // Compute Due Date dynamically
   const computedDueDate = useMemo(() => {
@@ -66,14 +66,40 @@ export function AddBillModal({
     return d.toISOString().split('T')[0];
   }, [billDate, creditDays]);
 
-  // Compute effective numeric GST rate
+  // Compute base total of line items
+  const itemsSubtotal = useMemo(() => {
+    return items.reduce((sum, item) => {
+      const q = Math.max(0, Number(item.quantity) || 0);
+      const p = Math.max(0, Number(item.unitPrice) || 0);
+      return sum + q * p;
+    }, 0);
+  }, [items]);
+
+  // Compute tax total from line items
+  const itemsTaxTotal = useMemo(() => {
+    if (billType === 'kaccha') return 0;
+    return items.reduce((sum, item) => {
+      const q = Math.max(0, Number(item.quantity) || 0);
+      const p = Math.max(0, Number(item.unitPrice) || 0);
+      const rate = Number(item.gstRate ?? 18) || 0;
+      return sum + q * p * (rate / 100);
+    }, 0);
+  }, [items, billType]);
+
+  const totalUnitsCount = useMemo(() => {
+    return items.reduce((sum, item) => {
+      return sum + Math.max(0, Number(item.quantity) || 0);
+    }, 0);
+  }, [items]);
+
+  // Compute effective numeric GST rate across items
   const effectiveGstRate = useMemo(() => {
-    if (isCustomGst) {
-      const parsed = parseFloat(customGstRate);
-      return isNaN(parsed) || parsed < 0 ? 0 : parsed;
+    if (billType === 'kaccha') return 0;
+    if (itemsSubtotal > 0 && itemsTaxTotal >= 0) {
+      return Math.round((itemsTaxTotal / itemsSubtotal) * 10000) / 100;
     }
-    return Number(gstRate) || 0;
-  }, [isCustomGst, customGstRate, gstRate]);
+    return 18;
+  }, [billType, itemsSubtotal, itemsTaxTotal]);
 
   // Tax Breakdown calculation for GST bills
   const taxBreakdown = useMemo(() => {
@@ -115,27 +141,16 @@ export function AddBillModal({
     };
   }, [totalAmount, billType, effectiveGstRate, taxJurisdiction]);
 
-  // Compute total of line items
-  const itemsSubtotal = useMemo(() => {
-    return items.reduce((sum, item) => {
-      const q = Math.max(0, Number(item.quantity) || 0);
-      const p = Math.max(0, Number(item.unitPrice) || 0);
-      return sum + q * p;
-    }, 0);
-  }, [items]);
-
-  const totalUnitsCount = useMemo(() => {
-    return items.reduce((sum, item) => {
-      return sum + (Math.max(0, Number(item.quantity) || 0));
-    }, 0);
-  }, [items]);
-
   // Auto-sync total amount if total was empty or previously matching itemsSubtotal
   useEffect(() => {
     if (itemsSubtotal > 0 && (!totalAmount || totalAmount === '0')) {
-      setTotalAmount(String(itemsSubtotal));
+      const defaultTotal =
+        billType === 'gst'
+          ? Math.round(itemsSubtotal + itemsTaxTotal)
+          : itemsSubtotal;
+      setTotalAmount(String(defaultTotal));
     }
-  }, [itemsSubtotal]);
+  }, [itemsSubtotal, itemsTaxTotal, billType]);
 
   function handleAddItem() {
     setItems((prev) => [
@@ -144,13 +159,17 @@ export function AddBillModal({
         id: Date.now() + Math.random(),
         name: '',
         quantity: 1,
+        gstRate: 18,
         unitPrice: '',
       },
     ]);
   }
 
   function handleRemoveItem(id) {
-    setItems((prev) => prev.filter((it) => it.id !== id));
+    setItems((prev) => {
+      const filtered = prev.filter((it) => it.id !== id);
+      return filtered.length === 0 ? [createInitialItem()] : filtered;
+    });
   }
 
   function handleItemChange(id, field, value) {
@@ -158,13 +177,18 @@ export function AddBillModal({
       prev.map((it) => {
         if (it.id !== id) return it;
         const updated = { ...it, [field]: value };
-        // If name changes, check if it matches a catalog product to auto-fill unitPrice
+        // If name changes, check if it matches a catalog product to auto-fill unitPrice and gstRate
         if (field === 'name') {
           const matched = storeProducts.find(
             (p) => p.name?.toLowerCase() === value?.trim().toLowerCase()
           );
-          if (matched && (!updated.unitPrice || updated.unitPrice === '0')) {
-            updated.unitPrice = String(matched.cost_price || matched.selling_price || '');
+          if (matched) {
+            if (!updated.unitPrice || updated.unitPrice === '0') {
+              updated.unitPrice = String(matched.cost_price || matched.selling_price || '');
+            }
+            if (matched.gst_rate != null) {
+              updated.gstRate = Number(matched.gst_rate);
+            }
           }
         }
         return updated;
@@ -180,9 +204,18 @@ export function AddBillModal({
 
   function handleApplyItemsWithGst() {
     if (itemsSubtotal > 0) {
-      const withTax = Math.round(itemsSubtotal * (1 + effectiveGstRate / 100));
+      const withTax = Math.round(itemsSubtotal + itemsTaxTotal);
       setTotalAmount(String(withTax));
     }
+  }
+
+  function handleCloseModal() {
+    setBillNumber('');
+    setTotalAmount('');
+    setItems([createInitialItem()]);
+    setNotes('');
+    setErrorMsg('');
+    onClose();
   }
 
   async function handleSubmit(e) {
@@ -209,6 +242,7 @@ export function AddBillModal({
       .map((it) => ({
         name: it.name.trim(),
         quantity: Math.max(1, Number(it.quantity) || 1),
+        gst_rate: Number(it.gstRate ?? 18),
         unit_price: Math.max(0, Number(it.unitPrice) || 0),
         total:
           Math.max(1, Number(it.quantity) || 1) *
@@ -233,23 +267,17 @@ export function AddBillModal({
       });
 
       // Clear & Close
-      setBillNumber('');
-      setTotalAmount('');
-      setItems([]);
-      setNotes('');
-      onClose();
+      handleCloseModal();
     } catch (err) {
       console.error('Failed to create bill:', err);
       setErrorMsg(err.message || 'Error recording dealer bill. Please verify bill details.');
     }
   }
 
-  const selectedDealerObj = dealers.find((d) => d.id === dealerId) || preselectedDealer;
-
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleCloseModal}
       title="Record New Dealer Bill / Purchase Entry"
       className="max-w-2xl"
     >
@@ -312,7 +340,7 @@ export function AddBillModal({
           </div>
         </div>
 
-        {/* Dealer Selection */}
+        {/* Dealer Selection - Just the Supplier's Name */}
         <div>
           <label className="block text-xs font-semibold text-text mb-1">
             Supplier / Brand Dealer <span className="text-brand-crimson">*</span>
@@ -333,8 +361,7 @@ export function AddBillModal({
             <option value="">-- Choose Brand / Dealer --</option>
             {dealers.map((d) => (
               <option key={d.id} value={d.id}>
-                {d.brand_name || d.name} ({d.name}) - Current Bal:{' '}
-                {formatCurrency(d.metrics?.totalBalance || 0)}
+                {d.name || d.brand_name}
               </option>
             ))}
           </select>
@@ -394,9 +421,9 @@ export function AddBillModal({
           </div>
         </div>
 
-        {/* Items Section */}
+        {/* Bill Items / Products Section - Ordered: Item -> Qty -> GST -> Price -> Total */}
         <div className="pt-2 border-t border-border space-y-2.5">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Package size={15} className="text-brand-sage" />
               <div>
@@ -404,19 +431,53 @@ export function AddBillModal({
                   Bill Items / Products
                 </span>
                 <span className="text-[10px] text-muted ml-1.5 font-normal hidden sm:inline">
-                  (Itemize quantities & rates)
+                  (Itemize quantities, GST & rates)
                 </span>
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={handleAddItem}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg bg-surface-subtle hover:bg-surface border border-border text-text hover:border-brand-sage transition-all cursor-pointer shadow-2xs"
-            >
-              <Plus size={13} className="stroke-[2.5]" />
-              <span>Add Item</span>
-            </button>
+            <div className="flex items-center gap-2">
+              {/* Intra vs Inter-State Switch */}
+              {billType === 'gst' && (
+                <div className="flex items-center gap-1 bg-surface-subtle p-0.5 rounded-lg border border-border text-[11px]">
+                  <button
+                    type="button"
+                    onClick={() => setTaxJurisdiction('intra')}
+                    className={cn(
+                      'px-2 py-0.5 rounded-md font-semibold transition-all cursor-pointer text-[10px]',
+                      taxJurisdiction === 'intra'
+                        ? 'bg-[#1B382B] text-white shadow-2xs'
+                        : 'text-muted hover:text-text'
+                    )}
+                    title="Intra-State: CGST (50%) + SGST (50%)"
+                  >
+                    CGST+SGST
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTaxJurisdiction('inter')}
+                    className={cn(
+                      'px-2 py-0.5 rounded-md font-semibold transition-all cursor-pointer text-[10px]',
+                      taxJurisdiction === 'inter'
+                        ? 'bg-[#1B382B] text-white shadow-2xs'
+                        : 'text-muted hover:text-text'
+                    )}
+                    title="Inter-State: IGST (100%)"
+                  >
+                    IGST
+                  </button>
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={handleAddItem}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] transition-all cursor-pointer shadow-2xs shrink-0"
+              >
+                <Plus size={13} className="stroke-[2.5]" />
+                <span>Add Item</span>
+              </button>
+            </div>
           </div>
 
           {/* Datalist for autocomplete suggestions from store inventory */}
@@ -428,306 +489,233 @@ export function AddBillModal({
             ))}
           </datalist>
 
-          {items.length === 0 ? (
-            <div className="p-3 text-center rounded-xl border border-dashed border-border bg-surface-subtle/50 text-xs text-muted flex items-center justify-between">
-              <span className="text-[11px]">
-                No items added yet. You can itemize products, quantities, and rates or enter total amount directly.
-              </span>
-              <button
-                type="button"
-                onClick={handleAddItem}
-                className="text-xs font-semibold text-brand-sage hover:underline flex items-center gap-1 cursor-pointer shrink-0 ml-3"
-              >
-                <Plus size={13} /> Add Item
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {/* Items Table */}
-              <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-2xs">
-                <div className="bg-surface-subtle/80 px-3 py-1.5 border-b border-border text-[10px] uppercase font-bold text-muted grid grid-cols-12 gap-2 items-center">
-                  <div className="col-span-5 sm:col-span-6">Item / Product Name</div>
-                  <div className="col-span-2 text-center">Qty</div>
-                  <div className="col-span-3 text-right">Unit Rate (₹)</div>
-                  <div className="col-span-2 sm:col-span-1 text-right">Total</div>
-                </div>
-
-                <div className="divide-y divide-border/60 max-h-56 overflow-y-auto">
-                  {items.map((it) => {
-                    const rowQty = Math.max(1, Number(it.quantity) || 1);
-                    const rowRate = Math.max(0, Number(it.unitPrice) || 0);
-                    const rowTotal = rowQty * rowRate;
-
-                    return (
-                      <div
-                        key={it.id}
-                        className="p-2 sm:px-3 sm:py-2 grid grid-cols-12 gap-2 items-center hover:bg-surface-subtle/40 transition-colors"
-                      >
-                        {/* Name input */}
-                        <div className="col-span-5 sm:col-span-6">
-                          <input
-                            type="text"
-                            list="dealer-bill-product-suggestions"
-                            required
-                            placeholder="Item name / model"
-                            value={it.name}
-                            onChange={(e) =>
-                              handleItemChange(it.id, 'name', e.target.value)
-                            }
-                            className="w-full px-2 py-1.5 text-xs rounded-md border border-border bg-surface text-text focus:outline-none focus:ring-1 focus:ring-brand-sage font-medium"
-                          />
-                        </div>
-
-                        {/* Quantity input */}
-                        <div className="col-span-2">
-                          <input
-                            type="number"
-                            min="1"
-                            step="1"
-                            required
-                            placeholder="1"
-                            value={it.quantity}
-                            onChange={(e) =>
-                              handleItemChange(it.id, 'quantity', e.target.value)
-                            }
-                            className="w-full px-1.5 py-1.5 text-xs text-center font-mono font-semibold rounded-md border border-border bg-surface text-text focus:outline-none focus:ring-1 focus:ring-brand-sage"
-                          />
-                        </div>
-
-                        {/* Price input */}
-                        <div className="col-span-3">
-                          <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="Rate ₹"
-                            value={it.unitPrice}
-                            onChange={(e) =>
-                              handleItemChange(it.id, 'unitPrice', e.target.value)
-                            }
-                            className="w-full px-2 py-1.5 text-xs text-right font-mono font-medium rounded-md border border-border bg-surface text-text focus:outline-none focus:ring-1 focus:ring-brand-sage"
-                          />
-                        </div>
-
-                        {/* Line Total & Remove button */}
-                        <div className="col-span-2 sm:col-span-1 flex items-center justify-end gap-1.5">
-                          <span className="font-mono text-[11px] font-bold text-text truncate hidden sm:inline">
-                            {formatCurrency(rowTotal)}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveItem(it.id)}
-                            className="p-1 rounded text-muted hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer"
-                            title="Remove this item"
-                          >
-                            <Trash2 size={13} />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+          {/* Items Table - Combined layout: Item -> Qty -> GST -> Price -> Total */}
+          <div className="space-y-2">
+            <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-2xs">
+              <div className="bg-surface-subtle/80 px-3 py-1.5 border-b border-border text-[10px] uppercase font-bold text-muted grid grid-cols-12 gap-2 items-center">
+                <div className="col-span-5">Item / Product Name</div>
+                <div className="col-span-1 text-center">Qty</div>
+                <div className="col-span-2 text-center">GST</div>
+                <div className="col-span-2 text-right">Price (₹)</div>
+                <div className="col-span-2 text-right pr-1">Total</div>
               </div>
 
-              {/* Items Summary Bar */}
-              <div className="p-2.5 rounded-lg bg-surface-subtle border border-border flex items-center justify-between text-xs">
-                <div className="text-[11px] text-muted flex items-center gap-2">
-                  <span className="font-bold text-text">{items.length} items</span>
-                  <span>•</span>
-                  <span>{totalUnitsCount} total units</span>
-                  <span>•</span>
-                  <span>
-                    Items Sum: <strong className="font-mono text-text">{formatCurrency(itemsSubtotal)}</strong>
-                  </span>
-                </div>
+              <div className="divide-y divide-border/60 max-h-56 overflow-y-auto">
+                {items.map((it) => {
+                  const rowQty = Math.max(1, Number(it.quantity) || 1);
+                  const rowRate = Math.max(0, Number(it.unitPrice) || 0);
+                  const rowTotal = rowQty * rowRate;
 
-                {itemsSubtotal > 0 && (
-                  <div className="flex items-center gap-1.5 flex-wrap">
+                  return (
+                    <div
+                      key={it.id}
+                      className="p-2 sm:px-3 sm:py-2 grid grid-cols-12 gap-2 items-center hover:bg-surface-subtle/40 transition-colors"
+                    >
+                      {/* 1. Item Name */}
+                      <div className="col-span-5">
+                        <input
+                          type="text"
+                          list="dealer-bill-product-suggestions"
+                          required
+                          placeholder="Item name / model"
+                          value={it.name}
+                          onChange={(e) =>
+                            handleItemChange(it.id, 'name', e.target.value)
+                          }
+                          className="w-full px-2 py-1.5 text-xs rounded-md border border-border bg-surface text-text focus:outline-none focus:ring-1 focus:ring-brand-sage font-medium"
+                        />
+                      </div>
+
+                      {/* 2. Quantity */}
+                      <div className="col-span-1">
+                        <input
+                          type="number"
+                          min="1"
+                          step="1"
+                          required
+                          placeholder="1"
+                          value={it.quantity}
+                          onChange={(e) =>
+                            handleItemChange(it.id, 'quantity', e.target.value)
+                          }
+                          className="w-full px-1 py-1.5 text-xs text-center font-mono font-semibold rounded-md border border-border bg-surface text-text focus:outline-none focus:ring-1 focus:ring-brand-sage"
+                        />
+                      </div>
+
+                      {/* 3. GST Dropdown */}
+                      <div className="col-span-2">
+                        {billType === 'gst' ? (
+                          <select
+                            value={it.gstRate ?? 18}
+                            onChange={(e) =>
+                              handleItemChange(it.id, 'gstRate', Number(e.target.value))
+                            }
+                            className="w-full px-1.5 py-1.5 text-xs text-center font-mono font-semibold rounded-md border border-border bg-surface text-text focus:outline-none focus:ring-1 focus:ring-brand-sage cursor-pointer shadow-2xs"
+                          >
+                            <option value={18}>18% GST</option>
+                            <option value={12}>12% GST</option>
+                            <option value={5}>5% GST</option>
+                            <option value={28}>28% GST</option>
+                            <option value={0}>0% (Nil)</option>
+                          </select>
+                        ) : (
+                          <div className="w-full py-1.5 text-center text-xs text-muted font-mono bg-surface-subtle rounded-md border border-border">
+                            0%
+                          </div>
+                        )}
+                      </div>
+
+                      {/* 4. Price (Unit Rate ₹) */}
+                      <div className="col-span-2">
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="Rate ₹"
+                          value={it.unitPrice}
+                          onChange={(e) =>
+                            handleItemChange(it.id, 'unitPrice', e.target.value)
+                          }
+                          className="w-full px-2 py-1.5 text-xs text-right font-mono font-medium rounded-md border border-border bg-surface text-text focus:outline-none focus:ring-1 focus:ring-brand-sage"
+                        />
+                      </div>
+
+                      {/* 5. Line Total & Remove button */}
+                      <div className="col-span-2 flex items-center justify-end gap-1.5 pr-1">
+                        <span className="font-mono text-xs font-bold text-text truncate">
+                          {formatCurrency(rowTotal)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveItem(it.id)}
+                          className="p-1 rounded text-muted hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer shrink-0"
+                          title="Remove item row"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Items Summary Bar */}
+            <div className="p-2.5 rounded-lg bg-surface-subtle border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div className="text-[11px] text-muted flex items-center gap-2 flex-wrap">
+                <span className="font-bold text-text">
+                  {items.length} {items.length === 1 ? 'item' : 'items'}
+                </span>
+                <span>•</span>
+                <span>{totalUnitsCount} units</span>
+                <span>•</span>
+                <span>
+                  Base: <strong className="font-mono text-text">{formatCurrency(itemsSubtotal)}</strong>
+                </span>
+                {billType === 'gst' && itemsTaxTotal > 0 && (
+                  <>
+                    <span>•</span>
+                    <span>
+                      Tax: <strong className="font-mono text-text">{formatCurrency(Math.round(itemsTaxTotal))}</strong>
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {itemsSubtotal > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={handleApplyItemsTotal}
+                    className="px-2 py-0.5 rounded bg-surface border border-border text-[11px] font-medium text-text hover:border-brand-sage hover:bg-surface-subtle transition-all cursor-pointer shadow-2xs"
+                    title="Set Total Bill Payable to base items sum"
+                  >
+                    Base: {formatCurrency(itemsSubtotal)}
+                  </button>
+                  {billType === 'gst' && (
                     <button
                       type="button"
-                      onClick={handleApplyItemsTotal}
-                      className="px-2 py-0.5 rounded bg-surface border border-border text-[11px] font-medium text-text hover:border-brand-sage hover:bg-surface-subtle transition-all cursor-pointer shadow-2xs"
-                      title="Set Total Bill Payable to exact Items Subtotal"
+                      onClick={handleApplyItemsWithGst}
+                      className="px-2 py-0.5 rounded bg-surface border border-brand-sage-border/80 text-[11px] font-semibold text-brand-sage hover:bg-brand-sage-subtle transition-all cursor-pointer shadow-2xs"
+                      title="Set Total Bill Payable to items sum + GST"
                     >
-                      Inclusive: {formatCurrency(itemsSubtotal)}
+                      + GST ({formatCurrency(Math.round(itemsSubtotal + itemsTaxTotal))})
                     </button>
-                    {billType === 'gst' && effectiveGstRate > 0 && (
-                      <button
-                        type="button"
-                        onClick={handleApplyItemsWithGst}
-                        className="px-2 py-0.5 rounded bg-surface border border-brand-sage-border/80 text-[11px] font-semibold text-brand-sage hover:bg-brand-sage-subtle transition-all cursor-pointer shadow-2xs"
-                        title={`Add ${effectiveGstRate}% GST on top of items subtotal`}
-                      >
-                        + Add {effectiveGstRate}% GST ({formatCurrency(Math.round(itemsSubtotal * (1 + effectiveGstRate / 100)))})
-                      </button>
-                    )}
-                  </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Bill Total Amount & Live Tax Summary */}
+        <div className="p-3 rounded-xl border border-border bg-surface-subtle/40 space-y-2 shadow-2xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <label className="block text-xs font-semibold text-text">
+                Total Bill Payable (₹) <span className="text-brand-crimson">*</span>
+              </label>
+              <span className="text-[11px] text-muted">
+                Final invoice amount credited to supplier khata
+              </span>
+            </div>
+
+            <div className="relative min-w-[160px]">
+              <span className="absolute left-2.5 top-2 text-muted font-bold text-xs">₹</span>
+              <input
+                type="number"
+                step="0.01"
+                min="1"
+                required
+                placeholder="0.00"
+                value={totalAmount}
+                onChange={(e) => setTotalAmount(e.target.value)}
+                className="w-full pl-6 pr-2.5 py-1.5 text-sm font-bold font-mono rounded-lg border border-border bg-surface text-text focus:outline-none focus:ring-1 focus:ring-brand-sage text-right shadow-2xs"
+              />
+            </div>
+          </div>
+
+          {/* Live GST Tax Breakdown Preview */}
+          {billType === 'gst' && parseFloat(totalAmount) > 0 && (
+            <div className="pt-2 border-t border-border/70 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div className="text-muted text-[11px]">
+                Taxable Base: <span className="font-mono font-semibold text-text">{formatCurrency(taxBreakdown.taxable)}</span>
+              </div>
+
+              <div className="text-[11px] font-mono text-muted flex items-center gap-2">
+                {effectiveGstRate > 0 && taxJurisdiction === 'intra' && (
+                  <>
+                    <span>
+                      CGST ({(effectiveGstRate / 2).toFixed(effectiveGstRate % 2 === 0 ? 0 : 1)}%):{' '}
+                      <strong className="text-text">{formatCurrency(taxBreakdown.cgst)}</strong>
+                    </span>
+                    <span>+</span>
+                    <span>
+                      SGST ({(effectiveGstRate / 2).toFixed(effectiveGstRate % 2 === 0 ? 0 : 1)}%):{' '}
+                      <strong className="text-text">{formatCurrency(taxBreakdown.sgst)}</strong>
+                    </span>
+                  </>
                 )}
+
+                {effectiveGstRate > 0 && taxJurisdiction === 'inter' && (
+                  <span>
+                    IGST ({effectiveGstRate}%): <strong className="text-text">{formatCurrency(taxBreakdown.igst)}</strong>
+                  </span>
+                )}
+
+                {effectiveGstRate === 0 && (
+                  <span className="text-brand-sage font-semibold">0% Nil-Rated</span>
+                )}
+
+                <span className="text-brand-sage font-semibold">
+                  (Total Tax: {formatCurrency(taxBreakdown.totalTax)})
+                </span>
               </div>
             </div>
           )}
         </div>
 
-        {/* GST Configuration (Only if Tax Invoice) */}
-        {billType === 'gst' && (
-          <div className="p-3 sm:p-3.5 rounded-xl border border-border bg-surface-subtle/70 space-y-3 shadow-2xs">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/70 pb-2.5">
-              <div className="flex items-center gap-2">
-                <Receipt size={15} className="text-brand-sage" />
-                <div>
-                  <span className="text-xs font-bold text-text uppercase tracking-wider">
-                    GST Rate & Tax Jurisdiction
-                  </span>
-                  <span className="text-[10px] text-muted ml-1.5 font-normal">
-                    (Choose rate or custom %)
-                  </span>
-                </div>
-              </div>
-
-              {/* Intra vs Inter-State Segmented Switch */}
-              <div className="flex items-center gap-1 bg-surface p-0.5 rounded-lg border border-border text-[11px] self-start sm:self-auto shadow-2xs">
-                <button
-                  type="button"
-                  onClick={() => setTaxJurisdiction('intra')}
-                  className={cn(
-                    'px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer',
-                    taxJurisdiction === 'intra'
-                      ? 'bg-accent text-accent-fg shadow-2xs'
-                      : 'text-muted hover:text-text'
-                  )}
-                  title="CGST (50%) + SGST (50%) for intra-state supplier"
-                >
-                  Intra-State (CGST+SGST)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTaxJurisdiction('inter')}
-                  className={cn(
-                    'px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer',
-                    taxJurisdiction === 'inter'
-                      ? 'bg-accent text-accent-fg shadow-2xs'
-                      : 'text-muted hover:text-text'
-                  )}
-                  title="IGST (100%) for interstate supplier"
-                >
-                  Inter-State (IGST)
-                </button>
-              </div>
-            </div>
-
-            {/* GST Rate Preset Slabs */}
-            <div className="space-y-1.5">
-              <span className="text-[10px] uppercase font-bold text-muted block">
-                Select Applicable GST Slab:
-              </span>
-              <div className="flex items-center gap-1.5 flex-wrap">
-                {GST_PRESETS.map((p) => {
-                  const isSelected = !isCustomGst && gstRate === p.value;
-                  return (
-                    <button
-                      key={p.value}
-                      type="button"
-                      onClick={() => {
-                        setIsCustomGst(false);
-                        setGstRate(p.value);
-                      }}
-                      className={cn(
-                        'px-2.5 py-1.5 rounded-lg border text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs',
-                        isSelected
-                          ? 'border-accent bg-accent text-accent-fg ring-1 ring-accent'
-                          : 'border-border bg-surface text-text hover:bg-surface-subtle hover:border-border-strong'
-                      )}
-                    >
-                      <span>{p.label}</span>
-                      <span
-                        className={cn(
-                          'text-[10px] font-sans font-normal hidden md:inline',
-                          isSelected ? 'text-accent-fg/80' : 'text-muted'
-                        )}
-                      >
-                        ({p.desc})
-                      </span>
-                    </button>
-                  );
-                })}
-
-                {/* Custom Rate Pill */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsCustomGst(true);
-                    if (!customGstRate) setCustomGstRate('18');
-                  }}
-                  className={cn(
-                    'px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-all cursor-pointer shadow-2xs',
-                    isCustomGst
-                      ? 'border-accent bg-accent text-accent-fg ring-1 ring-accent font-bold'
-                      : 'border-border bg-surface text-text hover:bg-surface-subtle'
-                  )}
-                >
-                  Custom %
-                </button>
-
-                {/* Custom Rate Input when active */}
-                {isCustomGst && (
-                  <div className="flex items-center gap-1 pl-1">
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="100"
-                      autoFocus
-                      placeholder="e.g. 7.5"
-                      value={customGstRate}
-                      onChange={(e) => setCustomGstRate(e.target.value)}
-                      className="w-20 px-2 py-1 text-xs font-mono font-bold text-center rounded-lg border border-accent bg-surface text-text focus:outline-none focus:ring-1 focus:ring-accent"
-                    />
-                    <span className="text-xs font-bold text-text font-mono">%</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Live GST Tax Breakdown Preview */}
-            {parseFloat(totalAmount) > 0 && (
-              <div className="p-3 rounded-lg bg-surface border border-border/80 text-xs space-y-1.5 shadow-2xs">
-                <div className="flex items-center justify-between font-semibold text-text">
-                  <span className="text-muted">Taxable Base Value:</span>
-                  <span className="font-mono">{formatCurrency(taxBreakdown.taxable)}</span>
-                </div>
-
-                {effectiveGstRate > 0 && taxJurisdiction === 'intra' && (
-                  <div className="flex items-center justify-between text-[11px] text-muted">
-                    <span>
-                      CGST ({(effectiveGstRate / 2).toFixed(effectiveGstRate % 2 === 0 ? 0 : 1)}%) + SGST ({(effectiveGstRate / 2).toFixed(effectiveGstRate % 2 === 0 ? 0 : 1)}%):
-                    </span>
-                    <span className="font-mono text-text">
-                      {formatCurrency(taxBreakdown.cgst)} + {formatCurrency(taxBreakdown.sgst)} (Total: {formatCurrency(taxBreakdown.totalTax)})
-                    </span>
-                  </div>
-                )}
-
-                {effectiveGstRate > 0 && taxJurisdiction === 'inter' && (
-                  <div className="flex items-center justify-between text-[11px] text-muted">
-                    <span>IGST ({effectiveGstRate}%):</span>
-                    <span className="font-mono text-text">
-                      {formatCurrency(taxBreakdown.igst)}
-                    </span>
-                  </div>
-                )}
-
-                {effectiveGstRate === 0 && (
-                  <div className="flex items-center justify-between text-[11px] text-muted">
-                    <span>GST Rate:</span>
-                    <span className="font-semibold text-brand-sage">0% (Nil-Rated / Tax Exempt)</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Notes */}
+        {/* Consignment Remarks */}
         <div>
           <label className="block text-xs font-semibold text-text mb-1">
             Consignment Remarks / Invoice Notes
@@ -745,7 +733,7 @@ export function AddBillModal({
         <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-border">
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleCloseModal}
             className="px-4 py-2 text-xs font-semibold rounded-lg border border-border bg-surface text-text hover:bg-surface-subtle transition-all cursor-pointer"
           >
             Cancel

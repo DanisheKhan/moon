@@ -56,7 +56,7 @@ export function LauncherPage() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface-hover text-xs font-semibold text-text shadow-2xs transition-colors"
           >
             <Building2 size={14} className="text-brand-sage" />
-            <span>Dealers & Khata</span>
+            <span>Dealer</span>
           </Link>
 
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface text-xs font-semibold text-text shadow-2xs">
