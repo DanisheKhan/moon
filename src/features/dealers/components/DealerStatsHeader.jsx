@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Card, Badge } from '@/shared/ui';
+import { Card, Badge, KpiGridSkeleton } from '@/shared/ui';
 import { formatCurrency } from '@/shared/lib/format';
 import {
   TrendingUp,
@@ -13,6 +13,10 @@ import {
 } from 'lucide-react';
 
 export function DealerStatsHeader({ analytics, isLoading }) {
+  if (isLoading || !analytics) {
+    return <KpiGridSkeleton count={4} className="mb-4" />;
+  }
+
   const aging = analytics?.aging || {};
 
   const totalOverdue = analytics?.overdueAmount || 0;

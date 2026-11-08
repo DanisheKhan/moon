@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Card, Button, Badge } from '@/shared/ui';
+import { Card, Button, Badge, LoadingState } from '@/shared/ui';
 import { useDealerStatement } from '../hooks/useDealers';
 import { formatCurrency, formatDate, formatPhone } from '@/shared/lib/format';
 import {
@@ -255,8 +255,12 @@ Thank you for your ongoing partnership!`;
             <tbody className="divide-y divide-border">
               {isLoading ? (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-muted">
-                    Loading Khata statement...
+                  <td colSpan={8} className="p-0">
+                    <LoadingState
+                      size="sm"
+                      message="Loading Khata statement..."
+                      className="py-12"
+                    />
                   </td>
                 </tr>
               ) : entries.length === 0 ? (

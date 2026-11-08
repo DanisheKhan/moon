@@ -163,56 +163,70 @@ export async function listDealerBills({
   storeId,
   limit = 100,
 } = {}) {
-  let query = supabase
-    .from('dealer_bills')
-    .select(`
-      *,
-      dealer:dealers(id, name, brand_name, phone, gstin, billing_mode),
-      payments:dealer_payments(id, payment_number, payment_date, amount, payment_mode, transaction_ref),
-      debit_notes:dealer_debit_notes(id, note_number, note_date, amount, reason)
-    `)
-    .order('bill_date', { ascending: false })
-    .limit(limit);
+  const cacheKey = `dealers_bills_${storeId || 'all'}`;
 
-  if (dealerId) {
-    query = query.eq('dealer_id', dealerId);
-  }
-  if (billType && billType !== 'all') {
-    query = query.eq('bill_type', billType);
-  }
-  if (status && status !== 'all') {
-    query = query.eq('status', status);
-  }
-  if (storeId) {
-    query = query.or(`store_id.eq.${storeId},store_id.is.null`);
-  }
+  try {
+    let query = supabase
+      .from('dealer_bills')
+      .select(`
+        *,
+        dealer:dealers(id, name, brand_name, phone, gstin, billing_mode),
+        payments:dealer_payments(id, payment_number, payment_date, amount, payment_mode, transaction_ref),
+        debit_notes:dealer_debit_notes(id, note_number, note_date, amount, reason)
+      `)
+      .order('bill_date', { ascending: false })
+      .limit(limit);
 
-  const { data, error } = await query;
-  if (error) throw error;
-
-  const todayStr = new Date().toISOString().split('T')[0];
-  const today = new Date(todayStr);
-
-  return (data || []).map((bill) => {
-    let daysOverdue = 0;
-    let daysUntilDue = 0;
-    if (bill.due_date && bill.balance_amount > 0) {
-      const due = new Date(bill.due_date);
-      const diffDays = Math.floor((today - due) / (1000 * 60 * 60 * 24));
-      if (diffDays > 0) {
-        daysOverdue = diffDays;
-      } else {
-        daysUntilDue = Math.abs(diffDays);
-      }
+    if (dealerId) {
+      query = query.eq('dealer_id', dealerId);
+    }
+    if (billType && billType !== 'all') {
+      query = query.eq('bill_type', billType);
+    }
+    if (status && status !== 'all') {
+      query = query.eq('status', status);
+    }
+    if (storeId) {
+      query = query.or(`store_id.eq.${storeId},store_id.is.null`);
     }
 
-    return {
-      ...bill,
-      daysOverdue,
-      daysUntilDue,
-      isOverdue: daysOverdue > 0,
-    };
-  });
+    const { data, error } = await query;
+    if (error) throw error;
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    const today = new Date(todayStr);
+
+    const enriched = (data || []).map((bill) => {
+      let daysOverdue = 0;
+      let daysUntilDue = 0;
+      if (bill.due_date && bill.balance_amount > 0) {
+        const due = new Date(bill.due_date);
+        const diffDays = Math.floor((today - due) / (1000 * 60 * 60 * 24));
+        if (diffDays > 0) {
+          daysOverdue = diffDays;
+        } else {
+          daysUntilDue = Math.abs(diffDays);
+        }
+      }
+
+      return {
+        ...bill,
+        daysOverdue,
+        daysUntilDue,
+        isOverdue: daysOverdue > 0,
+      };
+    });
+
+    // Cache un-filtered base list
+    if (!dealerId && !billType && !status) {
+      setPersistentCache(cacheKey, enriched);
+    }
+
+    return enriched;
+  } catch (err) {
+    console.warn('[Dealers API] Network error loading bills, using cache:', err);
+    return getPersistentCache(cacheKey) || [];
+  }
 }
 
 /**
@@ -505,102 +519,112 @@ export async function getDealerStatement(dealerId, { billType = 'all' } = {}) {
  * Computes high level executive analytics across all dealers
  */
 export async function getDealerAnalyticsSummary({ storeId } = {}) {
-  let query = supabase.from('dealer_bills').select(`
-    id, bill_type, total_amount, paid_amount, balance_amount, status, bill_date, due_date, cleared_at, payment_days_taken, store_id
-  `);
+  const cacheKey = `dealers_analytics_${storeId || 'all'}`;
 
-  if (storeId) {
-    query = query.or(`store_id.eq.${storeId},store_id.is.null`);
-  }
+  try {
+    let query = supabase.from('dealer_bills').select(`
+      id, bill_type, total_amount, paid_amount, balance_amount, status, bill_date, due_date, cleared_at, payment_days_taken, store_id
+    `);
 
-  const { data: bills, error } = await query;
-  if (error) throw error;
-
-  const allBills = bills || [];
-  const todayStr = new Date().toISOString().split('T')[0];
-  const today = new Date(todayStr);
-
-  let totalPayable = 0;
-  let gstPayable = 0;
-  let kacchaPayable = 0;
-  let totalPurchases = 0;
-  let totalPaid = 0;
-
-  let overdueCount = 0;
-  let overdueAmount = 0;
-
-  // Aging buckets for outstanding balances
-  const aging = {
-    current: { count: 0, amount: 0 }, // 0 to due_date
-    bucket0_15: { count: 0, amount: 0 }, // 1 to 15 days overdue
-    bucket16_30: { count: 0, amount: 0 }, // 16 to 30 days overdue
-    bucket31_60: { count: 0, amount: 0 }, // 31 to 60 days overdue
-    bucket60_plus: { count: 0, amount: 0 }, // 60+ days overdue
-  };
-
-  const clearedDays = [];
-
-  allBills.forEach((b) => {
-    const total = Number(b.total_amount || 0);
-    const paid = Number(b.paid_amount || 0);
-    const balance = Number(b.balance_amount || 0);
-
-    totalPurchases += total;
-    totalPaid += paid;
-    totalPayable += balance;
-
-    if (b.bill_type === 'gst') {
-      gstPayable += balance;
-    } else {
-      kacchaPayable += balance;
+    if (storeId) {
+      query = query.or(`store_id.eq.${storeId},store_id.is.null`);
     }
 
-    if (b.status === 'paid' && b.payment_days_taken != null) {
-      clearedDays.push(Number(b.payment_days_taken));
-    }
+    const { data: bills, error } = await query;
+    if (error) throw error;
 
-    if (balance > 0 && b.due_date) {
-      const due = new Date(b.due_date);
-      const diffDays = Math.floor((today - due) / (1000 * 60 * 60 * 24));
+    const allBills = bills || [];
+    const todayStr = new Date().toISOString().split('T')[0];
+    const today = new Date(todayStr);
 
-      if (diffDays <= 0) {
-        aging.current.count += 1;
-        aging.current.amount += balance;
+    let totalPayable = 0;
+    let gstPayable = 0;
+    let kacchaPayable = 0;
+    let totalPurchases = 0;
+    let totalPaid = 0;
+
+    let overdueCount = 0;
+    let overdueAmount = 0;
+
+    // Aging buckets for outstanding balances
+    const aging = {
+      current: { count: 0, amount: 0 }, // 0 to due_date
+      bucket0_15: { count: 0, amount: 0 }, // 1 to 15 days overdue
+      bucket16_30: { count: 0, amount: 0 }, // 16 to 30 days overdue
+      bucket31_60: { count: 0, amount: 0 }, // 31 to 60 days overdue
+      bucket60_plus: { count: 0, amount: 0 }, // 60+ days overdue
+    };
+
+    const clearedDays = [];
+
+    allBills.forEach((b) => {
+      const total = Number(b.total_amount || 0);
+      const paid = Number(b.paid_amount || 0);
+      const balance = Number(b.balance_amount || 0);
+
+      totalPurchases += total;
+      totalPaid += paid;
+      totalPayable += balance;
+
+      if (b.bill_type === 'gst') {
+        gstPayable += balance;
       } else {
-        overdueCount += 1;
-        overdueAmount += balance;
+        kacchaPayable += balance;
+      }
 
-        if (diffDays <= 15) {
-          aging.bucket0_15.count += 1;
-          aging.bucket0_15.amount += balance;
-        } else if (diffDays <= 30) {
-          aging.bucket16_30.count += 1;
-          aging.bucket16_30.amount += balance;
-        } else if (diffDays <= 60) {
-          aging.bucket31_60.count += 1;
-          aging.bucket31_60.amount += balance;
+      if (b.status === 'paid' && b.payment_days_taken != null) {
+        clearedDays.push(Number(b.payment_days_taken));
+      }
+
+      if (balance > 0 && b.due_date) {
+        const due = new Date(b.due_date);
+        const diffDays = Math.floor((today - due) / (1000 * 60 * 60 * 24));
+
+        if (diffDays <= 0) {
+          aging.current.count += 1;
+          aging.current.amount += balance;
         } else {
-          aging.bucket60_plus.count += 1;
-          aging.bucket60_plus.amount += balance;
+          overdueCount += 1;
+          overdueAmount += balance;
+
+          if (diffDays <= 15) {
+            aging.bucket0_15.count += 1;
+            aging.bucket0_15.amount += balance;
+          } else if (diffDays <= 30) {
+            aging.bucket16_30.count += 1;
+            aging.bucket16_30.amount += balance;
+          } else if (diffDays <= 60) {
+            aging.bucket31_60.count += 1;
+            aging.bucket31_60.amount += balance;
+          } else {
+            aging.bucket60_plus.count += 1;
+            aging.bucket60_plus.amount += balance;
+          }
         }
       }
-    }
-  });
+    });
 
-  const avgDaysToClear =
-    clearedDays.length > 0
-      ? Math.round(clearedDays.reduce((a, c) => a + c, 0) / clearedDays.length)
-      : null;
+    const avgDaysToClear =
+      clearedDays.length > 0
+        ? Math.round(clearedDays.reduce((a, c) => a + c, 0) / clearedDays.length)
+        : null;
 
-  return {
-    totalPayable,
-    gstPayable,
-    kacchaPayable,
-    totalPurchases,
-    totalPaid,
-    overdueCount,
-    overdueAmount,
-    avgDaysToClear,
-    aging,
-  };
+    const summary = {
+      totalPayable,
+      gstPayable,
+      kacchaPayable,
+      totalPurchases,
+      totalPaid,
+      overdueCount,
+      overdueAmount,
+      avgDaysToClear,
+      aging,
+    };
+
+    setPersistentCache(cacheKey, summary);
+    return summary;
+  } catch (err) {
+    console.warn('[Dealers API] Network error loading analytics summary, using cache:', err);
+    return getPersistentCache(cacheKey) || null;
+  }
 }

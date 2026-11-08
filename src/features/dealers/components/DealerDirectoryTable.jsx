@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Badge } from '@/shared/ui';
+import { Badge, LoadingState } from '@/shared/ui';
 import { formatCurrency, formatPhone } from '@/shared/lib/format';
 import { cn } from '@/shared/lib/cn';
 import {
@@ -182,9 +182,12 @@ Thank you!`;
 
       {/* Loading State */}
       {isLoading && (
-        <div className="py-16 text-center bg-surface border border-border rounded-xl shadow-2xs space-y-2">
-          <div className="w-7 h-7 rounded-full border-2 border-accent border-t-transparent animate-spin mx-auto mb-2" />
-          <p className="text-xs text-muted">Loading dealer network & ledgers...</p>
+        <div className="bg-surface border border-border rounded-xl shadow-2xs">
+          <LoadingState
+            size="md"
+            title="Refreshing Dealer Directory"
+            message="Synchronizing dealer network, contacts, and live balances..."
+          />
         </div>
       )}
 

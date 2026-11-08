@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Badge } from '@/shared/ui';
+import { Badge, LoadingState } from '@/shared/ui';
 import { formatCurrency, formatDate, formatPhone } from '@/shared/lib/format';
 import { cn } from '@/shared/lib/cn';
 import { DealerBillPrintModal } from './DealerBillPrintModal';
@@ -216,9 +216,12 @@ Kindly verify your khata records and arrange the settlement.
 
       {/* Loading State */}
       {isLoading && (
-        <div className="py-16 text-center bg-surface border border-border rounded-xl shadow-2xs space-y-2">
-          <div className="w-7 h-7 rounded-full border-2 border-accent border-t-transparent animate-spin mx-auto mb-2" />
-          <p className="text-xs text-muted">Loading purchase bills...</p>
+        <div className="bg-surface border border-border rounded-xl shadow-2xs">
+          <LoadingState
+            size="md"
+            title="Refreshing Purchase Bills"
+            message="Updating bills, tax vouchers, and payment statuses..."
+          />
         </div>
       )}
 

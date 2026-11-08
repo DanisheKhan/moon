@@ -6,6 +6,7 @@ import {
   useDealerAnalytics,
 } from '../hooks/useDealers';
 import { useStores } from '@/features/stores';
+import { LoadingState, KpiGridSkeleton } from '@/shared/ui';
 import { DealerStatsHeader } from '../components/DealerStatsHeader';
 import { DealerDirectoryTable } from '../components/DealerDirectoryTable';
 import { BillsRegisterTable } from '../components/BillsRegisterTable';
@@ -48,6 +49,11 @@ export function DealersHubPage() {
   });
   const { data: analytics, isLoading: isLoadingAnalytics } = useDealerAnalytics(storeId);
 
+  const isInitialLoading =
+    (isLoadingBills && bills.length === 0) ||
+    (isLoadingDealers && dealers.length === 0) ||
+    (isLoadingAnalytics && !analytics);
+
   const basePath = storeCode ? `/admin/${storeCode}/dealers` : '/admin/dealers';
 
   function handleOpenAddBill(dealer = null) {
@@ -68,6 +74,37 @@ export function DealersHubPage() {
 
   function handleOpenTimeline(billId) {
     setTimelineBillId(billId);
+  }
+
+  if (isInitialLoading) {
+    return (
+      <div className="w-full space-y-6 min-w-0 pb-12 animate-in fade-in duration-150">
+        {/* 1. Page Header */}
+        <div className="pb-4 border-b border-border min-w-0">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-muted block mb-1">
+            ACCOUNTS PAYABLE & PROCUREMENT
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+            Dealer & Supplier Khata
+          </h1>
+          <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed max-w-3xl">
+            Multi-dealer central ledgers (Godrej, Samsung, Onida), partial payments, aging timeline, and strict GST vs. Kaccha separation.
+          </p>
+        </div>
+
+        {/* 2. Shimmer Skeleton for Metrics - Never flash ₹0 */}
+        <KpiGridSkeleton count={4} />
+
+        {/* 3. Unified Standard Loading Screen */}
+        <div className="bg-surface border border-border rounded-xl shadow-2xs">
+          <LoadingState
+            fullScreen
+            title="Loading Dealer & Khata Register"
+            message="Retrieving verified supplier balances, bills, and accounts payable..."
+          />
+        </div>
+      </div>
+    );
   }
 
   return (

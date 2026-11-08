@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getPersistentCache } from '@/shared/lib/cachePersistence';
 import {
   listDealers,
   getDealerById,
@@ -33,6 +34,15 @@ export function useDealers({ storeId, includeInactive = false } = {}) {
     queryFn: () => listDealers({ storeId, includeInactive }),
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: false,
+    initialData: () => {
+      const cached = getPersistentCache('dealers_directory');
+      if (!cached) return undefined;
+      if (storeId) {
+        return cached.filter((d) => !d.store_id || d.store_id === storeId);
+      }
+      return cached;
+    },
+    placeholderData: (prev) => prev,
   });
 }
 
@@ -50,6 +60,12 @@ export function useDealerBills(filters = {}) {
     queryFn: () => listDealerBills(filters),
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: false,
+    initialData: () => {
+      const cacheKey = `dealers_bills_${filters.storeId || 'all'}`;
+      const cached = getPersistentCache(cacheKey);
+      return cached || undefined;
+    },
+    placeholderData: (prev) => prev,
   });
 }
 
@@ -84,6 +100,12 @@ export function useDealerAnalytics(storeId) {
     queryFn: () => getDealerAnalyticsSummary({ storeId }),
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: false,
+    initialData: () => {
+      const cacheKey = `dealers_analytics_${storeId || 'all'}`;
+      const cached = getPersistentCache(cacheKey);
+      return cached || undefined;
+    },
+    placeholderData: (prev) => prev,
   });
 }
 
