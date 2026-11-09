@@ -8,7 +8,6 @@ import {
   CreditCard,
   Receipt,
   Package,
-  BarChart3,
   Menu,
   X,
   Store,
@@ -92,7 +91,6 @@ export function AdminConsoleLayout() {
   const isInvoicesActive = path.startsWith(`${basePath}/invoices`) || path === '/admin/invoices';
   const isInventoryActive = path.startsWith(`${basePath}/inventory`);
   const isDealersActive = path.startsWith(`${basePath}/dealers`) || path.startsWith('/admin/dealers');
-  const isReportsActive = path.startsWith(`${basePath}/reports`);
 
   const activeStoreName =
     currentStore?.name ||
@@ -266,22 +264,6 @@ export function AdminConsoleLayout() {
               >
                 <Package size={15} className="shrink-0" />
                 <span>Stock & Inventory</span>
-              </Link>
-
-              {/* 4. Reports */}
-              <Link
-                to={`${basePath}/reports`}
-                onMouseEnter={() => import('@/features/reports').catch(() => {})}
-                onClick={handleNavClick}
-                className={cn(
-                  'flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
-                  isReportsActive
-                    ? 'bg-sidebar-active text-sidebar-active-fg font-semibold border border-border shadow-2xs'
-                    : 'text-sidebar-text hover:text-sidebar-text-hover hover:bg-sidebar-surface font-medium'
-                )}
-              >
-                <BarChart3 size={15} className="shrink-0" />
-                <span>Reports & Tax</span>
               </Link>
             </div>
           </nav>

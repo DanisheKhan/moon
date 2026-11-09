@@ -408,7 +408,7 @@ export function StockAdjustmentForm({ product, storeId, onClose }) {
               <button
                 type="submit"
                 disabled={addUnitMutation.isPending}
-                className="inline-flex items-center gap-2 px-5 text-xs font-semibold self-end h-10 rounded-lg cursor-pointer bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-5 text-xs font-semibold self-end h-10 rounded-lg cursor-pointer bg-accent text-accent-fg hover:opacity-90 active:scale-[0.99] shadow-2xs transition-all disabled:opacity-50"
               >
                 <Plus size={14} className="stroke-[2.5]" />
                 <span>{addUnitMutation.isPending ? 'Adding Unit...' : 'Add Unit to Stock (+1)'}</span>
@@ -734,7 +734,7 @@ export function StockAdjustmentForm({ product, storeId, onClose }) {
             <button
               type="submit"
               disabled={adjustMutation.isPending || (calculatedDelta === 0 && adjustMode !== 'exact')}
-              className="inline-flex items-center gap-1.5 px-5 py-2 text-xs font-semibold rounded-lg bg-[#1B382B] text-white hover:bg-[#142d22] active:scale-[0.99] shadow-2xs transition-all cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-5 py-2 text-xs font-semibold rounded-lg bg-accent text-accent-fg hover:opacity-90 active:scale-[0.99] shadow-2xs transition-all cursor-pointer disabled:opacity-50"
             >
               <Boxes size={14} className="stroke-[2.5]" />
               <span>

@@ -92,7 +92,7 @@ export const router = createBrowserRouter([
       },
       {
         path: ':storeCode/reports',
-        element: <ReportsConsolePage />,
+        element: <Navigate to=".." relative="path" replace />,
       },
     ],
   },

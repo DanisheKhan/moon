@@ -19,6 +19,7 @@ import {
   CheckCircle2,
   AlertCircle,
   FolderPlus,
+  Boxes,
 } from 'lucide-react';
 
 export function InventoryCardsPage() {
@@ -35,7 +36,7 @@ export function InventoryCardsPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null);
-  const [editInitialTab, setEditInitialTab] = useState('details');
+  const [editInitialTab, setEditInitialTab] = useState('stock');
   const [productToDelete, setProductToDelete] = useState(null);
 
   // Strictly isolate products to selected store
@@ -412,29 +413,42 @@ export function InventoryCardsPage() {
                   )}
                 </div>
 
-                {/* Card Combined Action Controls: Single row with Edit & Stock + Delete */}
-                <div className="pt-2 border-t border-border flex items-center gap-2">
+                {/* Card Action Controls: Add Stock (Opens Stock page) + Edit Details + Delete */}
+                <div className="pt-2 border-t border-border flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProductToEdit(prod);
+                      setEditInitialTab('stock');
+                    }}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-lg text-xs font-semibold bg-surface-subtle hover:bg-surface text-text border border-border hover:border-brand-sage transition-all cursor-pointer shadow-2xs"
+                    title="Add and adjust stock level"
+                  >
+                    <Boxes size={13} className="text-brand-sage shrink-0" />
+                    <span>Add Stock</span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => {
                       setProductToEdit(prod);
                       setEditInitialTab('details');
                     }}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold bg-surface-subtle hover:bg-surface text-text border border-border hover:border-brand-sage transition-all cursor-pointer shadow-2xs"
-                    title="Edit details, pricing, and stock"
+                    className="inline-flex items-center justify-center p-2 rounded-lg text-xs font-medium border border-border bg-surface-subtle hover:bg-surface text-muted hover:text-text transition-colors cursor-pointer shadow-2xs shrink-0"
+                    title="Edit Product Details & Pricing"
+                    aria-label="Edit Details"
                   >
-                    <Pencil size={12} className="text-brand-sage" />
-                    <span>Edit & Stock</span>
+                    <Pencil size={13} />
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setProductToDelete(prod)}
-                    className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-lg text-xs font-medium border border-danger/30 bg-danger/5 hover:bg-danger/10 text-danger transition-colors cursor-pointer"
+                    className="inline-flex items-center justify-center p-2 rounded-lg text-xs font-medium border border-danger/30 bg-danger/5 hover:bg-danger/10 text-danger transition-colors cursor-pointer shadow-2xs shrink-0"
                     title="Delete Product"
+                    aria-label="Delete Product"
                   >
-                    <Trash2 size={12} />
-                    <span>Delete</span>
+                    <Trash2 size={13} />
                   </button>
                 </div>
               </div>
