@@ -131,17 +131,17 @@ Thank you for your business!`;
 *Dear ${customerName},*
 Thank you for your purchase with ${storeName}!
 
-📄 *Invoice No:* #${invoiceDetail.invoice_number}
-📅 *Date of Purchase:* ${purchaseDate}
-📦 *Items Purchased:*
+*Invoice No:* #${invoiceDetail.invoice_number}
+*Date of Purchase:* ${purchaseDate}
+*Items Purchased:*
 ${itemsList}
 
-💰 *Total Bill Amount:* ${formatCurrency(grandTotal)}
-✅ *Amount Paid:* ${formatCurrency(totalPaid)}
-✨ *Payment Status:* Fully Settled / Paid
+*Total Bill Amount:* ${formatCurrency(grandTotal)}
+*Amount Paid:* ${formatCurrency(totalPaid)}
+*Payment Status:* Fully Settled / Paid
 ----------------------------------------
-🏢 *Store:* ${storeName}
-📞 *Store Contact:* ${storePhone}
+*Store:* ${storeName}
+*Store Contact:* ${storePhone}
 
 We appreciate your business and look forward to serving you again!`;
     }
@@ -371,6 +371,40 @@ We appreciate your business and look forward to serving you again!`;
           )}
         </div>
       </div>
+
+      {/* Return & Refund Reconciliation Telemetry (if any) */}
+      {invoiceDetail.returns && invoiceDetail.returns.length > 0 && (
+        <div className="border border-t-0 border-black p-2.5 text-[11px] bg-purple-50/50">
+          <div className="font-bold uppercase tracking-wider text-purple-900 pb-1 flex items-center justify-between">
+            <span>Sales Return & Deduction Voucher</span>
+            <span className="font-mono text-[10px] text-purple-700">
+              {invoiceDetail.returns.length} {invoiceDetail.returns.length === 1 ? 'Return Event' : 'Return Events'}
+            </span>
+          </div>
+          <div className="space-y-1.5 divide-y divide-purple-200/60">
+            {invoiceDetail.returns.map((ret) => (
+              <div key={ret.id} className="pt-1.5 first:pt-0 flex flex-wrap items-center justify-between gap-2 font-mono text-[11px]">
+                <div>
+                  <span className="font-bold text-black">{ret.return_number}</span>
+                  <span className="text-gray-600 ml-2">({ret.reason || 'Customer Return'})</span>
+                  {ret.notes && <span className="text-gray-500 text-[10px] ml-1.5 italic font-sans">— {ret.notes}</span>}
+                </div>
+                <div className="flex items-center gap-3">
+                  <span>Gross: {formatCurrency(ret.gross_amount || ret.refund_amount, true)}</span>
+                  {Number(ret.deduction_amount) > 0 && (
+                    <span className="text-amber-700 font-semibold">
+                      Less Deduction ({ret.deduction_reason || 'Fee'}): -{formatCurrency(ret.deduction_amount, true)}
+                    </span>
+                  )}
+                  <span className="font-bold text-purple-900">
+                    Net Refund: {formatCurrency(ret.refund_amount, true)} ({ret.refund_method})
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Terms & Signatures */}
       <div className="grid grid-cols-2 border border-t-0 border-black p-3 text-[10px]">

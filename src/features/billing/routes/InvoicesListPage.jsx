@@ -212,17 +212,17 @@ Thank you for your business!`;
 *Dear ${customerName},*
 Thank you for your purchase with ${storeName}!
 
-📄 *Invoice No:* #${inv.invoice_number}
-📅 *Date of Purchase:* ${purchaseDate}
-📦 *Items Purchased:*
+*Invoice No:* #${inv.invoice_number}
+*Date of Purchase:* ${purchaseDate}
+*Items Purchased:*
 ${itemsList}
 
-💰 *Total Bill Amount:* ${formatCurrency(grandTotal)}
-✅ *Amount Paid:* ${formatCurrency(totalPaid)}
-✨ *Payment Status:* Fully Settled / Paid
+*Total Bill Amount:* ${formatCurrency(grandTotal)}
+*Amount Paid:* ${formatCurrency(totalPaid)}
+*Payment Status:* Fully Settled / Paid
 ----------------------------------------
-🏢 *Store:* ${storeName}
-📞 *Store Contact:* ${storePhone}
+*Store:* ${storeName}
+*Store Contact:* ${storePhone}
 
 We appreciate your business and look forward to serving you again!`;
     }

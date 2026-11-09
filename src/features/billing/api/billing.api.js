@@ -251,7 +251,7 @@ export async function voidInvoice(invoiceId) {
  * Fetches complete invoice with items and payments for receipt printing or editing
  */
 export async function getInvoiceDetail(invoiceId) {
-  const [invRes, itemsRes, payRes] = await Promise.all([
+  const [invRes, itemsRes, payRes, retRes] = await Promise.all([
     supabase
       .from('invoices')
       .select(`
@@ -269,6 +269,10 @@ export async function getInvoiceDetail(invoiceId) {
       .from('payments')
       .select('id, payment_method, amount, reference_number')
       .eq('invoice_id', invoiceId),
+    supabase
+      .from('sales_returns')
+      .select('id, return_number, refund_amount, gross_amount, deduction_amount, deduction_reason, refund_method, reason, notes, created_at')
+      .eq('invoice_id', invoiceId),
   ]);
 
   if (invRes.error) throw invRes.error;
@@ -279,6 +283,7 @@ export async function getInvoiceDetail(invoiceId) {
     ...invRes.data,
     items: itemsRes.data || [],
     payments: payRes.data || [],
+    returns: retRes.data || [],
   };
 }
 
@@ -334,9 +339,19 @@ export async function recordPayment({ invoiceId, paymentMethod, amount, referenc
 }
 
 /**
- * Processes a sales return / refund atomically via database RPC
+ * Processes a sales return / refund atomically via database RPC with deduction tracking
  */
-export async function processReturn({ invoiceId, items, refundAmount, refundMethod, reason, notes }) {
+export async function processReturn({
+  invoiceId,
+  items,
+  refundAmount,
+  deductionAmount = 0,
+  deductionReason = null,
+  grossAmount = null,
+  refundMethod,
+  reason,
+  notes,
+}) {
   let resolvedItems = items;
   const missingProductItems = (items || []).filter((it) => !it.product_id && it.order_item_id);
   if (missingProductItems.length > 0) {
@@ -361,13 +376,20 @@ export async function processReturn({ invoiceId, items, refundAmount, refundMeth
     }
   }
 
+  const numRefund = Math.max(0, parseFloat(refundAmount) || 0);
+  const numDeduction = Math.max(0, parseFloat(deductionAmount) || 0);
+  const numGross = grossAmount != null ? parseFloat(grossAmount) : numRefund + numDeduction;
+
   const { data, error } = await supabase.rpc('process_return', {
     p_invoice_id: invoiceId,
     p_items: resolvedItems,
-    p_refund_amount: parseFloat(refundAmount) || 0,
+    p_refund_amount: numRefund,
     p_refund_method: refundMethod || 'cash',
     p_reason: reason || 'Customer Return',
     p_notes: notes || null,
+    p_deduction_amount: numDeduction,
+    p_deduction_reason: deductionReason || null,
+    p_gross_amount: numGross,
   });
 
   if (error) throw error;
@@ -375,7 +397,7 @@ export async function processReturn({ invoiceId, items, refundAmount, refundMeth
 }
 
 /**
- * Lists return records for an invoice or store
+ * Lists return records for an invoice or store with deduction breakdown
  */
 export async function listReturns({ invoiceId, storeId } = {}) {
   let query = supabase
@@ -387,6 +409,9 @@ export async function listReturns({ invoiceId, storeId } = {}) {
       return_number,
       customer_name,
       refund_amount,
+      gross_amount,
+      deduction_amount,
+      deduction_reason,
       refund_method,
       reason,
       notes,

@@ -24,6 +24,15 @@ const RETURN_REASONS = [
 
 const RETURN_REASON_OPTIONS = RETURN_REASONS.map((r) => ({ value: r, label: r }));
 
+const DEDUCTION_REASON_OPTIONS = [
+  { value: 'Restocking / Processing Fee', label: 'Restocking / Processing Fee' },
+  { value: 'Packaging / Box Damaged', label: 'Packaging / Box Damaged' },
+  { value: 'Usage & Depreciation', label: 'Usage & Depreciation' },
+  { value: 'Missing Accessories / Parts', label: 'Missing Accessories / Parts' },
+  { value: 'Physical Scratches / Wear', label: 'Physical Scratches / Wear' },
+  { value: 'Special Agreement / Settlement', label: 'Special Agreement / Settlement' },
+];
+
 const REFUND_METHODS = [
   { id: 'cash', label: 'Cash Refund', icon: Banknote },
   { id: 'upi', label: 'UPI Instant Refund', icon: QrCode },
@@ -56,6 +65,8 @@ function ReturnProductForm({ invoice, onClose }) {
   });
 
   const [returnReason, setReturnReason] = useState(RETURN_REASONS[0]);
+  const [deductionAmount, setDeductionAmount] = useState('0');
+  const [deductionReason, setDeductionReason] = useState('Restocking / Usage Fee');
   const [refundMethod, setRefundMethod] = useState('cash');
   const [notes, setNotes] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -96,8 +107,8 @@ function ReturnProductForm({ invoice, onClose }) {
     }));
   }
 
-  // Compute total refund amount dynamically
-  const { totalRefundAmount, selectedCount, itemsToSubmit } = useMemo(() => {
+  // Compute gross item return value
+  const { grossRefundAmount, selectedCount, itemsToSubmit } = useMemo(() => {
     let sum = 0;
     let count = 0;
     const items = [];
@@ -111,7 +122,7 @@ function ReturnProductForm({ invoice, onClose }) {
         const unitDisc = parseFloat(it.discount) || 0;
         const taxable = Math.max(unitRate - unitDisc, 0) * returnQty;
         const gstRate = parseFloat(it.gst_rate) || 18;
-        const itemRefund = Math.round(taxable * (1 + gstRate / 100));
+        const itemRefund = it.total_amount || Math.round(taxable * (1 + gstRate / 100));
 
         sum += itemRefund;
         items.push({
@@ -126,8 +137,12 @@ function ReturnProductForm({ invoice, onClose }) {
       }
     });
 
-    return { totalRefundAmount: sum, selectedCount: count, itemsToSubmit: items };
+    return { grossRefundAmount: sum, selectedCount: count, itemsToSubmit: items };
   }, [orderItems, selectedItems]);
+
+  // Net payable after applying deduction
+  const numDeduction = Math.max(0, parseFloat(deductionAmount) || 0);
+  const totalRefundAmount = Math.max(0, grossRefundAmount - numDeduction);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -138,14 +153,33 @@ function ReturnProductForm({ invoice, onClose }) {
       return;
     }
 
+    if (numDeduction > grossRefundAmount) {
+      setErrorMessage(
+        `Deduction amount (${formatCurrency(numDeduction)}) cannot exceed actual item return price (${formatCurrency(grossRefundAmount)}).`
+      );
+      return;
+    }
+
+    const finalNotes = [
+      notes.trim(),
+      numDeduction > 0
+        ? `[Deduction: -${formatCurrency(numDeduction)} (${deductionReason}) applied. Actual Price: ${formatCurrency(grossRefundAmount)}. Net Refund: ${formatCurrency(totalRefundAmount)}]`
+        : '',
+    ]
+      .filter(Boolean)
+      .join(' • ');
+
     try {
       const result = await processReturnMutation.mutateAsync({
         invoiceId: invoice.id,
         items: itemsToSubmit,
         refundAmount: totalRefundAmount,
+        deductionAmount: numDeduction,
+        deductionReason: numDeduction > 0 ? deductionReason : null,
+        grossAmount: grossRefundAmount,
         refundMethod,
         reason: returnReason,
-        notes: notes.trim() || null,
+        notes: finalNotes || null,
       });
 
       setSuccessInfo(result);
@@ -205,8 +239,12 @@ function ReturnProductForm({ invoice, onClose }) {
           <div className="p-3 rounded-lg border border-brand-sage/30 bg-brand-sage/10 text-brand-sage text-xs flex items-center gap-2">
             <CheckCircle2 size={14} className="shrink-0" />
             <span>
-              Return <strong>{successInfo.return_number}</strong> processed! Refund of{' '}
-              <strong>{formatCurrency(totalRefundAmount)}</strong> issued.
+              Return <strong>{successInfo.return_number}</strong> recorded in database! Refund of{' '}
+              <strong>{formatCurrency(totalRefundAmount)}</strong> issued
+              {numDeduction > 0 && (
+                <> (Deduction of <strong>{formatCurrency(numDeduction)}</strong> saved to database records)</>
+              )}
+              .
             </span>
           </div>
         )}
@@ -306,8 +344,8 @@ function ReturnProductForm({ invoice, onClose }) {
           </div>
         </div>
 
-        {/* Return Details: Reason & Notes balanced side-by-side */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Return Details: Reason, Deduction & Notes */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
           <Select
             id="return-reason"
             label="Return Reason"
@@ -315,6 +353,76 @@ function ReturnProductForm({ invoice, onClose }) {
             onChange={(e) => setReturnReason(e.target.value)}
             options={RETURN_REASON_OPTIONS}
           />
+
+          <div className="space-y-1">
+            <Input
+              id="return-deduction"
+              type="number"
+              min="0"
+              max={grossRefundAmount}
+              label="Deduction Amount (₹)"
+              value={deductionAmount}
+              onChange={(e) => setDeductionAmount(e.target.value)}
+              placeholder="0"
+            />
+            {grossRefundAmount > 0 && (
+              <div className="flex items-center gap-1.5 pt-0.5 text-[10px] text-muted">
+                <span>Presets:</span>
+                <button
+                  type="button"
+                  onClick={() => setDeductionAmount('0')}
+                  className="hover:text-text cursor-pointer underline font-mono"
+                >
+                  ₹0
+                </button>
+                <span>•</span>
+                <button
+                  type="button"
+                  onClick={() => setDeductionAmount(String(Math.round(grossRefundAmount * 0.05)))}
+                  className="hover:text-text cursor-pointer underline font-mono"
+                >
+                  5%
+                </button>
+                <span>•</span>
+                <button
+                  type="button"
+                  onClick={() => setDeductionAmount(String(Math.round(grossRefundAmount * 0.10)))}
+                  className="hover:text-text cursor-pointer underline font-mono"
+                >
+                  10%
+                </button>
+                <span>•</span>
+                <button
+                  type="button"
+                  onClick={() => setDeductionAmount(String(Math.round(grossRefundAmount * 0.20)))}
+                  className="hover:text-text cursor-pointer underline font-mono"
+                >
+                  20%
+                </button>
+              </div>
+            )}
+          </div>
+
+          {numDeduction > 0 ? (
+            <Select
+              id="deduction-reason"
+              label="Deduction Category"
+              value={deductionReason}
+              onChange={(e) => setDeductionReason(e.target.value)}
+              options={DEDUCTION_REASON_OPTIONS}
+            />
+          ) : (
+            <Input
+              id="return-notes"
+              label="Inspector Remarks / Serial Note"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="e.g. Unit tested, screen intact, charger missing"
+            />
+          )}
+        </div>
+
+        {numDeduction > 0 && (
           <Input
             id="return-notes"
             label="Inspector Remarks / Serial Note"
@@ -322,7 +430,7 @@ function ReturnProductForm({ invoice, onClose }) {
             onChange={(e) => setNotes(e.target.value)}
             placeholder="e.g. Unit tested, screen intact, charger missing"
           />
-        </div>
+        )}
 
         {/* Refund Method Selector (Full Width 4-Card Ribbon) */}
         <div className="space-y-1.5">
@@ -353,31 +461,57 @@ function ReturnProductForm({ invoice, onClose }) {
           </div>
         </div>
 
-        {/* Total Refund Banner */}
-        <div className="p-4 rounded-xl border border-border bg-surface-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <span className="text-[11px] uppercase font-bold text-muted tracking-wider block">
-              TOTAL REFUND PAYABLE
-            </span>
-            <div
-              className={cn(
-                'text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-0.5',
-                totalRefundAmount > 0 ? 'text-danger' : 'text-text'
-              )}
-            >
-              {formatCurrency(totalRefundAmount)}
+        {/* Total Refund Banner with Real-Time Math Breakdown */}
+        <div className="p-4 rounded-xl border border-border bg-surface-subtle space-y-2.5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span className="text-[11px] uppercase font-bold text-muted tracking-wider block">
+                TOTAL REFUND PAYABLE
+              </span>
+              <div
+                className={cn(
+                  'text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-0.5',
+                  totalRefundAmount > 0 ? 'text-danger' : 'text-text'
+                )}
+              >
+                {formatCurrency(totalRefundAmount)}
+              </div>
+              <span className="text-xs text-muted block mt-0.5">
+                {numDeduction > 0
+                  ? `Actual item price ${formatCurrency(grossRefundAmount)} minus ${formatCurrency(numDeduction)} deduction`
+                  : 'Calculated from original invoice tax rates'}
+              </span>
             </div>
-            <span className="text-xs text-muted block mt-0.5">
-              Calculated from original invoice tax rates
-            </span>
+
+            <div className="flex flex-col sm:items-end gap-1.5 self-start sm:self-auto">
+              <Badge
+                variant={totalRefundAmount > 0 ? 'danger' : 'default'}
+                className="text-xs font-semibold py-1 px-3"
+              >
+                {selectedCount} {selectedCount === 1 ? 'item' : 'items'} returning
+              </Badge>
+
+              {numDeduction > 0 && (
+                <span className="text-[11px] font-mono font-semibold text-amber-700 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded">
+                  -{formatCurrency(numDeduction)} deduction ({deductionReason}) saved to DB
+                </span>
+              )}
+            </div>
           </div>
 
-          <Badge
-            variant={totalRefundAmount > 0 ? 'danger' : 'default'}
-            className="text-xs font-semibold py-1 px-3 self-start sm:self-auto"
-          >
-            {selectedCount} {selectedCount === 1 ? 'item' : 'items'} returning
-          </Badge>
+          {/* Math subtraction formula row */}
+          {numDeduction > 0 && (
+            <div className="pt-2 border-t border-border/60 flex items-center justify-between text-xs font-mono">
+              <div className="flex items-center gap-2 text-muted">
+                <span>Actual Price: <strong className="text-text">{formatCurrency(grossRefundAmount)}</strong></span>
+                <span>-</span>
+                <span>Deduction: <strong className="text-amber-700">-{formatCurrency(numDeduction)}</strong></span>
+              </div>
+              <div className="font-bold text-danger text-sm">
+                = Net Refund: {formatCurrency(totalRefundAmount)}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Actions */}
@@ -393,7 +527,7 @@ function ReturnProductForm({ invoice, onClose }) {
           </Button>
           <Button
             type="submit"
-            disabled={processReturnMutation.isPending || totalRefundAmount <= 0}
+            disabled={processReturnMutation.isPending || selectedCount === 0 || totalRefundAmount < 0}
             pending={processReturnMutation.isPending}
             className="text-xs font-semibold rounded-lg gap-1.5 shadow-2xs px-4 cursor-pointer bg-danger hover:bg-danger/90 text-white disabled:opacity-50"
           >
