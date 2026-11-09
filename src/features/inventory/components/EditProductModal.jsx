@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Modal, Button, Input, Select } from '@/shared/ui';
 import { useUpdateProduct } from '../hooks/useInventory';
 import { StockAdjustmentForm } from './StockAdjustmentModal';
+import { ProductImageUploader } from './ProductImageUploader';
+import { uploadProductImage } from '@/shared/lib/imageCompression';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { cn } from '@/shared/lib/cn';
 import { Pencil, Check, Boxes } from 'lucide-react';
@@ -24,6 +26,9 @@ export function EditProductModal({
   const [minSellingPrice, setMinSellingPrice] = useState(String(product?.min_selling_price || ''));
   const [gstRate, setGstRate] = useState(String(product?.gst_rate || '18'));
   const [reorderLevel, setReorderLevel] = useState(String(product?.reorder_level || '5'));
+  const [imageUrl, setImageUrl] = useState(product?.image_url || '');
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
@@ -54,6 +59,13 @@ export function EditProductModal({
 
     setError('');
     try {
+      let finalImageUrl = imageUrl || null;
+      if (uploadedImage?.file) {
+        setIsUploadingImage(true);
+        finalImageUrl = await uploadProductImage(uploadedImage.file, sku.trim());
+        setIsUploadingImage(false);
+      }
+
       await updateProductMutation.mutateAsync({
         productId: product.id,
         updates: {
@@ -64,6 +76,7 @@ export function EditProductModal({
           min_selling_price: parseFloat(minSellingPrice) || sp,
           gst_rate: !isNaN(parseInt(gstRate, 10)) ? parseInt(gstRate, 10) : 18,
           reorder_level: parseInt(reorderLevel, 10) || 5,
+          image_url: finalImageUrl,
         },
       });
       setSuccess(true);
@@ -72,6 +85,7 @@ export function EditProductModal({
         onClose();
       }, 700);
     } catch (err) {
+      setIsUploadingImage(false);
       setError(getErrorMessage(err));
     }
   }
@@ -229,17 +243,33 @@ export function EditProductModal({
               />
             </div>
 
+            {/* Product Image Update */}
+            <ProductImageUploader
+              previewUrl={uploadedImage?.dataUrl || imageUrl}
+              onImageChange={(res) => {
+                setUploadedImage(res);
+                if (res) {
+                  setImageUrl(res.dataUrl);
+                } else {
+                  setImageUrl('');
+                }
+              }}
+              required={false}
+              disabled={updateProductMutation.isPending || isUploadingImage}
+            />
+
             <div className="pt-4 border-t border-border flex items-center justify-end gap-3">
-              <Button type="button" variant="outline" onClick={onClose}>
+              <Button type="button" variant="outline" onClick={onClose} disabled={isUploadingImage || updateProductMutation.isPending}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 variant="solid"
-                pending={updateProductMutation.isPending}
+                pending={updateProductMutation.isPending || isUploadingImage}
+                disabled={isUploadingImage || updateProductMutation.isPending}
                 className="gap-2"
               >
-                <Pencil size={14} /> Save Product
+                <Pencil size={14} /> {isUploadingImage ? 'Uploading Image...' : 'Save Product'}
               </Button>
             </div>
           </form>

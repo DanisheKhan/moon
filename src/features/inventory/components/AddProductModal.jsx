@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
 import { Modal, Button, Input, Select } from '@/shared/ui';
 import { useCreateProduct, useCategories, useCreateCategory } from '../hooks/useInventory';
+import { ProductImageUploader } from './ProductImageUploader';
+import { uploadProductImage } from '@/shared/lib/imageCompression';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { Plus, FolderPlus, Check } from 'lucide-react';
 
@@ -18,6 +20,9 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
   const [isSerialized, setIsSerialized] = useState(storeCode === 'mobiles');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [imageError, setImageError] = useState('');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [initialStock, setInitialStock] = useState('1');
   const [error, setError] = useState('');
 
@@ -67,6 +72,12 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
       return;
     }
 
+    if (!uploadedImage && !imageUrl.trim()) {
+      setImageError('Product photo is mandatory. Please upload an image.');
+      setError('Product photo is mandatory. Please upload an image under 300 KB.');
+      return;
+    }
+
     const sp = parseFloat(sellingPrice);
     const cp = parseFloat(costPrice) || 0;
 
@@ -81,7 +92,15 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
     }
 
     setError('');
+    setImageError('');
     try {
+      let finalImageUrl = imageUrl.trim() || null;
+      if (uploadedImage?.file) {
+        setIsUploadingImage(true);
+        finalImageUrl = await uploadProductImage(uploadedImage.file, sku.trim());
+        setIsUploadingImage(false);
+      }
+
       await createProductMutation.mutateAsync({
         store_id: storeId,
         category_id: categoryId || (dbCategories[0]?.id || null),
@@ -94,7 +113,7 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
         gst_rate: !isNaN(parseInt(gstRate, 10)) ? parseInt(gstRate, 10) : 18,
         is_serialized: isSerialized,
         description: description.trim() || `${name.trim()} available at Star Enterprises.`,
-        image_url: imageUrl.trim() || null,
+        image_url: finalImageUrl,
         initialQuantity: parseInt(initialStock, 10) || 0,
         is_active: true,
       });
@@ -106,8 +125,11 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
       setCostPrice('');
       setDescription('');
       setImageUrl('');
+      setUploadedImage(null);
+      setImageError('');
       setInitialStock('1');
     } catch (err) {
+      setIsUploadingImage(false);
       setError(getErrorMessage(err));
     }
   }
@@ -294,32 +316,46 @@ export function AddProductModal({ storeId, storeCode = 'mobiles', isOpen, onClos
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <Input
-            id="prod-initial-stock"
-            type="number"
-            min="0"
-            label="Initial Stock on Hand (Units)"
-            placeholder="1"
-            value={initialStock}
-            onChange={(e) => setInitialStock(e.target.value)}
-            hint={isSerialized ? 'Initial quantity count (register unique serials after creating)' : 'Units placed on shelf today'}
-          />
-          <Input
-            id="prod-img"
-            label="Product Image URL (Optional)"
-            placeholder="e.g. /images/products/phone.jpg"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-          />
-        </div>
+        <Input
+          id="prod-initial-stock"
+          type="number"
+          min="0"
+          label="Initial Stock on Hand (Units)"
+          placeholder="1"
+          value={initialStock}
+          onChange={(e) => setInitialStock(e.target.value)}
+          hint={isSerialized ? 'Initial quantity count (register unique serials after creating)' : 'Units placed on shelf today'}
+        />
+
+        {/* Mandatory Uploadable Product Photo (< 300 KB) */}
+        <ProductImageUploader
+          previewUrl={uploadedImage?.dataUrl || imageUrl}
+          onImageChange={(res) => {
+            setUploadedImage(res);
+            setImageError('');
+            if (res) {
+              setImageUrl(res.dataUrl);
+            } else {
+              setImageUrl('');
+            }
+          }}
+          required={true}
+          error={imageError}
+          disabled={createProductMutation.isPending || isUploadingImage}
+        />
 
         <div className="pt-3 border-t border-border flex items-center justify-end gap-3">
-          <Button type="button" variant="outline" onClick={onClose} className="px-5">
+          <Button type="button" variant="outline" onClick={onClose} className="px-5" disabled={isUploadingImage || createProductMutation.isPending}>
             Cancel
           </Button>
-          <Button type="submit" variant="solid" pending={createProductMutation.isPending} className="gap-2 px-5">
-            <Plus size={15} /> Add Product to Catalog
+          <Button
+            type="submit"
+            variant="solid"
+            pending={createProductMutation.isPending || isUploadingImage}
+            disabled={createProductMutation.isPending || isUploadingImage}
+            className="gap-2 px-5"
+          >
+            <Plus size={15} /> {isUploadingImage ? 'Uploading Image...' : 'Add Product to Catalog'}
           </Button>
         </div>
       </form>

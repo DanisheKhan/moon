@@ -444,7 +444,10 @@ We appreciate your business and look forward to serving you again!`;
               const itemsCount = inv.order_items?.length || 0;
               const itemsPreview = (inv.order_items || [])
                 .slice(0, 2)
-                .map((it) => `${it.item_name} (${it.quantity})`)
+                .map((it) => {
+                  const qty = Number(it.quantity) || 1;
+                  return qty > 1 ? `${it.item_name} (×${qty})` : it.item_name;
+                })
                 .join(', ');
 
               const totalPaid = (inv.payments || []).reduce(

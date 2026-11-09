@@ -4,7 +4,7 @@ import { useCreateDealerBill } from '../hooks/useDealers';
 import { useProducts } from '@/features/inventory';
 import { formatCurrency, formatDate } from '@/shared/lib/format';
 import { cn } from '@/shared/lib/cn';
-import { FileText, Layers, Package, Plus, Trash2 } from 'lucide-react';
+import { FileText, Layers, Package, Plus, Trash2, Sparkles } from 'lucide-react';
 
 const createInitialItem = () => ({
   id: Date.now() + Math.random(),
@@ -43,16 +43,22 @@ export function AddBillModal({
   useEffect(() => {
     if (isOpen) {
       setItems((prev) => (prev.length > 0 ? prev : [createInitialItem()]));
+      let targetDealerId = dealerId;
+      let targetType = billType;
+
       if (preselectedDealer) {
-        setDealerId(preselectedDealer.id);
-        if (preselectedDealer.billing_mode === 'kaccha') {
-          setBillType('kaccha');
-        } else {
-          setBillType('gst');
-        }
+        targetDealerId = preselectedDealer.id;
+        targetType = preselectedDealer.billing_mode === 'kaccha' ? 'kaccha' : 'gst';
+        setDealerId(targetDealerId);
+        setBillType(targetType);
         setCreditDays(preselectedDealer.default_credit_days || 30);
       } else if (dealers.length > 0 && !dealerId) {
-        setDealerId(dealers[0].id);
+        targetDealerId = dealers[0].id;
+        setDealerId(targetDealerId);
+      }
+
+      if (!billNumber) {
+        setBillNumber(generateSmartBillNumber(targetType, targetDealerId));
       }
     }
   }, [isOpen, preselectedDealer, dealers]);
@@ -65,6 +71,41 @@ export function AddBillModal({
     d.setDate(d.getDate() + Number(creditDays || 0));
     return d.toISOString().split('T')[0];
   }, [billDate, creditDays]);
+
+  // Smart auto-generate invoice / parchi number
+  function generateSmartBillNumber(targetType = billType, targetDealerId = dealerId) {
+    const year = new Date(billDate || new Date()).getFullYear();
+    const randSuffix = Math.floor(100 + Math.random() * 900);
+
+    if (targetType === 'kaccha') {
+      return `EST-${year}-${randSuffix}`;
+    }
+
+    const selectedDealer = dealers.find((d) => d.id === targetDealerId);
+    let brandPrefix = 'INV';
+    if (selectedDealer) {
+      const rawBrand = (selectedDealer.brand_name || selectedDealer.name || '')
+        .split(' ')[0]
+        .replace(/[^a-zA-Z0-9]/g, '')
+        .toUpperCase();
+      if (rawBrand.length >= 2) {
+        brandPrefix = rawBrand.slice(0, 8);
+      }
+    }
+
+    return `${brandPrefix}/${year}/${randSuffix}`;
+  }
+
+  function handleAutoGenerateNumber() {
+    setBillNumber(generateSmartBillNumber());
+  }
+
+  function handleSelectBillType(type) {
+    setBillType(type);
+    if (!billNumber || billNumber.startsWith('EST-') || billNumber.includes('/')) {
+      setBillNumber(generateSmartBillNumber(type, dealerId));
+    }
+  }
 
   // Compute base total of line items
   const itemsSubtotal = useMemo(() => {
@@ -296,7 +337,7 @@ export function AddBillModal({
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
-              onClick={() => setBillType('gst')}
+              onClick={() => handleSelectBillType('gst')}
               className={`p-3 rounded-lg border text-left transition-all flex items-start gap-2.5 ${
                 billType === 'gst'
                   ? 'border-brand-sage bg-brand-sage-subtle/50 text-text ring-1 ring-brand-sage'
@@ -317,7 +358,7 @@ export function AddBillModal({
 
             <button
               type="button"
-              onClick={() => setBillType('kaccha')}
+              onClick={() => handleSelectBillType('kaccha')}
               className={`p-3 rounded-lg border text-left transition-all flex items-start gap-2.5 ${
                 billType === 'kaccha'
                   ? 'border-amber-500 bg-amber-50/60 text-text ring-1 ring-amber-500'
@@ -354,6 +395,9 @@ export function AddBillModal({
               if (found?.default_credit_days) {
                 setCreditDays(found.default_credit_days);
               }
+              if (billType === 'gst' && (!billNumber || billNumber.includes('/'))) {
+                setBillNumber(generateSmartBillNumber('gst', newId));
+              }
             }}
             required
             className="w-full px-3 py-2 text-xs rounded-lg border border-border bg-surface text-text font-medium focus:outline-none focus:ring-1 focus:ring-brand-sage"
@@ -370,17 +414,38 @@ export function AddBillModal({
         {/* Bill Number & Bill Date */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
-            <label className="block text-xs font-semibold text-text mb-1">
-              {billType === 'gst' ? 'Invoice Number' : 'Parchi / Slip No'} <span className="text-brand-crimson">*</span>
-            </label>
-            <input
-              type="text"
-              required
-              placeholder={billType === 'gst' ? 'e.g. GODREJ/2026/089' : 'e.g. EST-PARCHI-402'}
-              value={billNumber}
-              onChange={(e) => setBillNumber(e.target.value)}
-              className="w-full px-3 py-2 text-xs font-mono rounded-lg border border-border bg-surface text-text focus:outline-none focus:ring-1 focus:ring-brand-sage"
-            />
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-semibold text-text">
+                {billType === 'gst' ? 'Invoice Number' : 'Parchi / Slip No'} <span className="text-brand-crimson">*</span>
+              </label>
+              <button
+                type="button"
+                onClick={handleAutoGenerateNumber}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand-sage hover:text-brand-sage/80 active:scale-95 transition-all cursor-pointer"
+                title="Auto-generate a sequential bill reference number"
+              >
+                <Sparkles size={11} className="stroke-[2.5]" />
+                <span>Auto-Generate</span>
+              </button>
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                required
+                placeholder={billType === 'gst' ? 'e.g. GODREJ/2026/089' : 'e.g. EST-2026-402'}
+                value={billNumber}
+                onChange={(e) => setBillNumber(e.target.value)}
+                className="w-full pl-3 pr-16 py-2 text-xs font-mono rounded-lg border border-border bg-surface text-text focus:outline-none focus:ring-1 focus:ring-brand-sage"
+              />
+              <button
+                type="button"
+                onClick={handleAutoGenerateNumber}
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2 py-0.5 text-[10px] font-semibold rounded bg-surface-subtle text-muted hover:text-text hover:bg-border/60 border border-border/80 transition-colors cursor-pointer"
+                title="Click to generate"
+              >
+                Auto
+              </button>
+            </div>
           </div>
 
           <div>
