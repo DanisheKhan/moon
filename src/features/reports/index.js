@@ -1,3 +1,15 @@
 export { ReportsConsolePage } from './routes/ReportsConsolePage';
 export { useOwnerOverview, useOwnerDashboard, reportKeys } from './hooks/useReports';
 export { getOwnerOverview, getOwnerDashboardData } from './api/reports.api';
+export { ExecutiveStoreTelemetry, ExecutiveKpiGrid } from './components/ExecutiveStoreTelemetry';
+export { SalesVelocityTimeline } from './components/SalesVelocityTimeline';
+export { MostSellingCategoryGraph } from './components/MostSellingCategoryGraph';
+export { StarProductsSalesMatrix } from './components/StarProductsSalesMatrix';
+export { BusinessActionEngine } from './components/BusinessActionEngine';
+export { CategoryMarginTable } from './components/CategoryMarginTable';
+export { OperationalHourlyHeatmap } from './components/OperationalHourlyHeatmap';
+export { PaymentAndBranchSplit } from './components/PaymentAndBranchSplit';
+export { DiscountLeakageCard } from './components/DiscountLeakageCard';
+export { GstTaxConsole } from './components/GstTaxConsole';
+export { MerchandiseRankings } from './components/MerchandiseRankings';
+export { DayEndZReportModal } from './components/DayEndZReportModal';

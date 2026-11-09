@@ -1,24 +1,22 @@
 import { useState } from 'react';
 import { useOwnerDashboard } from '../hooks/useReports';
 import { ExecutiveHeader } from '../components/ExecutiveHeader';
-import { ExecutiveKpiGrid } from '../components/ExecutiveKpiGrid';
-import { BusinessActionEngine } from '../components/BusinessActionEngine';
-import { CategoryMarginTable } from '../components/CategoryMarginTable';
-import { OperationalHourlyHeatmap } from '../components/OperationalHourlyHeatmap';
+import { ExecutiveStoreTelemetry } from '../components/ExecutiveStoreTelemetry';
+import { SalesVelocityTimeline } from '../components/SalesVelocityTimeline';
+import { MostSellingCategoryGraph } from '../components/MostSellingCategoryGraph';
+import { StarProductsSalesMatrix } from '../components/StarProductsSalesMatrix';
 import { PaymentAndBranchSplit } from '../components/PaymentAndBranchSplit';
 import {
   LayoutDashboard,
-  Zap,
-  Layers,
-  Clock,
+  Trophy,
+  BarChart3,
   Info,
 } from 'lucide-react';
 
 const PERSPECTIVES = [
-  { id: 'overview', label: 'Overview & Financials', icon: LayoutDashboard },
-  { id: 'actions', label: 'Business Action Engine', icon: Zap, badge: '4 Levers' },
-  { id: 'categories', label: 'Category & Margins', icon: Layers },
-  { id: 'operations', label: 'Operational Heatmap', icon: Clock },
+  { id: 'overview', label: 'Overview & Performance', icon: LayoutDashboard },
+  { id: 'products', label: 'Star Products Sales Matrix', icon: Trophy, badge: 'Hero SKUs' },
+  { id: 'categories', label: 'Category Revenue Graph', icon: BarChart3, badge: 'Departments' },
 ];
 
 export function ReportsConsolePage() {
@@ -35,9 +33,11 @@ export function ReportsConsolePage() {
   const payments = dashboardData?.payments || {};
   const branches = dashboardData?.branches || [];
   const categories = dashboardData?.categories || [];
-  const hourlySales = dashboardData?.hourlySales || [];
+  const starProducts = dashboardData?.starProducts || [];
   const businessActions = dashboardData?.businessActions || {};
   const recentInvoices = dashboardData?.recentInvoices || [];
+  const salesVelocity = dashboardData?.salesVelocity || [];
+  const periodComparison = dashboardData?.periodComparison || {};
 
   return (
     <div className="space-y-6 pb-12">
@@ -68,10 +68,20 @@ export function ReportsConsolePage() {
         </div>
       )}
 
-      {/* 2. Core 4 Financial Telemetry Cards */}
-      <ExecutiveKpiGrid summary={summary} />
+      {/* 2. Executive Store Telemetry & Data Assets Component */}
+      <ExecutiveStoreTelemetry
+        summary={summary}
+        businessActions={businessActions}
+        periodComparison={periodComparison}
+      />
 
-      {/* 3. Executive Perspective Switcher Tabs */}
+      {/* 3. Interactive Sales & Profit Velocity Timeline Graph */}
+      <SalesVelocityTimeline
+        salesVelocity={salesVelocity}
+        periodComparison={periodComparison}
+      />
+
+      {/* 4. Perspective Switcher Tabs */}
       <div className="flex items-center gap-1.5 border-b border-border overflow-x-auto pb-px">
         {PERSPECTIVES.map((tab) => {
           const Icon = tab.icon;
@@ -99,26 +109,43 @@ export function ReportsConsolePage() {
         })}
       </div>
 
-      {/* 4. Dynamic Perspective Viewport */}
-      <div className="pt-2">
+      {/* 5. Dynamic Perspective Viewport */}
+      <div className="pt-2 space-y-6">
         {activeTab === 'overview' && (
-          <PaymentAndBranchSplit
-            payments={payments}
-            branches={branches}
-            recentInvoices={recentInvoices}
+          <>
+            {/* Most Selling Category Revenue Graph */}
+            <MostSellingCategoryGraph
+              categories={categories}
+              totalSales={summary.totalSales || 0}
+            />
+
+            {/* Star Products Sales Matrix */}
+            <StarProductsSalesMatrix
+              starProducts={starProducts}
+              totalSales={summary.totalSales || 0}
+            />
+
+            {/* Payment & Multi-Branch Split */}
+            <PaymentAndBranchSplit
+              payments={payments}
+              branches={branches}
+              recentInvoices={recentInvoices}
+            />
+          </>
+        )}
+
+        {activeTab === 'products' && (
+          <StarProductsSalesMatrix
+            starProducts={starProducts}
+            totalSales={summary.totalSales || 0}
           />
         )}
 
-        {activeTab === 'actions' && (
-          <BusinessActionEngine actions={businessActions} />
-        )}
-
         {activeTab === 'categories' && (
-          <CategoryMarginTable categories={categories} />
-        )}
-
-        {activeTab === 'operations' && (
-          <OperationalHourlyHeatmap hourlySales={hourlySales} />
+          <MostSellingCategoryGraph
+            categories={categories}
+            totalSales={summary.totalSales || 0}
+          />
         )}
       </div>
     </div>
