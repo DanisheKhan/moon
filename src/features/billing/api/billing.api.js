@@ -263,7 +263,7 @@ export async function getInvoiceDetail(invoiceId) {
       .single(),
     supabase
       .from('order_items')
-      .select('id, product_id, unit_id, item_name, serial_number, hsn_code, quantity, unit_price, discount, taxable_value, gst_rate, cgst_amount, sgst_amount, total_amount')
+      .select('id, product_id, unit_id, item_name, serial_number, hsn_code, quantity, unit_price, discount, taxable_value, gst_rate, cgst_amount, sgst_amount, total_amount, product_units(warranty_months), products(specs)')
       .eq('invoice_id', invoiceId),
     supabase
       .from('payments')
